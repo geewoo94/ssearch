@@ -4,11 +4,16 @@
   "version": "1.0.0",
   "description": "__MSG_description__",
   "icons": {
-
+    "128": "images/main-icon128.png",
+    "48": "images/main-icon48.png",
+    "16": "images/main-icon16.png"
   },
   "default_locale": "ko",
   "browser_action": {
     "default_icon": {
+      "128": "images/main-icon128.png",
+      "48": "images/main-icon48.png",
+      "16": "images/main-icon16.png"
     },
     "default_title": "__MSG_name__",
     "default_popup": "dist/redirect.html"

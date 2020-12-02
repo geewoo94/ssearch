@@ -1,13 +1,13 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   devServer: {
-    contentBase: __dirname + "/deploy/dist",
+    contentBase: __dirname + '/deploy/dist',
     inline: true,
     hot: true,
-    host: "localhost",
+    host: 'localhost',
     port: 3000
   },
   entry: [
@@ -43,8 +43,8 @@ module.exports = {
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "[name].css",
-      chunkFilename: "[id].css"
+      filename: '[name].css',
+      chunkFilename: '[id].css'
     }),
     new HtmlWebpackPlugin({
       minify: false,

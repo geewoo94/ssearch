@@ -15,7 +15,7 @@ module.exports = {
   ],
   output: {
     filename: 'main.js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'deploy/dist'),
   },
   module: {
     rules: [
@@ -48,6 +48,7 @@ module.exports = {
     }),
     new HtmlWebpackPlugin({
       minify: false,
+      template: './index.html',
     }),
   ],
 };

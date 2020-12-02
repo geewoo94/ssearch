@@ -4,6 +4,7 @@
   "description": "search your search history",
   "main": "index.js",
   "scripts": {
+    "build": "webpack",
     "dev": "webpack-cli serve --mode development",
     "test": "test"
   },

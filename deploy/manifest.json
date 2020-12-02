@@ -1,0 +1,17 @@
+{
+  "manifest_version": 2,
+  "name": "__MSG_name__",
+  "version": "1.0.0",
+  "description": "__MSG_description__",
+  "icons": {
+
+  },
+  "default_locale": "ko",
+  "browser_action": {
+    "default_icon": {
+    },
+    "default_title": "__MSG_name__",
+    "default_popup": "dist/redirect.html"
+  },
+  "options_page": "dist/index.html"
+}

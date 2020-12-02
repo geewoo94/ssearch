@@ -4,6 +4,7 @@
   "description": "search your search history",
   "main": "index.js",
   "scripts": {
+    "dev": "webpack-cli serve --mode development",
     "test": "test"
   },
   "repository": {
@@ -19,5 +20,20 @@
   "bugs": {
     "url": "https://github.com/geewoo94/ssearch/issues"
   },
-  "homepage": "https://github.com/geewoo94/ssearch#readme"
+  "homepage": "https://github.com/geewoo94/ssearch#readme",
+  "devDependencies": {
+    "css-loader": "^5.0.1",
+    "html-webpack-plugin": "^4.5.0",
+    "mini-css-extract-plugin": "^1.3.1",
+    "node-sass": "^5.0.0",
+    "sass-loader": "^10.1.0",
+    "style-loader": "^2.0.0",
+    "webpack-nano": "^1.1.1"
+  },
+  "dependencies": {
+    "@webpack-cli/init": "^1.0.3",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^4.2.0",
+    "webpack-dev-server": "^3.11.0"
+  }
 }

@@ -51,5 +51,4 @@ module.exports = {
       template: './index.html',
     }),
   ],
-  watch: true,
 };

@@ -1,0 +1,23 @@
+{
+  "name": "ssearch",
+  "version": "1.0.0",
+  "description": "search your search history",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/geewoo94/ssearch.git"
+  },
+  "keywords": [
+    "chrome",
+    "extension"
+  ],
+  "author": "geewoo94",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/geewoo94/ssearch/issues"
+  },
+  "homepage": "https://github.com/geewoo94/ssearch#readme"
+}

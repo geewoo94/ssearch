@@ -4,7 +4,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
   devServer: {
-    contentBase: __dirname + "/dist/",
+    contentBase: __dirname + "/deploy/dist",
     inline: true,
     hot: true,
     host: "localhost",
@@ -51,4 +51,5 @@ module.exports = {
       template: './index.html',
     }),
   ],
+  watch: true,
 };

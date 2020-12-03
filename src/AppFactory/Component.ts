@@ -16,7 +16,7 @@ class Component {
     this.props = null;
   }
 
-  setChild(child: Function, props?: storage) {
+  setChild(child: Function, props?: any) {
     this.children.push({ child, props });
     return this;
   }

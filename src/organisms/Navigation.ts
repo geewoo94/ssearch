@@ -1,16 +1,14 @@
 import { Component } from '../AppFactory';
 import { storage } from '../types';
 
-const Navigation = ({ navigationList }: storage) => {
-  const children = navigationList.map((title) => (
-    { child: () => new Component('li').setText(title).render() }
-  ));
+import Title from '../atoms/Title';
+import NavigationList from '../molecules/NavigationList';
 
+const Navigation = ({ navigationList }: storage) => {
   return (
-    new Component('ul')
-      .setChildren(navigationList.map((title) => (
-        { child: () => new Component('li').setText(title).render() }
-      )))
+    new Component('div')
+      .setChild(Title, { text: 'Navigation' })
+      .setChild(NavigationList, { navigationList })
       .render()
   );
 }

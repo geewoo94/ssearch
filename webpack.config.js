@@ -11,11 +11,14 @@ module.exports = {
     port: 3000
   },
   entry: [
-    './src/index.js',
+    './src/index.ts',
   ],
   output: {
     filename: 'main.js',
     path: path.resolve(__dirname, 'deploy/dist'),
+  },
+  optimization: {
+    minimize: false
   },
   module: {
     rules: [
@@ -39,7 +42,15 @@ module.exports = {
           }
         ]
       },
+      {
+        test: /\.ts$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
     ]
+  },
+  resolve: {
+    extensions: ['.js', '.ts'],
   },
   plugins: [
     new MiniCssExtractPlugin({

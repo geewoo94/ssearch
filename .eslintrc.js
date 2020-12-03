@@ -39,4 +39,7 @@ module.exports = {
     'no-unsafe-finally': 'off',
     'react/prop-types': 'off',
   },
+  'globals': {
+    'chrome': true
+  }
 };

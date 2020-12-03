@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "outDir": "deploy/dist",
+    "sourceMap": true,
+    "module": "commonjs",
+    "target": "es5",
+    "noImplicitAny": true,
+  },
+  "include": [
+    "./src/**/*"
+  ],
+  "exclude": [
+    "./node_modules/**/*"
+  ]
+}

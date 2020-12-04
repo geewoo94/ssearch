@@ -5,9 +5,7 @@ import { history } from '../types';
 function SiteCard({ sites }: { sites: history[] }) {
   const origin = sites[0].origin;
 
-  sites.sort((a, b) => {
-    return a.lastVisitTime - b.lastVisitTime;
-  });
+  sites.sort((a, b) => a.lastVisitTime - b.lastVisitTime);
 
   return render(
     Div()(
@@ -43,10 +41,8 @@ function Contents({ histories }: { histories: history[] }) {
     urls.push(nomalized[prop]);
   }
 
-  urls.sort((a: history[], b: history[]) => {
-    return b.length - a.length;
-  });
-  console.log(urls);
+  urls.sort((a: history[], b: history[]) => b.length - a.length);
+
   return render(
     Div()(
       ...urls.map((url) => SiteCard({ sites: url.slice(0, 10) })())

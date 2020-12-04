@@ -46,14 +46,14 @@ function PageContainer({ page }: { page: string }): Function {
   let Page = MainPage;
 
   if (page === 'Main') {
-    Page = MainPage;
+    return render(MainPage({
+      histories
+    })());
   } else if (page === 'Liked') {
-    // Page = LikedPage;
+    return render(
+      Div()('Liked')
+    );
   }
-
-  return render(Page({
-    histories
-  })());
 };
 
 export default PageContainer;

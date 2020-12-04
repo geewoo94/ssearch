@@ -1,12 +1,5 @@
-interface storage {
-  navigationList: ['Main Menu', 'Liked'];
-}
-
-type storageItems = 'navigationList';
-type storageValues = ['Main Menu', 'Liked'];
+import history from './history';
 
 export {
-  storage,
-  storageItems,
-  storageValues,
+  history,
 };

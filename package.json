@@ -33,6 +33,7 @@
     "webpack-nano": "^1.1.1"
   },
   "dependencies": {
+    "@types/chrome": "0.0.126",
     "@webpack-cli/init": "^1.0.3",
     "ts-loader": "^8.0.11",
     "typescript": "^4.1.2",

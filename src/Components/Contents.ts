@@ -4,7 +4,7 @@ import { history } from '../types';
 import './Contents.scss';
 
 function SiteCard({ sites }: { sites: history[] }) {
-  const origin = sites[0].origin;
+  const origin = sites[0].origin.replace(/(^\w+:|^)\/\//, '');
 
   sites.sort((a, b) => a.lastVisitTime - b.lastVisitTime);
 
@@ -20,7 +20,7 @@ function SiteCard({ sites }: { sites: history[] }) {
 }
 
 function Contents({ histories }: { histories: history[] }) {
-  const regex = /https:\/\/[-a-zA-Z0-9@:%._\+~#=]{1,256}\//;
+  const regex = /https:\/\/[-a-zA-Z0-9@:%._\+~#=]{1,256}/;
   const nomalized = histories.reduce((acc: any, cur: history) => {
     const matched = cur.url.match(regex);
 

@@ -9,17 +9,39 @@
   min-width: 700px;
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-between;
+  padding: 0 40px;
   background: $white;
   border-bottom: 1px solid black;
 
-  input {
+  .Header-Column {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+  .Right-Column {
+    width: 170px;
+  }
+
+  img {
+    height: 30px;
+    margin-bottom: 10px;
+  }
+
+  .Search-Input {
     height: 40px;
+    width: 400px;
+    border-radius: 20px;
+    color: #292929;
+    border: none;
+    border: 1px solid #c4c4c4;
+    padding: 0 20px;
+    outline: none;
+  }
+
+  .Range-Input {
     width: 200px;
-    text-align: center;
-    border-radius: 10px;
-    background: $blue;
-    color: $red;
-    border: 3px solid $dark-blue;
   }
 }

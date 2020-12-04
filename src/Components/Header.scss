@@ -1,0 +1,25 @@
+@import '../style/theme.scss';
+
+.Header-Wrapper {
+  position: fixed;
+  height: $header-height;
+  top: 0;
+  left: $nav-width;
+  width: calc(100vw - 230px);
+  min-width: 700px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: $white;
+  border-bottom: 1px solid black;
+
+  input {
+    height: 40px;
+    width: 200px;
+    text-align: center;
+    border-radius: 10px;
+    background: $blue;
+    color: $red;
+    border: 3px solid $dark-blue;
+  }
+}

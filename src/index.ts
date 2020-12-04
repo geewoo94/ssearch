@@ -4,13 +4,8 @@ import { Div, render } from './_Factory/Element';
 import NavigationContainer from './Container.ts/NavigationContainer';
 import PageContainer from './Container.ts/PageContainer';
 
-import styled from './utils/styled';
-
-const styledDiv = styled(Div);
-
-const style = `
-  color: red;
-`;
+import './style/global.scss';
+import './index.scss';
 
 function Main(): Function {
   const [ currentPage, setCurrentPage ] = useState('Main');
@@ -20,7 +15,7 @@ function Main(): Function {
   }
 
   return render(
-    styledDiv(style)(
+    Div({ class: 'Main-Wrapper' })(
       NavigationContainer({
         changeMenu: handleChangeMenu
       })(),

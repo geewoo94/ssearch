@@ -5,6 +5,7 @@ import Header from '../Components/Header';
 import Contents from '../Components/Contents';
 
 import { history } from '../types';
+import './PageContainer.scss';
 
 function filterHistory(range: number, histories: history[]) {
   return histories.filter((history) => {
@@ -19,7 +20,7 @@ function MainPage({ histories }: { histories: history[] }): Function {
   const filteredHistories = filterHistory(Number(range), histories);
 
   return render(
-    Div()(
+    Div({ class: 'PageContainer-wrapper' })(
       Header({ range, setRange })(),
       Contents({ histories: filteredHistories })(),
     )

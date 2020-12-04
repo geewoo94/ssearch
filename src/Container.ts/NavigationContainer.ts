@@ -1,6 +1,8 @@
 import { Div, H1, H2, Li, Nav, Ul } from '../_Factory/Element';
 import { render } from '../_Factory/Element';
 
+import './NavigationContainer.scss';
+
 function NavigationContainer({ changeMenu }: { changeMenu: Function }): Function {
   const navMenu = ['Main', 'Liked'];
 
@@ -9,7 +11,7 @@ function NavigationContainer({ changeMenu }: { changeMenu: Function }): Function
   }
 
   return render(
-    Div()(
+    Div({ class: 'NavigationContainer-Wrapper' })(
       H1()('Navigation'),
       Nav()(
         Ul()(

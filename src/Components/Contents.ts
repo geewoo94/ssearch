@@ -1,6 +1,7 @@
 import { Div, H1, Input, Li, render, Ul } from "../_Factory/Element";
 
 import { history } from '../types';
+import './Contents.scss';
 
 function SiteCard({ sites }: { sites: history[] }) {
   const origin = sites[0].origin;
@@ -8,7 +9,7 @@ function SiteCard({ sites }: { sites: history[] }) {
   sites.sort((a, b) => a.lastVisitTime - b.lastVisitTime);
 
   return render(
-    Div()(
+    Div({ class: 'SiteCard-Wrapper' })(
       H1()(origin),
       Input()(),
       Ul()(
@@ -44,7 +45,7 @@ function Contents({ histories }: { histories: history[] }) {
   urls.sort((a: history[], b: history[]) => b.length - a.length);
 
   return render(
-    Div()(
+    Div({ class: 'Contents-Wrapper' })(
       ...urls.map((url) => SiteCard({ sites: url.slice(0, 10) })())
     )
   );

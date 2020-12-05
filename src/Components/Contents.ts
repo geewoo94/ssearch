@@ -21,7 +21,7 @@ function SiteCard({ sites, setRemovedUrls }: {
       H1()(origin),
       Input()(),
       Ul()(
-        ...sites.map((site) => Li()(site.title.slice(0, 50) + '...' + '[미리보기]'))
+        ...sites.map((site) => Li()(site.title))
       )
     )
   );

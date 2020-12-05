@@ -10,6 +10,28 @@
 
   .SiteCard-Wrapper {
     position: relative;
+    border: 1px solid $gray;
+    padding: 20px;
+    width: 40vw;
+    min-width: 450px;
+    line-height: 30px;
+
+    li {
+      width:100%;
+      padding:0 5px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    li:nth-child(n + 2) {
+      border-top: 1px solid $gray;
+    }
+
+    li:nth-child(2n) {
+      color: $blue;
+      border-top: 1px solid $gray;
+    }
 
     .Close-Button {
       position: absolute;
@@ -22,7 +44,7 @@
       background: $white;
       transition: all 0.5s;
       cursor: pointer;
-      border: 1px solid black;
+      border: 1px solid $gray;
       z-index: 1;
 
       &:hover {
@@ -34,6 +56,13 @@
 
     h1 {
       font-size: 20px;
+      transition: all 0.5s;
+      cursor: pointer;
+      display: inline-block;
+
+      &:hover {
+        transform: scale(1.4);
+      }
     }
 
     input {
@@ -41,16 +70,10 @@
       height: 30px;
       border-radius: 10px;
       border: none;
-      border: 1px solid #c4c4c4;
+      border: 1px solid $gray;
       margin: 15px 0;
       outline: none;
       padding: 0 10px;
     }
-
-    border: 1px solid black;
-    padding: 20px;
-    width: 40vw;
-    min-width: 450px;
-    line-height: 30px;
   }
 }

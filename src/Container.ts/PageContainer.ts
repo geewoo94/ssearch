@@ -15,7 +15,7 @@ function filterHistory(range: number, histories: history[]) {
   });
 }
 
-function MainPage({ histories }: { histories: history[] }): Function {
+function MainPage({ histories }: { histories: history[] }): render {
   const [range, setRange] = useState('7');
   const filteredHistories = filterHistory(Number(range), histories);
 
@@ -29,7 +29,7 @@ function MainPage({ histories }: { histories: history[] }): Function {
 
 const initialHistories: history[] = [];
 
-function PageContainer({ page }: { page: string }): Function {
+function PageContainer({ page }: { page: string }): render {
   const [histories, setHistories] = useState(initialHistories);
 
   useEffect(() => {
@@ -44,7 +44,7 @@ function PageContainer({ page }: { page: string }): Function {
     //deploy
   }, []);
 
-  let Page = MainPage;
+  const Page = MainPage;
 
   if (page === 'Main') {
     return render(MainPage({
@@ -55,6 +55,6 @@ function PageContainer({ page }: { page: string }): Function {
       Div()('Liked')
     );
   }
-};
+}
 
 export default PageContainer;

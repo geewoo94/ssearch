@@ -1,4 +1,4 @@
-import { Div, H1, Input, Li, render, Ul } from "../_Factory/Element";
+import { Button, Div, H1, Input, Li, render, Ul } from '../_Factory/Element';
 
 import { history } from '../types';
 import './Contents.scss';
@@ -10,6 +10,7 @@ function SiteCard({ sites }: { sites: history[] }) {
 
   return render(
     Div({ class: 'SiteCard-Wrapper' })(
+      Button({ class: 'Close-Button' })('X'),
       H1()(origin),
       Input()(),
       Ul()(
@@ -19,9 +20,13 @@ function SiteCard({ sites }: { sites: history[] }) {
   );
 }
 
-function Contents({ histories }: { histories: history[] }) {
-  const regex = /https:\/\/[-a-zA-Z0-9@:%._\+~#=]{1,256}/;
-  const nomalized = histories.reduce((acc: any, cur: history) => {
+interface nomalized {
+  [key: string]: history[];
+}
+
+function Contents({ histories }: { histories: history[] }): render {
+  const regex = /https:\/\/[-a-zA-Z0-9@:%._+~#=]{1,256}/;
+  const nomalized = histories.reduce((acc: { [key: string]: history[] }, cur: history) => {
     const matched = cur.url.match(regex);
 
     if (!matched) return acc;

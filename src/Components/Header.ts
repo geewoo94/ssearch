@@ -1,16 +1,8 @@
-import { Div, Img, Input, render } from "../_Factory/Element";
+import { Div, Img, Input, render } from '../_Factory/Element';
 
-import styled from '../utils/styled';
 import './Header.scss';
 
-const styledDiv = styled(Div);
-const style = `
-  display: flex;
-  justify-content: space-around;
-  width: 100vh;
-`;
-
-function Header({ range, setRange }: { range: string, setRange: Function }): Function {
+function Header({ range, setRange }: { range: string, setRange: (val: string) => void }): render {
   return render(
     Div({ class: 'Header-Wrapper' })(
       Div({ class: 'Right-Column' })(),
@@ -24,7 +16,10 @@ function Header({ range, setRange }: { range: string, setRange: Function }): Fun
         max: '7',
         value: range,
         class: 'Range-Input',
-        onChange: (ev: any) => setRange(ev.target.value),
+        event: {
+          type: 'change',
+          callback: (ev: Event) => setRange((ev.target as HTMLInputElement).value),
+        }
       })(),
     )
   );

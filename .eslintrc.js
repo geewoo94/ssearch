@@ -26,19 +26,9 @@ module.exports = {
       'warn',
       'always',
     ],
-    'no-unused-vars': [
-      'warn',
-      {
-        'args': 'none',
-      },
-    ],
     'arrow-parens': [
       'warn',
       'always',
-    ],
-    'func-style': [
-      'warn',
-      'declaration',
     ],
     'no-unsafe-finally': 'off',
     'react/prop-types': 'off',

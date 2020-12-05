@@ -7,10 +7,10 @@ import PageContainer from './Container.ts/PageContainer';
 import './style/global.scss';
 import './index.scss';
 
-function Main(): Function {
+function Main(): render {
   const [ currentPage, setCurrentPage ] = useState('Main');
 
-  const handleChangeMenu = (page: string) => {
+  function handleChangeMenu(page: string) {
     setCurrentPage(page);
   }
 
@@ -22,7 +22,7 @@ function Main(): Function {
       PageContainer({ page: currentPage })(),
     )
   );
-};
+}
 
 const root = document.querySelector('#root');
-App.render(Main,root);
+App.render(Main, root);

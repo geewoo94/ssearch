@@ -1,5 +1,8 @@
-export function render(el: Element) {
-  return (function(...children: Element[] | null): Element {
+export type renderChildren = Element[] | string[] | number[] | null[];
+export type render = (...children: renderChildren) => Element
+
+export function render(el: Element): render {
+  return (function(...children: renderChildren): Element {
     if (typeof children[0] === 'string' || typeof children[0] === 'number') {
       this.textContent = String(children[0]);
       return this;
@@ -9,28 +12,37 @@ export function render(el: Element) {
 
     children.forEach((child) => {
       this.appendChild(child);
-    })
+    });
 
     return this;
   }).bind(el);
 }
 
+type myEvent = {
+  type: 'click' | 'change';
+  callback: (ev: Event) => void;
+}
+
+interface factoryOption {
+  [key: string]: string | myEvent;
+  event?: myEvent;
+}
+
 function elementFactory(type: string) {
-  return function (options?: any) {
+  return function (options?: factoryOption) {
     const el = document.createElement(type);
 
     for (const key in options) {
-      if (key === 'onClick') {
-        el.addEventListener('click', options[key]);
-      } else if (key === 'onChange') {
-        el.addEventListener('change', options[key]);
+      if (key === 'event') {
+        const { type, callback } = options[key];
+        el.addEventListener(type, callback);
       } else {
-        el.setAttribute(key, options[key]);
+        el.setAttribute(key, (options[key] as string));
       }
     }
 
     return render(el);
-  }
+  };
 }
 
 export const Div = elementFactory('div');
@@ -49,3 +61,4 @@ export const H6 = elementFactory('h6');
 
 export const Img = elementFactory('img');
 export const Input = elementFactory('input');
+export const Button = elementFactory('button');

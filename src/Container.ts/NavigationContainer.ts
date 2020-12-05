@@ -3,12 +3,12 @@ import { render } from '../_Factory/Element';
 
 import './NavigationContainer.scss';
 
-function NavigationContainer({ changeMenu }: { changeMenu: Function }): Function {
+function NavigationContainer({ changeMenu }: { changeMenu: (page: string) => void }): render {
   const navMenu = ['Main', 'Liked'];
 
   const handleClick = (value: string) => {
     changeMenu(value);
-  }
+  };
 
   return render(
     Div({ class: 'NavigationContainer-Wrapper' })(
@@ -16,13 +16,16 @@ function NavigationContainer({ changeMenu }: { changeMenu: Function }): Function
       Nav()(
         Ul()(
           ...navMenu.map((menu) => Li({
-            onClick: (ev: any) => handleClick(ev.target.textContent),
+            event: {
+              type: 'click',
+              callback: (ev: Event) => handleClick((ev.target as HTMLElement).textContent),
+            }
           })(menu))
         )
       ),
       H2()('Options'),
     ),
   );
-};
+}
 
 export default NavigationContainer;

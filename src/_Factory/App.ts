@@ -1,12 +1,18 @@
+type render = () => () => Element
+
+type Dispatch<A> = (value: A) => void;
+type SetStateAction<S> = S | ((prevState: S) => S);
+type useState<S> = (initialState: S | (() => S)) => [S, Dispatch<SetStateAction<S>>];
+
 const initialApp = (function init() {
-  let rootComponent: Function = null;
+  let rootComponent: render = null;
   let rootElement: Element = null;
 
-  const hooks: any = [];
-  let currentHook: any = 0;
+  const hooks: unknown[] = [];
+  let currentHook = 0;
 
   const App = {
-    render: (component: Function, target: Element) => {
+    render: (component: render, target: Element) => {
       if (!rootComponent) rootComponent = component;
       if (!rootElement) rootElement = target;
 
@@ -15,9 +21,9 @@ const initialApp = (function init() {
 
       target.appendChild(component()());
     }
-  }
+  };
 
-  function useState(initialState: any): any {
+  function useState(initialState: any): [ any, (state: any) => void ] {
     hooks[currentHook] = hooks[currentHook] || initialState;
 
     const setStateHookIndex = currentHook;
@@ -30,25 +36,25 @@ const initialApp = (function init() {
     return [hooks[currentHook++], setState];
   }
 
-  function useEffect(callback: Function, depArray: any[]) {
-    const hasNoDeps = !depArray
-    const deps = hooks[currentHook]
-    const hasChangedDeps = deps ? !depArray.every((el, i) => el === deps[i]) : true
+  function useEffect(callback: () => void, depArray: unknown[]) {
+    const hasNoDeps = !depArray;
+    const deps = hooks[currentHook];
+    const hasChangedDeps = deps ? !depArray.every((el, i) => el === (deps as [])[i]) : true;
 
     if (hasNoDeps || hasChangedDeps) {
-      callback()
-      hooks[currentHook] = depArray
+      callback();
+      hooks[currentHook] = depArray;
     }
 
-    currentHook++
+    currentHook++;
   }
 
   return {
     App,
     useState,
     useEffect,
-  }
-})()
+  };
+})();
 
 export const useState = initialApp.useState;
 export const useEffect = initialApp.useEffect;

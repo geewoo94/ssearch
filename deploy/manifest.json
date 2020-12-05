@@ -18,5 +18,9 @@
     "default_title": "__MSG_name__",
     "default_popup": "dist/redirect.html"
   },
-  "options_page": "dist/index.html"
+  "options_page": "dist/index.html",
+  "permissions": [
+    "history",
+    "tabs"
+  ]
 }

@@ -1,8 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 type render = () => () => Element
-
-type Dispatch<A> = (value: A) => void;
-type SetStateAction<S> = S | ((prevState: S) => S);
-type useState<S> = (initialState: S | (() => S)) => [S, Dispatch<SetStateAction<S>>];
 
 const initialApp = (function init() {
   let rootComponent: render = null;

@@ -4,32 +4,35 @@ import { Div, render } from '../_Factory/Element';
 import Header from '../Components/Header';
 import Contents from '../Components/Contents';
 
+import filterHistory from '../utils/filterHistory';
 import { history } from '../types';
 import './PageContainer.scss';
 
-function filterHistory(range: number, histories: history[]) {
-  return histories.filter((history) => {
-    const startTime = (new Date()).getTime() - (range * 24 * 3600 * 1000);
-
-    return history.lastVisitTime >= startTime;
-  });
-}
-
 function MainPage({ histories }: { histories: history[] }): render {
-  const [range, setRange] = useState('7');
-  const filteredHistories = filterHistory(Number(range), histories);
+  const [ range, setRange ] = useState('7');
+  const [ searchTerm, setSearchTerm ] = useState('');
+  const [ removedUrls, setRemovedUrls ] = useState([]);
+  console.log(removedUrls);
+  const filteredHistories = filterHistory(histories, {
+    range: Number(range),
+    searchTerm,
+    removedUrls,
+  });
+
+  const handleRemoveUrls = (val: string) => {
+    setRemovedUrls([...removedUrls, val]);
+  };
 
   return render(
     Div({ class: 'PageContainer-wrapper' })(
-      Header({ range, setRange })(),
-      Contents({ histories: filteredHistories })(),
+      Header({ range, setRange, searchTerm, setSearchTerm })(),
+      Contents({ histories: filteredHistories, setRemovedUrls: handleRemoveUrls })(),
     )
   );
 }
 
-const initialHistories: history[] = [];
-
 function PageContainer({ page }: { page: string }): render {
+  const initialHistories: history[] = [];
   const [histories, setHistories] = useState(initialHistories);
 
   useEffect(() => {

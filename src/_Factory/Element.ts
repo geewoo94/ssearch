@@ -19,7 +19,7 @@ export function render(el: Element): render {
 }
 
 type myEvent = {
-  type: 'click' | 'change';
+  type: 'click' | 'change' | 'input' | 'submit';
   callback: (ev: Event) => void;
 }
 

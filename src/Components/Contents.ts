@@ -3,14 +3,21 @@ import { Button, Div, H1, Input, Li, render, Ul } from '../_Factory/Element';
 import { history } from '../types';
 import './Contents.scss';
 
-function SiteCard({ sites }: { sites: history[] }) {
+function SiteCard({ sites, setRemovedUrls }: {
+  sites: history[],
+  setRemovedUrls: (val: string) => void,
+}) {
   const origin = sites[0].origin.replace(/(^\w+:|^)\/\//, '');
-
-  sites.sort((a, b) => a.lastVisitTime - b.lastVisitTime);
 
   return render(
     Div({ class: 'SiteCard-Wrapper' })(
-      Button({ class: 'Close-Button' })('X'),
+      Button({
+        class: 'Close-Button',
+        event: {
+          type: 'click',
+          callback: () => setRemovedUrls(origin),
+        }
+      })('X'),
       H1()(origin),
       Input()(),
       Ul()(
@@ -20,38 +27,16 @@ function SiteCard({ sites }: { sites: history[] }) {
   );
 }
 
-interface nomalized {
-  [key: string]: history[];
-}
-
-function Contents({ histories }: { histories: history[] }): render {
-  const regex = /https:\/\/[-a-zA-Z0-9@:%._+~#=]{1,256}/;
-  const nomalized = histories.reduce((acc: { [key: string]: history[] }, cur: history) => {
-    const matched = cur.url.match(regex);
-
-    if (!matched) return acc;
-
-    const root = matched[0];
-
-    if (!acc[root]) acc[root] = [];
-
-    cur.origin = root;
-    acc[root].push(cur);
-
-    return acc;
-  }, {});
-
-  const urls: history[][] = [];
-
-  for (const prop in nomalized) {
-    urls.push(nomalized[prop]);
-  }
-
-  urls.sort((a: history[], b: history[]) => b.length - a.length);
-
+function Contents({ histories, setRemovedUrls }:{
+  histories: history[][],
+  setRemovedUrls: (val: string) => void,
+}): render {
   return render(
     Div({ class: 'Contents-Wrapper' })(
-      ...urls.map((url) => SiteCard({ sites: url.slice(0, 10) })())
+      ...histories.map((history) => SiteCard({
+        sites: history.slice(0, 10),
+        setRemovedUrls,
+      })())
     )
   );
 }

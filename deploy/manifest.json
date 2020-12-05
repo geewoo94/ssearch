@@ -18,9 +18,40 @@
     "default_title": "__MSG_name__",
     "default_popup": "dist/redirect.html"
   },
+  "background": {
+    "scripts": ["dist/background.js"],
+    "persistent": false
+  },
   "options_page": "dist/index.html",
+  "commands": {
+    "saveUrl": {
+      "suggested_key": {
+        "default": "Ctrl+S",
+        "mac": "Command+S"
+      },
+      "description": "Toggle feature foo"
+    },
+    "_execute_browser_action": {
+      "suggested_key": {
+        "windows": "Ctrl+Shift+Y",
+        "mac": "Command+Shift+Y",
+        "chromeos": "Ctrl+Shift+U",
+        "linux": "Ctrl+Shift+J"
+      }
+    },
+    "_execute_page_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+E",
+        "windows": "Alt+Shift+P",
+        "mac": "Alt+Shift+P"
+      }
+    }
+  },
   "permissions": [
     "history",
-    "tabs"
+    "tabs",
+    "contextMenus",
+    "storage",
+    "notifications"
   ]
 }

@@ -23,6 +23,8 @@
   },
   "homepage": "https://github.com/geewoo94/ssearch#readme",
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.9.0",
+    "@typescript-eslint/parser": "^4.9.0",
     "css-loader": "^5.0.1",
     "eslint": "^7.14.0",
     "html-webpack-plugin": "^4.5.0",

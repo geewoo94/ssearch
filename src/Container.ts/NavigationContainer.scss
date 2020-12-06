@@ -8,4 +8,13 @@
   border-right: 1px solid black;
   flex-direction: column;
   width: $nav-width;
+
+  li {
+    cursor: pointer;
+    transition: all 0.3s;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
 }

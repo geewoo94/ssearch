@@ -1,4 +1,4 @@
-import { Button, Div, H1, Input, Li, render, Ul } from '../_Factory/Element';
+import { Button, Div, H1, Img, Input, Li, render, Ul } from '../_Factory/Element';
 
 import { history } from '../types';
 import './Contents.scss';
@@ -18,10 +18,15 @@ function SiteCard({ sites, setRemovedUrls }: {
           callback: () => setRemovedUrls(origin),
         }
       })('X'),
+      Img({
+        src: `https://www.google.com/s2/favicons?domain=${origin}`
+      })(),
       H1()(origin),
       Input()(),
       Ul()(
-        ...sites.map((site) => Li()(site.title))
+        ...sites.map((site) => {
+          return Li()(site.title);
+        })
       )
     )
   );

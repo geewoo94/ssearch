@@ -4,7 +4,11 @@ import { history } from '../types';
 import './DetailContents.scss';
 import { filterDetail } from '../utils/filterHistory';
 
-function DetailContents({ currentPage, histories }: { currentPage?: string, histories?: history[] }): render {
+type DetailContentsProps = {
+  currentPage ?: string;
+  histories ?: history[];
+}
+function DetailContents({ currentPage, histories }: DetailContentsProps): render {
   const filteredHistories = filterDetail(histories, { currentPage });
 
   return render(

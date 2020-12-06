@@ -10,7 +10,6 @@ type HeaderProps = {
   changeMenu?: (val: string) => void,
   setRemovedUrls?: (val: string[]) => void,
 };
-
 function Header({ range, setRange, setSearchTerm, changeMenu, setRemovedUrls }: HeaderProps): render {
   const navMenu = ['Main', 'Liked'];
 

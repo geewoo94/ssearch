@@ -9,7 +9,7 @@ import { filterHistory } from '../utils/filterHistory';
 import { history } from '../types';
 import './PageContainer.scss';
 
-interface MainPageProps {
+type MainPageProps = {
   range: string;
   searchTerm: string;
   removedUrls: string[];
@@ -17,7 +17,6 @@ interface MainPageProps {
   setRemovedUrls: (val: string[]) => void;
   histories: history[];
 }
-
 function MainPage({ range, searchTerm, removedUrls, setCurrentPage, setRemovedUrls, histories }: MainPageProps): render {
   const filteredHistories = filterHistory(histories, {
     range: Number(range),
@@ -34,7 +33,8 @@ function MainPage({ range, searchTerm, removedUrls, setCurrentPage, setRemovedUr
   );
 }
 
-function LikedPage({ likedItems }: { likedItems: history[] }): render {
+type LikedPageProps = { likedItems: history[] };
+function LikedPage({ likedItems }: LikedPageProps): render {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   return render(
     Div({ class: 'DetailContents-Wrapper' })(

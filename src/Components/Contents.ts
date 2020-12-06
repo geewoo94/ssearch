@@ -3,11 +3,12 @@ import { Button, Div, H1, Img, Input, Li, render, Ul, A } from '../_Factory/Elem
 import { history } from '../types';
 import './Contents.scss';
 
-function SiteCard({ sites, setCurrentPage, setRemovedUrls }: {
-  sites: history[],
-  setCurrentPage: (val: string) => void,
-  setRemovedUrls: (val: string) => void,
-}) {
+type SiteCardProps = {
+  sites?: history[];
+  setCurrentPage?: (val: string) => void;
+  setRemovedUrls?: (val: string) => void;
+}
+function SiteCard({ sites, setCurrentPage, setRemovedUrls }: SiteCardProps) {
   const origin = sites[0].origin.replace(/(^\w+:|^)\/\//, '');
 
   const handleSetCurrentPage = (ev: Event) => {
@@ -17,7 +18,7 @@ function SiteCard({ sites, setCurrentPage, setRemovedUrls }: {
   const handleSearchInSite = (ev: Event) => {
     if (chrome.search) {
       chrome.search.query({
-        text: (ev.target as HTMLInputElement).value + ' ' + `site:${origin}`,
+        text: `${(ev.target as HTMLInputElement).value} site:${origin}`,
         disposition: 'NEW_TAB',
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       }, () => {});
@@ -29,7 +30,6 @@ function SiteCard({ sites, setCurrentPage, setRemovedUrls }: {
   return render(
     Div({ class: 'SiteCard-Wrapper' })(
       Button({
-        class: 'Close-Button',
         event: {
           type: 'click',
           callback: () => setRemovedUrls(origin),
@@ -65,11 +65,12 @@ function SiteCard({ sites, setCurrentPage, setRemovedUrls }: {
   );
 }
 
-function Contents({ histories, setCurrentPage, setRemovedUrls }:{
-  histories?: history[][],
-  setCurrentPage?: (val: string) => void,
-  setRemovedUrls?: (val: string) => void,
-}): render {
+type ContentsProps = {
+  histories?: history[][];
+  setCurrentPage?: (val: string) => void;
+  setRemovedUrls?: (val: string) => void;
+}
+function Contents({ histories, setCurrentPage, setRemovedUrls }: ContentsProps): render {
   return render(
     Div({ class: 'Contents-Wrapper' })(
       ...histories.map((history) => SiteCard({

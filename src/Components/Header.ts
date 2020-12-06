@@ -8,10 +8,18 @@ type HeaderProps = {
   searchTerm?: string,
   setSearchTerm?: (val: string) => void,
   changeMenu?: (val: string) => void,
+  setRemovedUrls: (val: string[]) => void,
 };
 
-function Header({ range, setRange, setSearchTerm, changeMenu }: HeaderProps): render {
+function Header({ range, setRange, setSearchTerm, changeMenu, setRemovedUrls }: HeaderProps): render {
   const navMenu = ['Main', 'Liked'];
+
+  const handleReset = () => {
+    setRange('7');
+    setSearchTerm('');
+    changeMenu('Main');
+    setRemovedUrls([]);
+  };
 
   return render(
     Div({ class: 'Header-Wrapper' })(
@@ -26,7 +34,13 @@ function Header({ range, setRange, setSearchTerm, changeMenu }: HeaderProps): re
         )
       ),
       Div({ class: 'Header-Column' })(
-        Img({ src: './main-icon-128.png' })(),
+        Img({
+          src: './main-icon-128.png',
+          event: {
+            type: 'click',
+            callback: handleReset,
+          }
+        })(),
         Input({
           class: 'Search-Input',
           placeholder: '검색을 껌색하세요!',

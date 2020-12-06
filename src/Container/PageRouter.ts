@@ -86,14 +86,14 @@ function PageRouter(): render {
   if (currentPage === 'Main') {
     return render(
       Div()(
-        Header({ range, setRange, setSearchTerm, changeMenu: handleChangeMenu })(),
+        Header({ range, setRange, setSearchTerm, changeMenu: handleChangeMenu, setRemovedUrls })(),
         MainPage({ range, searchTerm, removedUrls, setRemovedUrls, histories })()
       )
     );
   } else if (currentPage === 'Liked') {
     return render(
       Div()(
-        Header({ range, setRange, setSearchTerm, changeMenu: handleChangeMenu })(),
+        Header({ range, setRange, setSearchTerm, changeMenu: handleChangeMenu, setRemovedUrls })(),
         LikedPage({ likedItems })()
       )
     );

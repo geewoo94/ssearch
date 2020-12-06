@@ -12,8 +12,8 @@ function saveItem(item) {
   chrome.storage.sync.get((items) => {
     let isDuplicated = false;
 
-    items.likedUrls.forEach((url) => {
-      if (url.pageUrl === item.pageUrl) {
+    items.likedItems && items.likedItems.forEach((likedItem) => {
+      if (likedItem.url === item.url) {
         isDuplicated = true;
       }
     });
@@ -23,7 +23,7 @@ function saveItem(item) {
         type: 'basic',
         iconUrl: './dist/main-icon-128.png',
         title: 'SAVED',
-        message: item.pageUrl,
+        message: item.url,
       }, (_) => {
         setTimeout(() => {
           chrome.notifications.clear('created');
@@ -33,13 +33,13 @@ function saveItem(item) {
     }
 
     chrome.storage.sync.set({
-      likedUrls: items.likedUrls ? [...items.likedUrls, item] : [item],
+      likedItems: items.likedItems ? [...items.likedItems, item] : [item],
     }, () => {
       chrome.notifications.create('created', {
         type: 'basic',
         iconUrl: './dist/main-icon-128.png',
         title: 'SAVED',
-        message: item.pageUrl,
+        message: item.url,
       }, (_) => {
         setTimeout(() => {
           chrome.notifications.clear('created');
@@ -53,12 +53,16 @@ chrome.contextMenus.onClicked.addListener((item) => {
   if (item.menuItemId === 'deleteUrls') {
     chrome.storage.sync.clear();
   } else {
-    saveItem(item);
+    chrome.tabs.query({ active: true, currentWindow: true }, (tab) => {
+      const { url, title } = tab[0];
+      saveItem({ url, title });
+    });
   }
 });
 
 chrome.commands.onCommand.addListener(function (_) {
   chrome.tabs.query({ active: true, currentWindow: true }, (tab) => {
-    saveItem({ pageUrl: tab[0].url });
+    const { url, title } = tab[0];
+    saveItem({ url, title });
   });
 });

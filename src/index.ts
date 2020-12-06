@@ -2,7 +2,7 @@ import App, { useState } from './_Factory/App';
 import { Div, render } from './_Factory/Element';
 
 import NavigationContainer from './Container.ts/NavigationContainer';
-import PageContainer from './Container.ts/PageContainer';
+import PageRouter from './Container.ts/PageRouter';
 
 import './style/global.scss';
 import './index.scss';
@@ -19,7 +19,7 @@ function Main(): render {
       NavigationContainer({
         changeMenu: handleChangeMenu
       })(),
-      PageContainer({ page: currentPage })(),
+      PageRouter({ page: currentPage })(),
     )
   );
 }

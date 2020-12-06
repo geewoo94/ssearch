@@ -3,10 +3,10 @@ import { Div, Img, Input, render } from '../_Factory/Element';
 import './Header.scss';
 
 type HeaderProps = {
-  range: string,
-  setRange: (val: string) => void,
-  searchTerm: string,
-  setSearchTerm: (val: string) => void,
+  range?: string,
+  setRange?: (val: string) => void,
+  searchTerm?: string,
+  setSearchTerm?: (val: string) => void,
 };
 
 function Header({ range, setRange, searchTerm, setSearchTerm }: HeaderProps): render {

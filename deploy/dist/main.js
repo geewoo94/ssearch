@@ -91,7 +91,7 @@
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Input = exports.Img = exports.H6 = exports.H5 = exports.H4 = exports.H3 = exports.H2 = exports.H1 = exports.Li = exports.Ul = exports.Ol = exports.Nav = exports.Div = exports.render = void 0;
+exports.Button = exports.Input = exports.Img = exports.H6 = exports.H5 = exports.H4 = exports.H3 = exports.H2 = exports.H1 = exports.Li = exports.Ul = exports.Ol = exports.Nav = exports.Div = exports.render = void 0;
 function render(el) {
     return (function () {
         var _this = this;
@@ -116,11 +116,9 @@ function elementFactory(type) {
     return function (options) {
         var el = document.createElement(type);
         for (var key in options) {
-            if (key === 'onClick') {
-                el.addEventListener('click', options[key]);
-            }
-            else if (key === 'onChange') {
-                el.addEventListener('change', options[key]);
+            if (key === 'event') {
+                var _a = options[key], type_1 = _a.type, callback = _a.callback;
+                el.addEventListener(type_1, callback);
             }
             else {
                 el.setAttribute(key, options[key]);
@@ -142,6 +140,7 @@ exports.H5 = elementFactory('h5');
 exports.H6 = elementFactory('h6');
 exports.Img = elementFactory('img');
 exports.Input = elementFactory('input');
+exports.Button = elementFactory('button');
 
 
 /***/ }),
@@ -215,23 +214,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var App_1 = __webpack_require__(1);
 var Element_1 = __webpack_require__(0);
 var NavigationContainer_1 = __webpack_require__(4);
-var PageContainer_1 = __webpack_require__(6);
-__webpack_require__(13);
-__webpack_require__(14);
-chrome.tabs.query({}, function (tabs) {
-    var url = tabs[0].url;
-    console.log(tabs);
-});
+var PageRouter_1 = __webpack_require__(6);
+__webpack_require__(15);
+__webpack_require__(16);
 function Main() {
     var _a = App_1.useState('Main'), currentPage = _a[0], setCurrentPage = _a[1];
-    var handleChangeMenu = function (page) {
+    function handleChangeMenu(page) {
         setCurrentPage(page);
-    };
+    }
     return Element_1.render(Element_1.Div({ class: 'Main-Wrapper' })(NavigationContainer_1.default({
         changeMenu: handleChangeMenu
-    })(), PageContainer_1.default({ page: currentPage })()));
+    })(), PageRouter_1.default({ page: currentPage })()));
 }
-;
 var root = document.querySelector('#root');
 App_1.default.render(Main, root);
 
@@ -253,10 +247,12 @@ function NavigationContainer(_a) {
         changeMenu(value);
     };
     return Element_2.render(Element_1.Div({ class: 'NavigationContainer-Wrapper' })(Element_1.H1()('Navigation'), Element_1.Nav()(Element_1.Ul().apply(void 0, navMenu.map(function (menu) { return Element_1.Li({
-        onClick: function (ev) { return handleClick(ev.target.textContent); },
+        event: {
+            type: 'click',
+            callback: function (ev) { return handleClick(ev.target.textContent); },
+        }
     })(menu); }))), Element_1.H2()('Options')));
 }
-;
 exports.default = NavigationContainer;
 
 
@@ -311,60 +307,88 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var App_1 = __webpack_require__(1);
 var Element_1 = __webpack_require__(0);
 var Header_1 = __webpack_require__(7);
-var Contents_1 = __webpack_require__(10);
-__webpack_require__(12);
-function filterHistory(range, histories) {
-    return histories.filter(function (history) {
-        var startTime = (new Date()).getTime() - (range * 24 * 3600 * 1000);
-        return history.lastVisitTime >= startTime;
-    });
-}
+var Contents_1 = __webpack_require__(9);
+var DetailContents_1 = __webpack_require__(11);
+var filterHistory_1 = __webpack_require__(13);
+__webpack_require__(14);
 function MainPage(_a) {
     var histories = _a.histories;
     var _b = App_1.useState('7'), range = _b[0], setRange = _b[1];
-    var filteredHistories = filterHistory(Number(range), histories);
-    return Element_1.render(Element_1.Div({ class: 'PageContainer-wrapper' })(Header_1.default({ range: range, setRange: setRange })(), Contents_1.default({ histories: filteredHistories })()));
+    var _c = App_1.useState(''), searchTerm = _c[0], setSearchTerm = _c[1];
+    var _d = App_1.useState([]), removedUrls = _d[0], setRemovedUrls = _d[1];
+    var filteredHistories = filterHistory_1.default(histories, {
+        range: Number(range),
+        searchTerm: searchTerm,
+        removedUrls: removedUrls,
+    });
+    var handleRemoveUrls = function (val) {
+        setRemovedUrls(__spreadArrays(removedUrls, [val]));
+    };
+    return Element_1.render(Element_1.Div({ class: 'PageContainer-wrapper' })(Header_1.default({ range: range, setRange: setRange, searchTerm: searchTerm, setSearchTerm: setSearchTerm })(), Contents_1.default({ histories: filteredHistories, setRemovedUrls: handleRemoveUrls })()));
 }
-var initialHistories = [];
-function PageContainer(_a) {
+function LikedPage(_a) {
+    var likedItems = _a.likedItems;
+    return Element_1.render(Element_1.Div({ class: 'PageContainer-wrapper' })(Header_1.default({ range: '6', searchTerm: '' })(), DetailContents_1.default({ title: 'Liked', histories: likedItems })()));
+}
+function PageRouter(_a) {
     var _this = this;
     var page = _a.page;
+    var initialHistories = [];
     var _b = App_1.useState(initialHistories), histories = _b[0], setHistories = _b[1];
+    var _c = App_1.useState([]), likedItems = _c[0], setLikedItems = _c[1];
     App_1.useEffect(function () {
-        //dev
-        (function () { return __awaiter(_this, void 0, void 0, function () {
-            var histories, parsed;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, fetch('./mockHistory.json')];
-                    case 1:
-                        histories = _a.sent();
-                        return [4 /*yield*/, histories.json()];
-                    case 2:
-                        parsed = _a.sent();
-                        setHistories(parsed);
-                        return [2 /*return*/];
-                }
+        if (!chrome.history) {
+            (function () { return __awaiter(_this, void 0, void 0, function () {
+                var histories, parsed;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, fetch('./mockHistory.json')];
+                        case 1:
+                            histories = _a.sent();
+                            return [4 /*yield*/, histories.json()];
+                        case 2:
+                            parsed = _a.sent();
+                            setHistories(parsed);
+                            setLikedItems([{ title: 'mocktitle', url: 'https://www.google.com' }]);
+                            return [2 /*return*/];
+                    }
+                });
+            }); })();
+        }
+        else {
+            var query = { text: '', maxResults: 0, startTime: (new Date()).getTime() - (7 * 24 * 3600 * 1000), endTime: (new Date()).getTime() };
+            chrome.history.search(query, function (history) {
+                setHistories(history);
             });
-        }); })();
-        //deploy
+            chrome.storage.sync.get(function (_a) {
+                var likedItems = _a.likedItems;
+                setLikedItems(likedItems);
+            });
+        }
     }, []);
-    var Page = MainPage;
     if (page === 'Main') {
         return Element_1.render(MainPage({
             histories: histories
         })());
     }
     else if (page === 'Liked') {
-        return Element_1.render(Element_1.Div()('Liked'));
+        return Element_1.render(LikedPage({
+            likedItems: likedItems,
+        })());
     }
 }
-;
-exports.default = PageContainer;
+exports.default = PageRouter;
 
 
 /***/ }),
@@ -375,19 +399,27 @@ exports.default = PageContainer;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Element_1 = __webpack_require__(0);
-var styled_1 = __webpack_require__(8);
-__webpack_require__(9);
-var styledDiv = styled_1.default(Element_1.Div);
-var style = "\n  display: flex;\n  justify-content: space-around;\n  width: 100vh;\n";
+__webpack_require__(8);
 function Header(_a) {
-    var range = _a.range, setRange = _a.setRange;
-    return Element_1.render(Element_1.Div({ class: 'Header-Wrapper' })(Element_1.Div({ class: 'Right-Column' })(), Element_1.Div({ class: 'Header-Column' })(Element_1.Img({ src: './main-icon-128.png' })(), Element_1.Input({ placeholder: '검색을 껌색하세요!', class: 'Search-Input' })()), Element_1.Input({
+    var range = _a.range, setRange = _a.setRange, searchTerm = _a.searchTerm, setSearchTerm = _a.setSearchTerm;
+    return Element_1.render(Element_1.Div({ class: 'Header-Wrapper' })(Element_1.Div({ class: 'Right-Column' })(), Element_1.Div({ class: 'Header-Column' })(Element_1.Img({ src: './main-icon-128.png' })(), Element_1.Input({
+        class: 'Search-Input',
+        placeholder: '검색을 껌색하세요!',
+        value: searchTerm,
+        event: {
+            type: 'change',
+            callback: function (ev) { return setSearchTerm(ev.target.value); }
+        }
+    })()), Element_1.Input({
         type: 'range',
         min: '0',
         max: '7',
         value: range,
         class: 'Range-Input',
-        onChange: function (ev) { return setRange(ev.target.value); },
+        event: {
+            type: 'change',
+            callback: function (ev) { return setRange(ev.target.value); },
+        }
     })()));
 }
 exports.default = Header;
@@ -395,38 +427,6 @@ exports.default = Header;
 
 /***/ }),
 /* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = (function () {
-    var memo = {};
-    var styleTag = document.createElement('style');
-    var head = document.querySelector('head');
-    function generateRandomString() {
-        return (Math.random()
-            .toString(36)
-            .replace(/[^a-z]+/g, ''));
-    }
-    function styled(el) {
-        var randomClass = generateRandomString();
-        return function (style, options) {
-            var text = "." + randomClass + " {" + style + "}";
-            if (!memo[text]) {
-                memo[text] = true;
-                styleTag.textContent += text;
-            }
-            head.appendChild(styleTag);
-            return el(Object.assign({ class: randomClass }, options));
-        };
-    }
-    return styled;
-})();
-
-
-/***/ }),
-/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -435,51 +435,60 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Element_1 = __webpack_require__(0);
-__webpack_require__(11);
+__webpack_require__(10);
 function SiteCard(_a) {
-    var sites = _a.sites;
+    var sites = _a.sites, setRemovedUrls = _a.setRemovedUrls;
     var origin = sites[0].origin.replace(/(^\w+:|^)\/\//, '');
-    sites.sort(function (a, b) { return a.lastVisitTime - b.lastVisitTime; });
-    return Element_1.render(Element_1.Div({ class: 'SiteCard-Wrapper' })(Element_1.H1()(origin), Element_1.Input()(), Element_1.Ul().apply(void 0, sites.map(function (site) { return Element_1.Li()(site.title.slice(0, 50) + '...' + '[미리보기]'); }))));
+    return Element_1.render(Element_1.Div({ class: 'SiteCard-Wrapper' })(Element_1.Button({
+        class: 'Close-Button',
+        event: {
+            type: 'click',
+            callback: function () { return setRemovedUrls(origin); },
+        }
+    })('X'), Element_1.H1()(origin), Element_1.Input()(), Element_1.Ul().apply(void 0, sites.map(function (site) { return Element_1.Li()(site.title); }))));
 }
 function Contents(_a) {
-    var histories = _a.histories;
-    var regex = /https:\/\/[-a-zA-Z0-9@:%._\+~#=]{1,256}\//;
-    var nomalized = histories.reduce(function (acc, cur) {
-        var matched = cur.url.match(regex);
-        if (!matched)
-            return acc;
-        var root = matched[0];
-        if (!acc[root])
-            acc[root] = [];
-        cur.origin = root;
-        acc[root].push(cur);
-        return acc;
-    }, {});
-    var urls = [];
-    for (var prop in nomalized) {
-        urls.push(nomalized[prop]);
-    }
-    urls.sort(function (a, b) { return b.length - a.length; });
-    return Element_1.render(Element_1.Div({ class: 'Contents-Wrapper' }).apply(void 0, urls.map(function (url) { return SiteCard({ sites: url.slice(0, 10) })(); })));
+    var histories = _a.histories, setRemovedUrls = _a.setRemovedUrls;
+    return Element_1.render(Element_1.Div({ class: 'Contents-Wrapper' }).apply(void 0, histories.map(function (history) { return SiteCard({
+        sites: history.slice(0, 10),
+        setRemovedUrls: setRemovedUrls,
+    })(); })));
 }
 exports.default = Contents;
 
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Element_1 = __webpack_require__(0);
+__webpack_require__(12);
+function DetailContents(_a) {
+    var title = _a.title, histories = _a.histories;
+    return Element_1.render(Element_1.Div({ class: 'DetailContents-Wrapper' })(Element_1.H1()(title), Element_1.Div()(Element_1.Ul().apply(void 0, histories.map(function (history) {
+        return Element_1.Li()(history.title);
+    })))));
+}
+exports.default = DetailContents;
 
 
 /***/ }),
@@ -493,6 +502,85 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 /* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Filter = /** @class */ (function () {
+    function Filter(histories) {
+        this.histories = histories;
+    }
+    Filter.prototype.filterByRange = function (range) {
+        this.histories = this.histories.filter(function (history) {
+            var startTime = (new Date()).getTime() - (range * 24 * 3600 * 1000);
+            return history.lastVisitTime >= startTime;
+        });
+        return this;
+    };
+    Filter.prototype.filterBySearchTerm = function (searchTerm) {
+        this.histories = this.histories.filter(function (history) {
+            if (history.url.includes(searchTerm)) {
+                return true;
+            }
+            else if (history.title.includes(searchTerm)) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        });
+        return this;
+    };
+    Filter.prototype.filterByRemovedUrls = function (removedUrls) {
+        this.histories = this.histories.filter(function (history) {
+            return !removedUrls.some(function (url) {
+                var regex = new RegExp(url);
+                return regex.test(history.url);
+            });
+        });
+        return this;
+    };
+    Filter.prototype.sortByTime = function () {
+        return this;
+    };
+    Filter.prototype.nomalize = function () {
+        var regex = /https:\/\/[-a-zA-Z0-9@:%._+~#=]{1,256}/;
+        var nomalized = this.histories.reduce(function (acc, cur) {
+            var matched = cur.url.match(regex);
+            if (!matched)
+                return acc;
+            var root = matched[0];
+            if (!acc[root])
+                acc[root] = [];
+            cur.origin = root;
+            acc[root].push(cur);
+            return acc;
+        }, {});
+        var urls = [];
+        for (var prop in nomalized) {
+            urls.push(nomalized[prop]);
+        }
+        urls.sort(function (a, b) { return b.length - a.length; });
+        urls.forEach(function (url) { return url.sort(function (a, b) { return a.lastVisitTime - b.lastVisitTime; }); });
+        return urls;
+    };
+    return Filter;
+}());
+function filterHistory(histories, _a) {
+    var range = _a.range, searchTerm = _a.searchTerm, removedUrls = _a.removedUrls;
+    return (new Filter(histories)
+        .filterByRange(range)
+        .filterBySearchTerm(searchTerm)
+        .filterByRemovedUrls(removedUrls)
+        .sortByTime()
+        .nomalize());
+}
+exports.default = filterHistory;
+
+
+/***/ }),
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -501,7 +589,16 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /***/ }),
-/* 14 */
+/* 15 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

@@ -1,4 +1,4 @@
-import { Div, H1, Li, render, Ul } from '../_Factory/Element';
+import { A, Div, H1, Li, render, Ul } from '../_Factory/Element';
 
 import { history } from '../types';
 import './DetailContents.scss';
@@ -10,7 +10,13 @@ function DetailContents({ title, histories }: { title: string, histories: histor
       Div()(
         Ul()(
           ...histories.map((history) => {
-            return Li()(history.title);
+            return Li()(
+              A({
+                href: history.url,
+                target: '_blank',
+                title: history.url,
+              })(history.title)
+            );
           })
         )
       ),

@@ -1,4 +1,4 @@
-import { Button, Div, H1, Img, Input, Li, render, Ul, A, Form } from '../_Factory/Element';
+import { Button, Div, H1, Img, Input, Li, render, Ul, A } from '../_Factory/Element';
 
 import { history } from '../types';
 import './Contents.scss';
@@ -14,6 +14,7 @@ function SiteCard({ sites, setRemovedUrls }: {
       chrome.search.query({
         text: (ev.target as HTMLInputElement).value + ' ' + `site:${origin}`,
         disposition: 'NEW_TAB',
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       }, () => {});
     } else {
       console.log('searched!');

@@ -215,8 +215,7 @@ module.exports = __webpack_require__(3);
 Object.defineProperty(exports, "__esModule", { value: true });
 var App_1 = __webpack_require__(1);
 var Element_1 = __webpack_require__(0);
-var NavigationContainer_1 = __webpack_require__(4);
-var PageRouter_1 = __webpack_require__(6);
+var PageRouter_1 = __webpack_require__(4);
 __webpack_require__(15);
 __webpack_require__(16);
 function Main() {
@@ -224,9 +223,7 @@ function Main() {
     function handleChangeMenu(page) {
         setCurrentPage(page);
     }
-    return Element_1.render(Element_1.Div({ class: 'Main-Wrapper' })(NavigationContainer_1.default({
-        changeMenu: handleChangeMenu
-    })(), PageRouter_1.default({ page: currentPage })()));
+    return Element_1.render(Element_1.Div({ class: 'Main-Wrapper' })(PageRouter_1.default({ page: currentPage })()));
 }
 var root = document.querySelector('#root');
 App_1.default.render(Main, root);
@@ -234,41 +231,6 @@ App_1.default.render(Main, root);
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Element_1 = __webpack_require__(0);
-var Element_2 = __webpack_require__(0);
-__webpack_require__(5);
-function NavigationContainer(_a) {
-    var changeMenu = _a.changeMenu;
-    var navMenu = ['Main', 'Liked'];
-    var handleClick = function (value) {
-        changeMenu(value);
-    };
-    return Element_2.render(Element_1.Div({ class: 'NavigationContainer-Wrapper' })(Element_1.H1()('Navigation'), Element_1.Nav()(Element_1.Ul().apply(void 0, navMenu.map(function (menu) { return Element_1.Li({
-        event: {
-            type: 'click',
-            callback: function (ev) { return handleClick(ev.target.textContent); },
-        }
-    })(menu); }))), Element_1.H2()('Options')));
-}
-exports.default = NavigationContainer;
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
-
-
-/***/ }),
-/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -319,13 +281,13 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var App_1 = __webpack_require__(1);
 var Element_1 = __webpack_require__(0);
-var Header_1 = __webpack_require__(7);
+var Header_1 = __webpack_require__(5);
 var Contents_1 = __webpack_require__(9);
 var DetailContents_1 = __webpack_require__(11);
 var filterHistory_1 = __webpack_require__(13);
 __webpack_require__(14);
 function MainPage(_a) {
-    var histories = _a.histories;
+    var histories = _a.histories, changeMenu = _a.changeMenu;
     var _b = App_1.useState('7'), range = _b[0], setRange = _b[1];
     var _c = App_1.useState(''), searchTerm = _c[0], setSearchTerm = _c[1];
     var _d = App_1.useState([]), removedUrls = _d[0], setRemovedUrls = _d[1];
@@ -337,15 +299,12 @@ function MainPage(_a) {
     var handleRemoveUrls = function (val) {
         setRemovedUrls(__spreadArrays(removedUrls, [val]));
     };
-    return Element_1.render(Element_1.Div({ class: 'PageContainer-wrapper' })(Header_1.default({ range: range, setRange: setRange, searchTerm: searchTerm, setSearchTerm: setSearchTerm })(), Contents_1.default({ histories: filteredHistories, setRemovedUrls: handleRemoveUrls })()));
+    return Element_1.render(Contents_1.default({ histories: filteredHistories, setRemovedUrls: handleRemoveUrls })());
 }
 function LikedPage(_a) {
     var likedItems = _a.likedItems;
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    var emptyFunction = function () { };
-    return Element_1.render(Element_1.Div({ class: 'PageContainer-wrapper' })(Header_1.default({
-        range: '6', setRange: emptyFunction, searchTerm: '', setSearchTerm: emptyFunction
-    })(), DetailContents_1.default({ title: 'Liked', histories: likedItems })()));
+    return Element_1.render(DetailContents_1.default({ title: 'Liked', histories: likedItems })());
 }
 function PageRouter(_a) {
     var _this = this;
@@ -353,6 +312,14 @@ function PageRouter(_a) {
     var initialHistories = [];
     var _b = App_1.useState(initialHistories), histories = _b[0], setHistories = _b[1];
     var _c = App_1.useState([]), likedItems = _c[0], setLikedItems = _c[1];
+    var _d = App_1.useState('7'), range = _d[0], setRange = _d[1];
+    var _e = App_1.useState(''), searchTerm = _e[0], setSearchTerm = _e[1];
+    var _f = App_1.useState([]), removedUrls = _f[0], setRemovedUrls = _f[1];
+    console.log(removedUrls);
+    var _g = App_1.useState('Main'), currentPage = _g[0], setCurrentPage = _g[1];
+    function handleChangeMenu(page) {
+        setCurrentPage(page);
+    }
     App_1.useEffect(function () {
         if (!chrome.history) {
             (function () { return __awaiter(_this, void 0, void 0, function () {
@@ -366,7 +333,17 @@ function PageRouter(_a) {
                         case 2:
                             parsed = _a.sent();
                             setHistories(parsed);
-                            setLikedItems([{ title: 'mocktitle', url: 'https://www.google.com' }]);
+                            setLikedItems([
+                                { title: 'mocktitle', url: 'https://www.google.com' },
+                                { title: 'mocktitle', url: 'https://www.google.com' },
+                                { title: 'mocktitle', url: 'https://www.google.com' },
+                                { title: 'mocktitle', url: 'https://www.google.com' },
+                                { title: 'mocktitle', url: 'https://www.google.com' },
+                                { title: 'mocktitle', url: 'https://www.google.com' },
+                                { title: 'mocktitle', url: 'https://www.google.com' },
+                                { title: 'mocktitle', url: 'https://www.google.com' },
+                                { title: 'mocktitle', url: 'https://www.google.com' },
+                            ]);
                             return [2 /*return*/];
                     }
                 });
@@ -384,31 +361,28 @@ function PageRouter(_a) {
         }
     }, []);
     if (page === 'Main') {
-        return Element_1.render(MainPage({
-            histories: histories
-        })());
+        return Element_1.render(Element_1.Div()(Header_1.default({ range: range, setRange: setRange, searchTerm: searchTerm, setSearchTerm: setSearchTerm, changeMenu: handleChangeMenu })(), MainPage({ histories: histories, changeMenu: handleChangeMenu })()));
     }
     else if (page === 'Liked') {
-        return Element_1.render(LikedPage({
-            likedItems: likedItems,
-        })());
+        return Element_1.render(Element_1.Div()(Header_1.default({ range: range, setRange: setRange, searchTerm: searchTerm, setSearchTerm: setSearchTerm, changeMenu: handleChangeMenu })(), LikedPage({ likedItems: likedItems })()));
     }
 }
 exports.default = PageRouter;
 
 
 /***/ }),
-/* 7 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Element_1 = __webpack_require__(0);
+var NavigationContainer_1 = __webpack_require__(6);
 __webpack_require__(8);
 function Header(_a) {
-    var range = _a.range, setRange = _a.setRange, searchTerm = _a.searchTerm, setSearchTerm = _a.setSearchTerm;
-    return Element_1.render(Element_1.Div({ class: 'Header-Wrapper' })(Element_1.Div({ class: 'Right-Column' })(), Element_1.Div({ class: 'Header-Column' })(Element_1.Img({ src: './main-icon-128.png' })(), Element_1.Input({
+    var range = _a.range, setRange = _a.setRange, searchTerm = _a.searchTerm, setSearchTerm = _a.setSearchTerm, changeMenu = _a.changeMenu;
+    return Element_1.render(Element_1.Div({ class: 'Header-Wrapper' })(NavigationContainer_1.default({ changeMenu: changeMenu })(), Element_1.Div({ class: 'Right-Column' })(), Element_1.Div({ class: 'Header-Column' })(Element_1.Img({ src: './main-icon-128.png' })(), Element_1.Input({
         class: 'Search-Input',
         placeholder: '검색을 껌색하세요!',
         value: searchTerm,
@@ -429,6 +403,41 @@ function Header(_a) {
     })()));
 }
 exports.default = Header;
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Element_1 = __webpack_require__(0);
+var Element_2 = __webpack_require__(0);
+__webpack_require__(7);
+function NavigationContainer(_a) {
+    var changeMenu = _a.changeMenu;
+    var navMenu = ['Main', 'Liked'];
+    var handleClick = function (value) {
+        changeMenu(value);
+    };
+    return Element_2.render(Element_1.Div({ class: 'NavigationContainer-Wrapper' })(Element_1.Nav()(Element_1.Ul().apply(void 0, navMenu.map(function (menu) { return Element_1.Li({
+        event: {
+            type: 'click',
+            callback: function (ev) { return handleClick(ev.target.textContent); },
+        }
+    })(menu); })))));
+}
+exports.default = NavigationContainer;
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
 
 
 /***/ }),
@@ -453,10 +462,15 @@ function SiteCard(_a) {
     var sites = _a.sites, setRemovedUrls = _a.setRemovedUrls;
     var origin = sites[0].origin.replace(/(^\w+:|^)\/\//, '');
     var handleSearchInSite = function (ev) {
-        chrome.search.query({
-            text: ev.target.value + ' ' + ("site:" + origin),
-            disposition: 'NEW_TAB',
-        }, function () { });
+        if (chrome.search) {
+            chrome.search.query({
+                text: ev.target.value + ' ' + ("site:" + origin),
+                disposition: 'NEW_TAB',
+            }, function () { });
+        }
+        else {
+            console.log('searched!');
+        }
     };
     return Element_1.render(Element_1.Div({ class: 'SiteCard-Wrapper' })(Element_1.Button({
         class: 'Close-Button',
@@ -510,7 +524,11 @@ __webpack_require__(12);
 function DetailContents(_a) {
     var title = _a.title, histories = _a.histories;
     return Element_1.render(Element_1.Div({ class: 'DetailContents-Wrapper' })(Element_1.H1()(title), Element_1.Div()(Element_1.Ul().apply(void 0, histories.map(function (history) {
-        return Element_1.Li()(history.title);
+        return Element_1.Li()(Element_1.A({
+            href: history.url,
+            target: '_blank',
+            title: history.url,
+        })(history.title));
     })))));
 }
 exports.default = DetailContents;

@@ -1,4 +1,4 @@
-import { Button, Div, H1, Img, Input, Li, render, Ul } from '../_Factory/Element';
+import { Button, Div, H1, Img, Input, Li, render, Ul, A } from '../_Factory/Element';
 
 import { history } from '../types';
 import './Contents.scss';
@@ -25,7 +25,13 @@ function SiteCard({ sites, setRemovedUrls }: {
       Input()(),
       Ul()(
         ...sites.map((site) => {
-          return Li()(site.title);
+          return Li()(
+            A({
+              href: site.url,
+              target: '_blank',
+              title: site.url,
+            })(site.title)
+          );
         })
       )
     )

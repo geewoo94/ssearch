@@ -62,3 +62,4 @@ export const H6 = elementFactory('h6');
 export const Img = elementFactory('img');
 export const Input = elementFactory('input');
 export const Button = elementFactory('button');
+export const A = elementFactory('a');

@@ -91,7 +91,7 @@
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Button = exports.Input = exports.Img = exports.H6 = exports.H5 = exports.H4 = exports.H3 = exports.H2 = exports.H1 = exports.Li = exports.Ul = exports.Ol = exports.Nav = exports.Div = exports.render = void 0;
+exports.Form = exports.A = exports.Button = exports.Input = exports.Img = exports.H6 = exports.H5 = exports.H4 = exports.H3 = exports.H2 = exports.H1 = exports.Li = exports.Ul = exports.Ol = exports.Nav = exports.Div = exports.render = void 0;
 function render(el) {
     return (function () {
         var _this = this;
@@ -141,6 +141,8 @@ exports.H6 = elementFactory('h6');
 exports.Img = elementFactory('img');
 exports.Input = elementFactory('input');
 exports.Button = elementFactory('button');
+exports.A = elementFactory('a');
+exports.Form = elementFactory('form');
 
 
 /***/ }),
@@ -339,7 +341,11 @@ function MainPage(_a) {
 }
 function LikedPage(_a) {
     var likedItems = _a.likedItems;
-    return Element_1.render(Element_1.Div({ class: 'PageContainer-wrapper' })(Header_1.default({ range: '6', searchTerm: '' })(), DetailContents_1.default({ title: 'Liked', histories: likedItems })()));
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    var emptyFunction = function () { };
+    return Element_1.render(Element_1.Div({ class: 'PageContainer-wrapper' })(Header_1.default({
+        range: '6', setRange: emptyFunction, searchTerm: '', setSearchTerm: emptyFunction
+    })(), DetailContents_1.default({ title: 'Liked', histories: likedItems })()));
 }
 function PageRouter(_a) {
     var _this = this;
@@ -446,13 +452,32 @@ __webpack_require__(10);
 function SiteCard(_a) {
     var sites = _a.sites, setRemovedUrls = _a.setRemovedUrls;
     var origin = sites[0].origin.replace(/(^\w+:|^)\/\//, '');
+    var handleSearchInSite = function (ev) {
+        chrome.search.query({
+            text: ev.target.value + ' ' + ("site:" + origin),
+            disposition: 'NEW_TAB',
+        }, function () { });
+    };
     return Element_1.render(Element_1.Div({ class: 'SiteCard-Wrapper' })(Element_1.Button({
         class: 'Close-Button',
         event: {
             type: 'click',
             callback: function () { return setRemovedUrls(origin); },
         }
-    })('X'), Element_1.H1()(origin), Element_1.Input()(), Element_1.Ul().apply(void 0, sites.map(function (site) { return Element_1.Li()(site.title); }))));
+    })('X'), Element_1.Img({
+        src: "https://www.google.com/s2/favicons?domain=" + origin
+    })(), Element_1.H1()(origin), Element_1.Input({
+        event: {
+            type: 'change',
+            callback: handleSearchInSite
+        }
+    })(), Element_1.Ul().apply(void 0, sites.map(function (site) {
+        return Element_1.Li()(Element_1.A({
+            href: site.url,
+            target: '_blank',
+            title: site.url,
+        })(site.title));
+    }))));
 }
 function Contents(_a) {
     var histories = _a.histories, setRemovedUrls = _a.setRemovedUrls;

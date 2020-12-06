@@ -1,4 +1,4 @@
-import { Button, Div, H1, Img, Input, Li, render, Ul, A } from '../_Factory/Element';
+import { Button, Div, H1, Img, Input, Li, render, Ul, A, Form } from '../_Factory/Element';
 
 import { history } from '../types';
 import './Contents.scss';
@@ -8,6 +8,17 @@ function SiteCard({ sites, setRemovedUrls }: {
   setRemovedUrls: (val: string) => void,
 }) {
   const origin = sites[0].origin.replace(/(^\w+:|^)\/\//, '');
+
+  const handleSearchInSite = (ev: Event) => {
+    if (chrome.search) {
+      chrome.search.query({
+        text: (ev.target as HTMLInputElement).value + ' ' + `site:${origin}`,
+        disposition: 'NEW_TAB',
+      }, () => {});
+    } else {
+      console.log('searched!');
+    }
+  };
 
   return render(
     Div({ class: 'SiteCard-Wrapper' })(
@@ -22,7 +33,12 @@ function SiteCard({ sites, setRemovedUrls }: {
         src: `https://www.google.com/s2/favicons?domain=${origin}`
       })(),
       H1()(origin),
-      Input()(),
+      Input({
+        event: {
+          type: 'change',
+          callback: handleSearchInSite
+        }
+      })(),
       Ul()(
         ...sites.map((site) => {
           return Li()(

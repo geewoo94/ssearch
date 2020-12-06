@@ -1,11 +1,11 @@
 import { useEffect, useState } from '../_Factory/App';
-import { Div, render } from '../_Factory/Element';
+import { A, Div, H1, Li, render, Ul } from '../_Factory/Element';
 
 import Header from '../Components/Header';
 import Contents from '../Components/Contents';
 import DetailContents from '../Components/DetailContents';
 
-import filterHistory from '../utils/filterHistory';
+import { filterHistory } from '../utils/filterHistory';
 import { history } from '../types';
 import './PageContainer.scss';
 
@@ -13,11 +13,12 @@ interface MainPageProps {
   range: string;
   searchTerm: string;
   removedUrls: string[];
+  setCurrentPage: (val: string) => void,
   setRemovedUrls: (val: string[]) => void;
   histories: history[];
 }
 
-function MainPage({ range, searchTerm, removedUrls, setRemovedUrls, histories }: MainPageProps): render {
+function MainPage({ range, searchTerm, removedUrls, setCurrentPage, setRemovedUrls, histories }: MainPageProps): render {
   const filteredHistories = filterHistory(histories, {
     range: Number(range),
     searchTerm,
@@ -29,29 +30,42 @@ function MainPage({ range, searchTerm, removedUrls, setRemovedUrls, histories }:
   };
 
   return render(
-    Contents({ histories: filteredHistories, setRemovedUrls: handleRemoveUrls })(),
+    Contents({ histories: filteredHistories, setCurrentPage, setRemovedUrls: handleRemoveUrls })(),
   );
 }
 
 function LikedPage({ likedItems }: { likedItems: history[] }): render {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   return render(
-    DetailContents({ title: 'Liked', histories: likedItems })(),
+    Div({ class: 'DetailContents-Wrapper' })(
+      H1()('Liked'),
+      Div()(
+        Ul()(
+          ...likedItems.map((item) => {
+            return Li()(
+              A({
+                href: item.url,
+                target: '_blank',
+                title: item.url,
+              })(item.title)
+            );
+          })
+        )
+      ),
+    )
   );
 }
 
 function PageRouter(): render {
   const initialHistories: history[] = [];
+  const initialLikedItems: { url: string, title: string }[] = [];
+  const initialRemovedItems: string[] = [];
   const [histories, setHistories] = useState(initialHistories);
-  const [likedItems, setLikedItems] = useState([]);
+  const [likedItems, setLikedItems] = useState(initialLikedItems);
+  const [removedUrls, setRemovedUrls] = useState(initialRemovedItems);
   const [range, setRange] = useState('7');
   const [searchTerm, setSearchTerm] = useState('');
-  const [removedUrls, setRemovedUrls] = useState([]);
   const [currentPage, setCurrentPage] = useState('Main');
-
-  function handleChangeMenu(page: string) {
-    setCurrentPage(page);
-  }
 
   useEffect(() => {
     if (!chrome.history) {
@@ -86,15 +100,22 @@ function PageRouter(): render {
   if (currentPage === 'Main') {
     return render(
       Div()(
-        Header({ range, setRange, setSearchTerm, changeMenu: handleChangeMenu, setRemovedUrls })(),
-        MainPage({ range, searchTerm, removedUrls, setRemovedUrls, histories })()
+        Header({ range, setRange, setSearchTerm, changeMenu: setCurrentPage, setRemovedUrls })(),
+        MainPage({ range, searchTerm, removedUrls, setCurrentPage, setRemovedUrls, histories })()
       )
     );
   } else if (currentPage === 'Liked') {
     return render(
       Div()(
-        Header({ range, setRange, setSearchTerm, changeMenu: handleChangeMenu, setRemovedUrls })(),
+        Header({ range, setRange, setSearchTerm, changeMenu: setCurrentPage, setRemovedUrls })(),
         LikedPage({ likedItems })()
+      )
+    );
+  } else {
+    return render(
+      Div()(
+        Header({ range, setRange, setSearchTerm, changeMenu: setCurrentPage, setRemovedUrls })(),
+        DetailContents({ currentPage, histories })()
       )
     );
   }

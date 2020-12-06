@@ -3,11 +3,16 @@ import { Button, Div, H1, Img, Input, Li, render, Ul, A } from '../_Factory/Elem
 import { history } from '../types';
 import './Contents.scss';
 
-function SiteCard({ sites, setRemovedUrls }: {
+function SiteCard({ sites, setCurrentPage, setRemovedUrls }: {
   sites: history[],
+  setCurrentPage: (val: string) => void,
   setRemovedUrls: (val: string) => void,
 }) {
   const origin = sites[0].origin.replace(/(^\w+:|^)\/\//, '');
+
+  const handleSetCurrentPage = (ev: Event) => {
+    setCurrentPage((ev.target as HTMLElement).textContent);
+  };
 
   const handleSearchInSite = (ev: Event) => {
     if (chrome.search) {
@@ -33,7 +38,12 @@ function SiteCard({ sites, setRemovedUrls }: {
       Img({
         src: `https://www.google.com/s2/favicons?domain=${origin}`
       })(),
-      H1()(origin),
+      H1({
+        event: {
+          type: 'click',
+          callback: handleSetCurrentPage
+        }
+      })(origin),
       Input({
         event: {
           type: 'change',
@@ -55,14 +65,16 @@ function SiteCard({ sites, setRemovedUrls }: {
   );
 }
 
-function Contents({ histories, setRemovedUrls }:{
-  histories: history[][],
-  setRemovedUrls: (val: string) => void,
+function Contents({ histories, setCurrentPage, setRemovedUrls }:{
+  histories?: history[][],
+  setCurrentPage?: (val: string) => void,
+  setRemovedUrls?: (val: string) => void,
 }): render {
   return render(
     Div({ class: 'Contents-Wrapper' })(
       ...histories.map((history) => SiteCard({
         sites: history.slice(0, 10),
+        setCurrentPage,
         setRemovedUrls,
       })())
     )

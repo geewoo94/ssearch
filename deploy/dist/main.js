@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -203,11 +203,107 @@ exports.default = initialApp.App;
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(3);
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.filterDetail = exports.filterHistory = void 0;
+var Filter = /** @class */ (function () {
+    function Filter(histories) {
+        this.histories = histories;
+    }
+    Filter.prototype.filterByRange = function (range) {
+        this.histories = this.histories.filter(function (history) {
+            var startTime = (new Date()).getTime() - (range * 24 * 3600 * 1000);
+            return history.lastVisitTime >= startTime;
+        });
+        return this;
+    };
+    Filter.prototype.filterBySearchTerm = function (searchTerm) {
+        this.histories = this.histories.filter(function (history) {
+            if (history.url.includes(searchTerm)) {
+                return true;
+            }
+            else if (history.title.includes(searchTerm)) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        });
+        return this;
+    };
+    Filter.prototype.filterByRemovedUrls = function (removedUrls) {
+        this.histories = this.histories.filter(function (history) {
+            return !removedUrls.some(function (url) {
+                var regex = new RegExp(url);
+                return regex.test(history.url);
+            });
+        });
+        return this;
+    };
+    Filter.prototype.sortByTime = function () {
+        return this;
+    };
+    Filter.prototype.filterByCurrentPage = function (currentPage) {
+        console.log(this.histories);
+        this.histories = this.histories.filter(function (history) {
+            var regex = new RegExp(currentPage);
+            return regex.test(history.url);
+        });
+        return this;
+    };
+    Filter.prototype.nomalize = function () {
+        var regex = /https:\/\/[-a-zA-Z0-9@:%._+~#=]{1,256}/;
+        var nomalized = this.histories.reduce(function (acc, cur) {
+            var matched = cur.url.match(regex);
+            if (!matched)
+                return acc;
+            var root = matched[0];
+            if (!acc[root])
+                acc[root] = [];
+            cur.origin = root;
+            acc[root].push(cur);
+            return acc;
+        }, {});
+        var urls = [];
+        for (var prop in nomalized) {
+            urls.push(nomalized[prop]);
+        }
+        urls.sort(function (a, b) { return b.length - a.length; });
+        urls.forEach(function (url) { return url.sort(function (a, b) { return a.lastVisitTime - b.lastVisitTime; }); });
+        return urls;
+    };
+    return Filter;
+}());
+function filterHistory(histories, _a) {
+    var range = _a.range, searchTerm = _a.searchTerm, removedUrls = _a.removedUrls;
+    return (new Filter(histories)
+        .filterByRange(range)
+        .filterBySearchTerm(searchTerm)
+        .filterByRemovedUrls(removedUrls)
+        .sortByTime()
+        .nomalize());
+}
+exports.filterHistory = filterHistory;
+function filterDetail(histories, _a) {
+    var currentPage = _a.currentPage;
+    return (new Filter(histories)
+        .filterByCurrentPage(currentPage)
+        .sortByTime()
+        .nomalize());
+}
+exports.filterDetail = filterDetail;
 
 
 /***/ }),
 /* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(4);
+
+
+/***/ }),
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -215,22 +311,18 @@ module.exports = __webpack_require__(3);
 Object.defineProperty(exports, "__esModule", { value: true });
 var App_1 = __webpack_require__(1);
 var Element_1 = __webpack_require__(0);
-var PageRouter_1 = __webpack_require__(4);
-__webpack_require__(15);
-__webpack_require__(16);
+var PageRouter_1 = __webpack_require__(5);
+__webpack_require__(13);
+__webpack_require__(14);
 function Main() {
-    var _a = App_1.useState('Main'), currentPage = _a[0], setCurrentPage = _a[1];
-    function handleChangeMenu(page) {
-        setCurrentPage(page);
-    }
-    return Element_1.render(Element_1.Div({ class: 'Main-Wrapper' })(PageRouter_1.default({ page: currentPage })()));
+    return Element_1.render(Element_1.Div({ class: 'Main-Wrapper' })(PageRouter_1.default()()));
 }
 var root = document.querySelector('#root');
 App_1.default.render(Main, root);
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -281,17 +373,14 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var App_1 = __webpack_require__(1);
 var Element_1 = __webpack_require__(0);
-var Header_1 = __webpack_require__(5);
-var Contents_1 = __webpack_require__(9);
-var DetailContents_1 = __webpack_require__(11);
-var filterHistory_1 = __webpack_require__(13);
-__webpack_require__(14);
+var Header_1 = __webpack_require__(6);
+var Contents_1 = __webpack_require__(8);
+var DetailContents_1 = __webpack_require__(10);
+var filterHistory_1 = __webpack_require__(2);
+__webpack_require__(12);
 function MainPage(_a) {
-    var histories = _a.histories, changeMenu = _a.changeMenu;
-    var _b = App_1.useState('7'), range = _b[0], setRange = _b[1];
-    var _c = App_1.useState(''), searchTerm = _c[0], setSearchTerm = _c[1];
-    var _d = App_1.useState([]), removedUrls = _d[0], setRemovedUrls = _d[1];
-    var filteredHistories = filterHistory_1.default(histories, {
+    var range = _a.range, searchTerm = _a.searchTerm, removedUrls = _a.removedUrls, setCurrentPage = _a.setCurrentPage, setRemovedUrls = _a.setRemovedUrls, histories = _a.histories;
+    var filteredHistories = filterHistory_1.filterHistory(histories, {
         range: Number(range),
         searchTerm: searchTerm,
         removedUrls: removedUrls,
@@ -299,27 +388,30 @@ function MainPage(_a) {
     var handleRemoveUrls = function (val) {
         setRemovedUrls(__spreadArrays(removedUrls, [val]));
     };
-    return Element_1.render(Contents_1.default({ histories: filteredHistories, setRemovedUrls: handleRemoveUrls })());
+    return Element_1.render(Contents_1.default({ histories: filteredHistories, setCurrentPage: setCurrentPage, setRemovedUrls: handleRemoveUrls })());
 }
 function LikedPage(_a) {
     var likedItems = _a.likedItems;
     // eslint-disable-next-line @typescript-eslint/no-empty-function
-    return Element_1.render(DetailContents_1.default({ title: 'Liked', histories: likedItems })());
+    return Element_1.render(Element_1.Div({ class: 'DetailContents-Wrapper' })(Element_1.H1()('Liked'), Element_1.Div()(Element_1.Ul().apply(void 0, likedItems.map(function (item) {
+        return Element_1.Li()(Element_1.A({
+            href: item.url,
+            target: '_blank',
+            title: item.url,
+        })(item.title));
+    })))));
 }
-function PageRouter(_a) {
+function PageRouter() {
     var _this = this;
-    var page = _a.page;
     var initialHistories = [];
-    var _b = App_1.useState(initialHistories), histories = _b[0], setHistories = _b[1];
-    var _c = App_1.useState([]), likedItems = _c[0], setLikedItems = _c[1];
+    var initialLikedItems = [];
+    var initialRemovedItems = [];
+    var _a = App_1.useState(initialHistories), histories = _a[0], setHistories = _a[1];
+    var _b = App_1.useState(initialLikedItems), likedItems = _b[0], setLikedItems = _b[1];
+    var _c = App_1.useState(initialRemovedItems), removedUrls = _c[0], setRemovedUrls = _c[1];
     var _d = App_1.useState('7'), range = _d[0], setRange = _d[1];
     var _e = App_1.useState(''), searchTerm = _e[0], setSearchTerm = _e[1];
-    var _f = App_1.useState([]), removedUrls = _f[0], setRemovedUrls = _f[1];
-    console.log(removedUrls);
-    var _g = App_1.useState('Main'), currentPage = _g[0], setCurrentPage = _g[1];
-    function handleChangeMenu(page) {
-        setCurrentPage(page);
-    }
+    var _f = App_1.useState('Main'), currentPage = _f[0], setCurrentPage = _f[1];
     App_1.useEffect(function () {
         if (!chrome.history) {
             (function () { return __awaiter(_this, void 0, void 0, function () {
@@ -360,32 +452,51 @@ function PageRouter(_a) {
             });
         }
     }, []);
-    if (page === 'Main') {
-        return Element_1.render(Element_1.Div()(Header_1.default({ range: range, setRange: setRange, searchTerm: searchTerm, setSearchTerm: setSearchTerm, changeMenu: handleChangeMenu })(), MainPage({ histories: histories, changeMenu: handleChangeMenu })()));
+    if (currentPage === 'Main') {
+        return Element_1.render(Element_1.Div()(Header_1.default({ range: range, setRange: setRange, setSearchTerm: setSearchTerm, changeMenu: setCurrentPage, setRemovedUrls: setRemovedUrls })(), MainPage({ range: range, searchTerm: searchTerm, removedUrls: removedUrls, setCurrentPage: setCurrentPage, setRemovedUrls: setRemovedUrls, histories: histories })()));
     }
-    else if (page === 'Liked') {
-        return Element_1.render(Element_1.Div()(Header_1.default({ range: range, setRange: setRange, searchTerm: searchTerm, setSearchTerm: setSearchTerm, changeMenu: handleChangeMenu })(), LikedPage({ likedItems: likedItems })()));
+    else if (currentPage === 'Liked') {
+        return Element_1.render(Element_1.Div()(Header_1.default({ range: range, setRange: setRange, setSearchTerm: setSearchTerm, changeMenu: setCurrentPage, setRemovedUrls: setRemovedUrls })(), LikedPage({ likedItems: likedItems })()));
+    }
+    else {
+        return Element_1.render(Element_1.Div()(Header_1.default({ range: range, setRange: setRange, setSearchTerm: setSearchTerm, changeMenu: setCurrentPage, setRemovedUrls: setRemovedUrls })(), DetailContents_1.default({ currentPage: currentPage, histories: histories })()));
     }
 }
 exports.default = PageRouter;
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Element_1 = __webpack_require__(0);
-var NavigationContainer_1 = __webpack_require__(6);
-__webpack_require__(8);
+__webpack_require__(7);
 function Header(_a) {
-    var range = _a.range, setRange = _a.setRange, searchTerm = _a.searchTerm, setSearchTerm = _a.setSearchTerm, changeMenu = _a.changeMenu;
-    return Element_1.render(Element_1.Div({ class: 'Header-Wrapper' })(NavigationContainer_1.default({ changeMenu: changeMenu })(), Element_1.Div({ class: 'Right-Column' })(), Element_1.Div({ class: 'Header-Column' })(Element_1.Img({ src: './main-icon-128.png' })(), Element_1.Input({
+    var range = _a.range, setRange = _a.setRange, setSearchTerm = _a.setSearchTerm, changeMenu = _a.changeMenu, setRemovedUrls = _a.setRemovedUrls;
+    var navMenu = ['Main', 'Liked'];
+    var handleReset = function () {
+        setRange('7');
+        setSearchTerm('');
+        changeMenu('Main');
+        setRemovedUrls([]);
+    };
+    return Element_1.render(Element_1.Div({ class: 'Header-Wrapper' })(Element_1.Nav()(Element_1.Ul().apply(void 0, navMenu.map(function (menu) { return Element_1.Li({
+        event: {
+            type: 'click',
+            callback: function (ev) { return changeMenu(ev.target.textContent); },
+        }
+    })(menu); }))), Element_1.Div({ class: 'Header-Column' })(Element_1.Img({
+        src: './main-icon-128.png',
+        event: {
+            type: 'click',
+            callback: handleReset,
+        }
+    })(), Element_1.Input({
         class: 'Search-Input',
         placeholder: '검색을 껌색하세요!',
-        value: searchTerm,
         event: {
             type: 'change',
             callback: function (ev) { return setSearchTerm(ev.target.value); }
@@ -406,32 +517,6 @@ exports.default = Header;
 
 
 /***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Element_1 = __webpack_require__(0);
-var Element_2 = __webpack_require__(0);
-__webpack_require__(7);
-function NavigationContainer(_a) {
-    var changeMenu = _a.changeMenu;
-    var navMenu = ['Main', 'Liked'];
-    var handleClick = function (value) {
-        changeMenu(value);
-    };
-    return Element_2.render(Element_1.Div({ class: 'NavigationContainer-Wrapper' })(Element_1.Nav()(Element_1.Ul().apply(void 0, navMenu.map(function (menu) { return Element_1.Li({
-        event: {
-            type: 'click',
-            callback: function (ev) { return handleClick(ev.target.textContent); },
-        }
-    })(menu); })))));
-}
-exports.default = NavigationContainer;
-
-
-/***/ }),
 /* 7 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -442,25 +527,19 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 /* 8 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
-
-
-/***/ }),
-/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Element_1 = __webpack_require__(0);
-__webpack_require__(10);
+__webpack_require__(9);
 function SiteCard(_a) {
-    var sites = _a.sites, setRemovedUrls = _a.setRemovedUrls;
+    var sites = _a.sites, setCurrentPage = _a.setCurrentPage, setRemovedUrls = _a.setRemovedUrls;
     var origin = sites[0].origin.replace(/(^\w+:|^)\/\//, '');
+    var handleSetCurrentPage = function (ev) {
+        setCurrentPage(ev.target.textContent);
+    };
     var handleSearchInSite = function (ev) {
         if (chrome.search) {
             chrome.search.query({
@@ -480,7 +559,12 @@ function SiteCard(_a) {
         }
     })('X'), Element_1.Img({
         src: "https://www.google.com/s2/favicons?domain=" + origin
-    })(), Element_1.H1()(origin), Element_1.Input({
+    })(), Element_1.H1({
+        event: {
+            type: 'click',
+            callback: handleSetCurrentPage
+        }
+    })(origin), Element_1.Input({
         event: {
             type: 'change',
             callback: handleSearchInSite
@@ -494,9 +578,10 @@ function SiteCard(_a) {
     }))));
 }
 function Contents(_a) {
-    var histories = _a.histories, setRemovedUrls = _a.setRemovedUrls;
+    var histories = _a.histories, setCurrentPage = _a.setCurrentPage, setRemovedUrls = _a.setRemovedUrls;
     return Element_1.render(Element_1.Div({ class: 'Contents-Wrapper' }).apply(void 0, histories.map(function (history) { return SiteCard({
         sites: history.slice(0, 10),
+        setCurrentPage: setCurrentPage,
         setRemovedUrls: setRemovedUrls,
     })(); })));
 }
@@ -504,7 +589,7 @@ exports.default = Contents;
 
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -513,17 +598,19 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Element_1 = __webpack_require__(0);
-__webpack_require__(12);
+__webpack_require__(11);
+var filterHistory_1 = __webpack_require__(2);
 function DetailContents(_a) {
-    var title = _a.title, histories = _a.histories;
-    return Element_1.render(Element_1.Div({ class: 'DetailContents-Wrapper' })(Element_1.H1()(title), Element_1.Div()(Element_1.Ul().apply(void 0, histories.map(function (history) {
+    var currentPage = _a.currentPage, histories = _a.histories;
+    var filteredHistories = filterHistory_1.filterDetail(histories, { currentPage: currentPage });
+    return Element_1.render(Element_1.Div({ class: 'DetailContents-Wrapper' })(Element_1.H1()(currentPage), Element_1.Div()(Element_1.Ul().apply(void 0, filteredHistories[0].map(function (history) {
         return Element_1.Li()(Element_1.A({
             href: history.url,
             target: '_blank',
@@ -532,6 +619,15 @@ function DetailContents(_a) {
     })))));
 }
 exports.default = DetailContents;
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
 
 
 /***/ }),
@@ -545,103 +641,15 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 /* 13 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Filter = /** @class */ (function () {
-    function Filter(histories) {
-        this.histories = histories;
-    }
-    Filter.prototype.filterByRange = function (range) {
-        this.histories = this.histories.filter(function (history) {
-            var startTime = (new Date()).getTime() - (range * 24 * 3600 * 1000);
-            return history.lastVisitTime >= startTime;
-        });
-        return this;
-    };
-    Filter.prototype.filterBySearchTerm = function (searchTerm) {
-        this.histories = this.histories.filter(function (history) {
-            if (history.url.includes(searchTerm)) {
-                return true;
-            }
-            else if (history.title.includes(searchTerm)) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        });
-        return this;
-    };
-    Filter.prototype.filterByRemovedUrls = function (removedUrls) {
-        this.histories = this.histories.filter(function (history) {
-            return !removedUrls.some(function (url) {
-                var regex = new RegExp(url);
-                return regex.test(history.url);
-            });
-        });
-        return this;
-    };
-    Filter.prototype.sortByTime = function () {
-        return this;
-    };
-    Filter.prototype.nomalize = function () {
-        var regex = /https:\/\/[-a-zA-Z0-9@:%._+~#=]{1,256}/;
-        var nomalized = this.histories.reduce(function (acc, cur) {
-            var matched = cur.url.match(regex);
-            if (!matched)
-                return acc;
-            var root = matched[0];
-            if (!acc[root])
-                acc[root] = [];
-            cur.origin = root;
-            acc[root].push(cur);
-            return acc;
-        }, {});
-        var urls = [];
-        for (var prop in nomalized) {
-            urls.push(nomalized[prop]);
-        }
-        urls.sort(function (a, b) { return b.length - a.length; });
-        urls.forEach(function (url) { return url.sort(function (a, b) { return a.lastVisitTime - b.lastVisitTime; }); });
-        return urls;
-    };
-    return Filter;
-}());
-function filterHistory(histories, _a) {
-    var range = _a.range, searchTerm = _a.searchTerm, removedUrls = _a.removedUrls;
-    return (new Filter(histories)
-        .filterByRange(range)
-        .filterBySearchTerm(searchTerm)
-        .filterByRemovedUrls(removedUrls)
-        .sortByTime()
-        .nomalize());
-}
-exports.default = filterHistory;
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
 
 
 /***/ }),
 /* 14 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
-
-
-/***/ }),
-/* 15 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
-
-
-/***/ }),
-/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

@@ -46,6 +46,16 @@ class Filter {
     return this;
   }
 
+  filterByCurrentPage(currentPage: string) {
+    console.log(this.histories);
+    this.histories = this.histories.filter((history) => {
+      const regex = new RegExp(currentPage);
+      return regex.test(history.url);
+    });
+
+    return this;
+  }
+
   nomalize(): history[][] {
     const regex = /https:\/\/[-a-zA-Z0-9@:%._+~#=]{1,256}/;
     const nomalized = this.histories.reduce((acc: { [key: string]: history[] }, cur: history) => {
@@ -91,4 +101,18 @@ function filterHistory(histories: history[], {
   );
 }
 
-export default filterHistory;
+function filterDetail(histories: history[], {
+  currentPage,
+}: { currentPage: string }): history[][] {
+  return (
+    new Filter(histories)
+      .filterByCurrentPage(currentPage)
+      .sortByTime()
+      .nomalize()
+  );
+}
+
+export {
+  filterHistory,
+  filterDetail,
+};

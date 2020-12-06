@@ -8,7 +8,7 @@ type HeaderProps = {
   searchTerm?: string,
   setSearchTerm?: (val: string) => void,
   changeMenu?: (val: string) => void,
-  setRemovedUrls: (val: string[]) => void,
+  setRemovedUrls?: (val: string[]) => void,
 };
 
 function Header({ range, setRange, setSearchTerm, changeMenu, setRemovedUrls }: HeaderProps): render {

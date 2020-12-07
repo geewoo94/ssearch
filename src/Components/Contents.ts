@@ -16,15 +16,11 @@ function SiteCard({ sites, setCurrentPage, setRemovedUrls }: SiteCardProps) {
   };
 
   const handleSearchInSite = (ev: Event) => {
-    if (chrome.search) {
-      chrome.search.query({
-        text: `${(ev.target as HTMLInputElement).value} site:${origin}`,
-        disposition: 'NEW_TAB',
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      }, () => {});
-    } else {
-      console.log('searched!');
-    }
+    chrome.search.query({
+      text: `${(ev.target as HTMLInputElement).value} site:${origin}`,
+      disposition: 'NEW_TAB',
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    }, () => {});
   };
 
   return render(

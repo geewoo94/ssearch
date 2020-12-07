@@ -1,5 +1,6 @@
-import App, { useState } from './_Factory/App';
+import App from './_Factory/App';
 import { Div, render } from './_Factory/Element';
+import './utils/devSetting.js';
 
 import PageRouter from './Container/PageRouter';
 

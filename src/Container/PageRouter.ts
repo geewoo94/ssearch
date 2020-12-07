@@ -17,7 +17,14 @@ type MainPageProps = {
   setRemovedUrls: (val: string[]) => void;
   histories: history[];
 }
-function MainPage({ range, searchTerm, removedUrls, setCurrentPage, setRemovedUrls, histories }: MainPageProps): render {
+function MainPage({
+  range,
+  searchTerm,
+  removedUrls,
+  setCurrentPage,
+  setRemovedUrls,
+  histories
+}: MainPageProps): render {
   const filteredHistories = filterHistory(histories, {
     range: Number(range),
     searchTerm,
@@ -35,7 +42,6 @@ function MainPage({ range, searchTerm, removedUrls, setCurrentPage, setRemovedUr
 
 type LikedPageProps = { likedItems: history[] };
 function LikedPage({ likedItems }: LikedPageProps): render {
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   return render(
     Div({ class: 'DetailContents-Wrapper' })(
       H1()('Liked'),
@@ -68,33 +74,13 @@ function PageRouter(): render {
   const [currentPage, setCurrentPage] = useState('Main');
 
   useEffect(() => {
-    if (!chrome.history) {
-      (async () => {
-        const histories = await fetch('./mockHistory.json');
-        const parsed = await histories.json();
-
-        setHistories(parsed);
-        setLikedItems([
-          { title: 'mocktitle', url: 'https://www.google.com' },
-          { title: 'mocktitle', url: 'https://www.google.com' },
-          { title: 'mocktitle', url: 'https://www.google.com' },
-          { title: 'mocktitle', url: 'https://www.google.com' },
-          { title: 'mocktitle', url: 'https://www.google.com' },
-          { title: 'mocktitle', url: 'https://www.google.com' },
-          { title: 'mocktitle', url: 'https://www.google.com' },
-          { title: 'mocktitle', url: 'https://www.google.com' },
-          { title: 'mocktitle', url: 'https://www.google.com' },
-        ]);
-      })();
-    } else {
-      const query = { text: '', maxResults: 0, startTime: (new Date()).getTime() - (7 * 24 * 3600 * 1000), endTime: (new Date()).getTime() };
-      chrome.history.search(query, (history) => {
-        setHistories(history);
-      });
-      chrome.storage.sync.get(({ likedItems }) => {
-        setLikedItems(likedItems);
-      });
-    }
+    const query = { text: '', maxResults: 0, startTime: (new Date()).getTime() - (7 * 24 * 3600 * 1000), endTime: (new Date()).getTime() };
+    chrome.history.search(query, (history) => {
+      setHistories(history);
+    });
+    chrome.storage.sync.get(({ likedItems }) => {
+      setLikedItems(likedItems);
+    });
   }, []);
 
   if (currentPage === 'Main') {

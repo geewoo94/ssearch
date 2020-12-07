@@ -39,8 +39,8 @@ const initialApp = (function init() {
     const hasChangedDeps = deps ? !depArray.every((el, i) => el === (deps as [])[i]) : true;
 
     if (hasNoDeps || hasChangedDeps) {
-      callback();
       hooks[currentHook] = depArray;
+      callback();
     }
 
     currentHook++;

@@ -10,18 +10,16 @@ import PageRouter from './Container/PageRouter';
 import './style/global.scss';
 import './index.scss';
 
-function Main() {
-  return render(
-    Div({ class: 'Main-Wrapper' })(
-      PageRouter()(),
-    )
-  );
-}
-
 const root = document.querySelector('#root');
 const header = document.querySelector('#header');
 
 setStore(store);
 
 App.renderOnce(Header, header);
-App.render(Main, root);
+App.render(() => {
+  return render(
+    Div({ class: 'Main-Wrapper' })(
+      PageRouter()(),
+    )
+  );
+}, root);

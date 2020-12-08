@@ -2,56 +2,16 @@ import { useEffect } from '../_Factory/App';
 import { useDispatch, useSelector } from '../_Factory/Store';
 import { A, Div, H1, Li, render, Ul } from '../_Factory/Element';
 
-import Contents from '../Components/Contents';
 import DetailContents from '../Components/DetailContents';
+import MainPage from '../Components/MainPage';
+import LikedPage from '../Components/LikedPage';
 
-import { history } from '../types';
-import { filterHistory } from '../utils/filterHistory';
 import { setHistories, setLikedItems } from '../store';
 import {
   MAIN_PAGE,
   LIKED_PAGE,
 } from '../constants';
 import './PageContainer.scss';
-
-function MainPage({ histories }: { histories: history[] }) {
-  const {
-    range,
-    searchTerm,
-    removedUrls
-  } = useSelector();
-
-  const filteredHistories = filterHistory(histories, {
-    range: Number(range),
-    searchTerm,
-    removedUrls,
-  });
-
-  return render(
-    Contents({ histories: filteredHistories })(),
-  );
-}
-
-function LikedPage({ likedItems }: { likedItems: history[] }) {
-  return render(
-    Div({ class: 'DetailContents-Wrapper' })(
-      H1()('Liked'),
-      Div()(
-        Ul()(
-          ...likedItems.map((item) => {
-            return Li()(
-              A({
-                href: item.url,
-                target: '_blank',
-                title: item.url,
-              })(item.title)
-            );
-          })
-        )
-      ),
-    )
-  );
-}
 
 function PageRouter(): render {
   const { histories, likedItems, currentPage } = useSelector();

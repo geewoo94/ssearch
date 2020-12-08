@@ -32,6 +32,7 @@ module.exports = {
     ],
     'no-unsafe-finally': 'off',
     'react/prop-types': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
   },
   'globals': {
     'chrome': true

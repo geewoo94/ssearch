@@ -1,47 +1,38 @@
-import { useEffect, useState } from '../_Factory/App';
+import { useEffect } from '../_Factory/App';
+import { useDispatch, useSelector } from '../_Factory/Store';
 import { A, Div, H1, Li, render, Ul } from '../_Factory/Element';
 
-import Header from '../Components/Header';
 import Contents from '../Components/Contents';
 import DetailContents from '../Components/DetailContents';
 
-import { filterHistory } from '../utils/filterHistory';
 import { history } from '../types';
+import { filterHistory } from '../utils/filterHistory';
+import { setHistories, setLikedItems } from '../store';
+import {
+  MAIN_PAGE,
+  LIKED_PAGE,
+} from '../constants';
 import './PageContainer.scss';
 
-type MainPageProps = {
-  range: string;
-  searchTerm: string;
-  removedUrls: string[];
-  setCurrentPage: (val: string) => void,
-  setRemovedUrls: (val: string[]) => void;
-  histories: history[];
-}
-function MainPage({
-  range,
-  searchTerm,
-  removedUrls,
-  setCurrentPage,
-  setRemovedUrls,
-  histories
-}: MainPageProps): render {
+function MainPage({ histories }: { histories: history[] }) {
+  const {
+    range,
+    searchTerm,
+    removedUrls
+  } = useSelector();
+
   const filteredHistories = filterHistory(histories, {
     range: Number(range),
     searchTerm,
     removedUrls,
   });
 
-  const handleRemoveUrls = (val: string) => {
-    setRemovedUrls([...removedUrls, val]);
-  };
-
   return render(
-    Contents({ histories: filteredHistories, setCurrentPage, setRemovedUrls: handleRemoveUrls })(),
+    Contents({ histories: filteredHistories })(),
   );
 }
 
-type LikedPageProps = { likedItems: history[] };
-function LikedPage({ likedItems }: LikedPageProps): render {
+function LikedPage({ likedItems }: { likedItems: history[] }) {
   return render(
     Div({ class: 'DetailContents-Wrapper' })(
       H1()('Liked'),
@@ -63,44 +54,41 @@ function LikedPage({ likedItems }: LikedPageProps): render {
 }
 
 function PageRouter(): render {
-  const initialHistories: history[] = [];
-  const initialLikedItems: { url: string, title: string }[] = [];
-  const initialRemovedItems: string[] = [];
-  const [histories, setHistories] = useState(initialHistories);
-  const [likedItems, setLikedItems] = useState(initialLikedItems);
-  const [removedUrls, setRemovedUrls] = useState(initialRemovedItems);
-  const [range, setRange] = useState('7');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [currentPage, setCurrentPage] = useState('Main');
+  const { histories, likedItems, currentPage } = useSelector();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    const query = { text: '', maxResults: 0, startTime: (new Date()).getTime() - (7 * 24 * 3600 * 1000), endTime: (new Date()).getTime() };
+    const WEEK_BY_MILLISECOND = (7 * 24 * 3600 * 1000);
+    const query = {
+      text: '',
+      maxResults: 0,
+      startTime: (new Date()).getTime() - WEEK_BY_MILLISECOND,
+      endTime: (new Date()).getTime()
+    };
+
     chrome.history.search(query, (history) => {
-      setHistories(history);
+      dispatch(setHistories(history));
     });
     chrome.storage.sync.get(({ likedItems }) => {
-      setLikedItems(likedItems);
+      dispatch(setLikedItems(likedItems));
     });
   }, []);
 
-  if (currentPage === 'Main') {
+  if (currentPage === MAIN_PAGE) {
     return render(
       Div()(
-        Header({ range, setRange, setSearchTerm, changeMenu: setCurrentPage, setRemovedUrls })(),
-        MainPage({ range, searchTerm, removedUrls, setCurrentPage, setRemovedUrls, histories })()
+        MainPage({ histories })()
       )
     );
-  } else if (currentPage === 'Liked') {
+  } else if (currentPage === LIKED_PAGE) {
     return render(
       Div()(
-        Header({ range, setRange, setSearchTerm, changeMenu: setCurrentPage, setRemovedUrls })(),
         LikedPage({ likedItems })()
       )
     );
   } else {
     return render(
       Div()(
-        Header({ range, setRange, setSearchTerm, changeMenu: setCurrentPage, setRemovedUrls })(),
         DetailContents({ currentPage, histories })()
       )
     );

@@ -5,8 +5,8 @@ import './DetailContents.scss';
 import { filterDetail } from '../utils/filterHistory';
 
 type DetailContentsProps = {
-  currentPage ?: string;
-  histories ?: history[];
+  currentPage?: string;
+  histories?: history[];
 }
 function DetailContents({ currentPage, histories }: DetailContentsProps): render {
   const filteredHistories = filterDetail(histories, { currentPage });

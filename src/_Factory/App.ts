@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Store } from './Store';
+
 type render = () => () => Element
 
 const initialApp = (function init() {
@@ -7,18 +9,31 @@ const initialApp = (function init() {
 
   const hooks: unknown[] = [];
   let currentHook = 0;
+  let store: Store = null;
 
   const App = {
+    renderOnce: (component: render, target: Element) => {
+      target.appendChild(component()());
+    },
     render: (component: render, target: Element) => {
       if (!rootComponent) rootComponent = component;
       if (!rootElement) rootElement = target;
 
-      target.textContent = '';
+      rootElement.textContent = '';
       currentHook = 0;
 
-      target.appendChild(component()());
+      rootElement.appendChild(rootComponent()());
     }
   };
+
+  function setStore(newStore: Store) {
+    if (!store) {
+      store = newStore;
+      store.setSubscriber(App.render);
+    } else {
+      throw Error('setStore only can be called once');
+    }
+  }
 
   function useState(initialState: any): [ any, (state: any) => void ] {
     hooks[currentHook] = hooks[currentHook] || initialState;
@@ -48,11 +63,13 @@ const initialApp = (function init() {
 
   return {
     App,
+    setStore,
     useState,
     useEffect,
   };
 })();
 
+export const setStore = initialApp.setStore;
 export const useState = initialApp.useState;
 export const useEffect = initialApp.useEffect;
 

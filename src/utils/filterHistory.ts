@@ -47,7 +47,6 @@ class Filter {
   }
 
   filterByCurrentPage(currentPage: string) {
-    console.log(this.histories);
     this.histories = this.histories.filter((history) => {
       const regex = new RegExp(currentPage);
       return regex.test(history.url);
@@ -79,18 +78,18 @@ class Filter {
       urls.push(nomalized[prop]);
     }
 
-    urls.sort((a: history[], b: history[]) => b.length - a.length);
+    urls.sort((a, b) => b.length - a.length);
     urls.forEach((url) => url.sort((a, b) => a.lastVisitTime - b.lastVisitTime));
 
     return urls;
   }
 }
 
-function filterHistory(histories: history[], {
-  range,
-  searchTerm,
-  removedUrls,
-}: { range: number, searchTerm: string, removedUrls: string[] }): history[][]{
+function filterHistory(
+  histories: history[],
+  { range, searchTerm, removedUrls }:
+  { range: number, searchTerm: string, removedUrls: string[] }
+): history[][] {
   return (
     new Filter(histories)
       .filterByRange(range)
@@ -101,9 +100,10 @@ function filterHistory(histories: history[], {
   );
 }
 
-function filterDetail(histories: history[], {
-  currentPage,
-}: { currentPage: string }): history[][] {
+function filterDetail(
+  histories: history[],
+  { currentPage }: { currentPage: string }
+): history[][] {
   return (
     new Filter(histories)
       .filterByCurrentPage(currentPage)

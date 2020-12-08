@@ -1,23 +1,26 @@
 import { Button, Div, H1, Img, Input, Li, render, Ul, A } from '../_Factory/Element';
+import { useDispatch, useSelector } from '../_Factory/Store';
 
 import { history } from '../types';
+import { setCurrentPage, setRemovedUrls } from '../store';
 import './Contents.scss';
 
-type SiteCardProps = {
-  sites?: history[];
-  setCurrentPage?: (val: string) => void;
-  setRemovedUrls?: (val: string) => void;
-}
-function SiteCard({ sites, setCurrentPage, setRemovedUrls }: SiteCardProps) {
+function SiteCard({ sites }: { sites: history[] }) {
+  const dispatch = useDispatch();
+  const removedUrls = useSelector((state) => state.removedUrls);
   const origin = sites[0].origin.replace(/(^\w+:|^)\/\//, '');
 
-  const handleSetCurrentPage = (ev: Event) => {
-    setCurrentPage((ev.target as HTMLElement).textContent);
+  const handleSetCurrentPage = (val: string) => {
+    dispatch(setCurrentPage(val));
   };
 
-  const handleSearchInSite = (ev: Event) => {
+  const handleSetRemoveUrls = () => {
+    dispatch(setRemovedUrls([...removedUrls, origin]));
+  };
+
+  const handleSearchInSite = (val: string) => {
     chrome.search.query({
-      text: `${(ev.target as HTMLInputElement).value} site:${origin}`,
+      text: `${val} site:${origin}`,
       disposition: 'NEW_TAB',
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     }, () => {});
@@ -26,9 +29,10 @@ function SiteCard({ sites, setCurrentPage, setRemovedUrls }: SiteCardProps) {
   return render(
     Div({ class: 'SiteCard-Wrapper' })(
       Button({
+        class: '.Close-Button',
         event: {
           type: 'click',
-          callback: () => setRemovedUrls(origin),
+          callback: () => handleSetRemoveUrls(),
         }
       })('X'),
       Img({
@@ -37,13 +41,13 @@ function SiteCard({ sites, setCurrentPage, setRemovedUrls }: SiteCardProps) {
       H1({
         event: {
           type: 'click',
-          callback: handleSetCurrentPage
+          callback: (ev: Event) => handleSetCurrentPage((ev.target as HTMLElement).textContent),
         }
       })(origin),
       Input({
         event: {
           type: 'change',
-          callback: handleSearchInSite
+          callback: (ev: Event) => handleSearchInSite((ev.target as HTMLInputElement).value),
         }
       })(),
       Ul()(
@@ -61,18 +65,11 @@ function SiteCard({ sites, setCurrentPage, setRemovedUrls }: SiteCardProps) {
   );
 }
 
-type ContentsProps = {
-  histories?: history[][];
-  setCurrentPage?: (val: string) => void;
-  setRemovedUrls?: (val: string) => void;
-}
-function Contents({ histories, setCurrentPage, setRemovedUrls }: ContentsProps): render {
+function Contents({ histories }: { histories?: history[][] }): render {
   return render(
     Div({ class: 'Contents-Wrapper' })(
       ...histories.map((history) => SiteCard({
         sites: history.slice(0, 10),
-        setCurrentPage,
-        setRemovedUrls,
       })())
     )
   );

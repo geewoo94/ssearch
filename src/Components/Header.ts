@@ -1,35 +1,52 @@
 import { Div, Img, Input, Li, Nav, render, Ul } from '../_Factory/Element';
+import { useDispatch } from '../_Factory/Store';
 
+import {
+  setRange,
+  setRemovedUrls,
+  setSearchTerm,
+  setCurrentPage,
+} from '../store';
+import {
+  PAGES,
+  DEFAULT_PAGE,
+  DEFAULT_RANGE,
+} from '../constants';
 import './Header.scss';
 
-type HeaderProps = {
-  range?: string,
-  setRange?: (val: string) => void,
-  searchTerm?: string,
-  setSearchTerm?: (val: string) => void,
-  changeMenu?: (val: string) => void,
-  setRemovedUrls?: (val: string[]) => void,
-};
-function Header({ range, setRange, setSearchTerm, changeMenu, setRemovedUrls }: HeaderProps): render {
-  const navMenu = ['Main', 'Liked'];
+function Header(): render {
+  const navMenu = PAGES;
+  const dispatch = useDispatch();
+
+  const handleSetSearchTerm = (val: string) => {
+    dispatch(setSearchTerm(val));
+  };
+
+  const handleSetRange = (val: string) => {
+    dispatch(setRange(val));
+  };
+
+  const handleSetCurrentPage = (val: string) => {
+    dispatch(setCurrentPage(val));
+  };
 
   const handleReset = () => {
-    setRange('7');
-    setSearchTerm('');
-    changeMenu('Main');
-    setRemovedUrls([]);
+    dispatch(setRange(DEFAULT_RANGE));
+    dispatch(setSearchTerm(''));
+    dispatch(setCurrentPage(DEFAULT_PAGE));
+    dispatch(setRemovedUrls([]));
   };
 
   return render(
     Div({ class: 'Header-Wrapper' })(
       Nav()(
         Ul()(
-          ...navMenu.map((menu) => Li({
+          ...navMenu.map((currentPage) => Li({
             event: {
               type: 'click',
-              callback: (ev: Event) => changeMenu((ev.target as HTMLElement).textContent),
+              callback: (ev: Event) => handleSetCurrentPage((ev.target as HTMLElement).textContent),
             }
-          })(menu))
+          })(currentPage))
         )
       ),
       Div({ class: 'Header-Column' })(
@@ -44,8 +61,8 @@ function Header({ range, setRange, setSearchTerm, changeMenu, setRemovedUrls }: 
           class: 'Search-Input',
           placeholder: '검색을 껌색하세요!',
           event: {
-            type: 'change',
-            callback: (ev: Event) => setSearchTerm((ev.target as HTMLInputElement).value)
+            type: 'input',
+            callback: (ev: Event) => handleSetSearchTerm((ev.target as HTMLInputElement).value)
           }
         })(),
       ),
@@ -53,11 +70,10 @@ function Header({ range, setRange, setSearchTerm, changeMenu, setRemovedUrls }: 
         type: 'range',
         min: '0',
         max: '7',
-        value: range,
         class: 'Range-Input',
         event: {
-          type: 'change',
-          callback: (ev: Event) => setRange((ev.target as HTMLInputElement).value),
+          type: 'input',
+          callback: (ev: Event) => handleSetRange((ev.target as HTMLInputElement).value),
         }
       })(),
     )

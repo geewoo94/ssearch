@@ -6,6 +6,7 @@
     "target": "es5",
     "noImplicitAny": true,
     "resolveJsonModule": true,
+    "moduleResolution": "node",
   },
   "include": [
     "./src/**/*"
@@ -16,4 +17,9 @@
   "types": [
     "chrome"
   ],
+  "typeRoots": [
+    "./src/types/store-lib"
+  ],
+  "declaration": true,
+  "declarationDir": "./src/types/store-lib",
 }

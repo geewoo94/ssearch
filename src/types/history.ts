@@ -1,10 +1,4 @@
-interface history {
-  id: string;
-  lastVisitTime: number;
-  title: string;
-  typedCount: number;
-  url: string;
-  visitCount: number;
+interface history extends chrome.history.HistoryItem {
   origin?: string;
 }
 

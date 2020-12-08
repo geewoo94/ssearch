@@ -58,7 +58,18 @@
     }
   }
 
-  input[type=range] {
-    width: 200px;
+  Div:last-child {
+    position: relative;
+
+    input[type=range] {
+      width: 200px;
+    }
+
+    p {
+      position: absolute;
+      letter-spacing: 9.2px;
+      left: 7px;
+      width: 200px;
+    }
   }
 }

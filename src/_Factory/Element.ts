@@ -63,4 +63,5 @@ export const Img = elementFactory('img');
 export const Input = elementFactory('input');
 export const Button = elementFactory('button');
 export const A = elementFactory('a');
+export const P = elementFactory('p');
 export const Form = elementFactory('form');

@@ -1,4 +1,4 @@
-import { Div, Img, Input, Li, Nav, render, Ul } from '../_Factory/Element';
+import { Div, Img, Input, Li, Nav, P, render, Ul } from '../_Factory/Element';
 import { useDispatch } from '../_Factory/Store';
 
 import {
@@ -66,16 +66,19 @@ function Header(): render {
           }
         })(),
       ),
-      Input({
-        type: 'range',
-        min: '0',
-        max: '7',
-        class: 'Range-Input',
-        event: {
-          type: 'input',
-          callback: (ev: Event) => handleSetRange((ev.target as HTMLInputElement).value),
-        }
-      })(),
+      Div()(
+        Input({
+          type: 'range',
+          min: '1',
+          max: '7',
+          class: 'Range-Input',
+          event: {
+            type: 'input',
+            callback: (ev: Event) => handleSetRange((ev.target as HTMLInputElement).value),
+          }
+        })(),
+        P()('1 ⏐ 3 ⏐ 5 ⏐ 7'),
+      )
     )
   );
 }

@@ -54,6 +54,7 @@ function SiteCard({ sites }: { sites: history[] }) {
         }
       })(tempOrigin),
       Input({
+        placeholder: `${origin} 에서 검색`,
         event: {
           type: 'change',
           callback: (ev: Event) => handleSearchInSite((ev.target as HTMLInputElement).value),

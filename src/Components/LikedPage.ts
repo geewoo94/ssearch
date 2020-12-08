@@ -3,6 +3,28 @@ import { A, Div, H1, Li, render, Ul } from '../_Factory/Element';
 import { history } from '../types';
 
 function LikedPage({ likedItems }: { likedItems: history[] }) {
+  likedItems.sort((a, b) => {
+    return b.count - a.count;
+  });
+
+  const handleCountUp = (url: string) => {
+    chrome.storage.sync.get(({ likedItems }) => {
+      likedItems = likedItems.map((item: history) => {
+        if (item.url === url) {
+          item.count += 1;
+          return item;
+        } else {
+          return item;
+        }
+      });
+
+      chrome.storage.sync.set({
+        likedItems
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      });
+    });
+  };
+
   return render(
     Div({ class: 'DetailContents-Wrapper' })(
       H1()('Liked'),
@@ -11,10 +33,15 @@ function LikedPage({ likedItems }: { likedItems: history[] }) {
           ...likedItems.map((item) => {
             return Li()(
               A({
+                style: `font-size: ${item.count + 10}px;`,
                 href: item.url,
                 target: '_blank',
                 title: item.url,
-              })(item.title)
+                event: {
+                  type: 'click',
+                  callback: () => handleCountUp(item.url),
+                }
+              })(item.count + ' 번 검색한' + ' ' +item.title)
             );
           })
         )

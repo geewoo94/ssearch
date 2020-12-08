@@ -8,44 +8,37 @@ chrome.contextMenus.create({
   title: chrome.i18n.getMessage('contextRemove'),
 });
 
-function saveItem(item) {
+function saveItem({ url, title, count }) {
   chrome.storage.sync.get((items) => {
     let isDuplicated = false;
-
+    console.log(items);
     items.likedItems && items.likedItems.forEach((likedItem) => {
-      if (likedItem.url === item.url) {
+      if (likedItem.url === url) {
         isDuplicated = true;
       }
     });
 
     if (isDuplicated) {
-      chrome.notifications.create('created', {
-        type: 'basic',
-        iconUrl: './dist/main-icon-128.png',
-        title: 'SAVED',
-        message: item.url,
-      }, (_) => {
-        setTimeout(() => {
-          chrome.notifications.clear('created');
-        }, 5000);
-      });
+      alertNotification();
       return;
     }
 
-    chrome.storage.sync.set({
-      likedItems: items.likedItems ? [...items.likedItems, item] : [item],
-    }, () => {
+    function alertNotification() {
       chrome.notifications.create('created', {
         type: 'basic',
         iconUrl: './dist/main-icon-128.png',
         title: 'SAVED',
-        message: item.url,
-      }, (_) => {
+        message: url,
+      }, () => {
         setTimeout(() => {
           chrome.notifications.clear('created');
-        }, 5000);
+        }, 4000);
       });
-    });
+    }
+
+    chrome.storage.sync.set({
+      likedItems: items.likedItems ? [...items.likedItems, { url, title, count }] : [{ url, title, count }],
+    }, alertNotification);
   });
 }
 
@@ -55,14 +48,14 @@ chrome.contextMenus.onClicked.addListener((item) => {
   } else {
     chrome.tabs.query({ active: true, currentWindow: true }, (tab) => {
       const { url, title } = tab[0];
-      saveItem({ url, title });
+      saveItem({ url, title, count: 0 });
     });
   }
 });
 
-chrome.commands.onCommand.addListener(function (_) {
+chrome.commands.onCommand.addListener(() => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tab) => {
     const { url, title } = tab[0];
-    saveItem({ url, title });
+    saveItem({ url, title, count: 0 });
   });
 });

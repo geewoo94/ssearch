@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -152,23 +152,168 @@ exports.Form = elementFactory('form');
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.useEffect = exports.useState = void 0;
+exports.useDispatch = exports.useSelector = void 0;
+var Store = (function () {
+    var state = null;
+    var reducer = null;
+    var subscriber = [];
+    var setSubscriber = function (sub) {
+        subscriber.push(sub);
+    };
+    var setInitialState = function (initState) {
+        if (!state) {
+            state = initState;
+        }
+        else {
+            throw Error('setInitialState only can be called once');
+        }
+    };
+    var setReducer = function (newReducer) {
+        if (!reducer) {
+            reducer = newReducer;
+        }
+        else {
+            throw Error('setReducer only can be called once');
+        }
+    };
+    var useSelector = function (callback) {
+        if (!callback) {
+            return state;
+        }
+        else {
+            return callback(state);
+        }
+    };
+    var useDispatch = function () {
+        return function (action) {
+            state = reducer(state, action);
+            subscriber.forEach(function (sub) {
+                sub();
+            });
+        };
+    };
+    return {
+        state: state,
+        setSubscriber: setSubscriber,
+        setInitialState: setInitialState,
+        setReducer: setReducer,
+        useSelector: useSelector,
+        useDispatch: useDispatch,
+    };
+})();
+exports.useSelector = Store.useSelector;
+exports.useDispatch = Store.useDispatch;
+exports.default = Store;
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.setLikedItems = exports.setHistories = exports.setRemovedUrls = exports.setCurrentPage = exports.setSearchTerm = exports.setRange = void 0;
+var Store_1 = __webpack_require__(1);
+var store_lib_1 = __webpack_require__(9);
+var DEFAULT_RANGE = '7';
+var DEFAULT_PAGE = 'Main';
+var initialState = {
+    range: DEFAULT_RANGE,
+    searchTerm: '',
+    removedUrls: [],
+    currentPage: DEFAULT_PAGE,
+    histories: [],
+    likedItems: [],
+};
+var setRange = function (payload) { return ({ type: store_lib_1.TYPE.SET_RANGE, payload: payload }); };
+exports.setRange = setRange;
+var setSearchTerm = function (payload) { return ({ type: store_lib_1.TYPE.SET_SEARCH_TERM, payload: payload }); };
+exports.setSearchTerm = setSearchTerm;
+var setCurrentPage = function (payload) { return ({ type: store_lib_1.TYPE.SET_CURRENT_PAGE, payload: payload }); };
+exports.setCurrentPage = setCurrentPage;
+var setRemovedUrls = function (payload) { return ({ type: store_lib_1.TYPE.SET_REMOVED_URLS, payload: payload }); };
+exports.setRemovedUrls = setRemovedUrls;
+var setHistories = function (payload) { return ({ type: store_lib_1.TYPE.SET_HISTORIES, payload: payload }); };
+exports.setHistories = setHistories;
+var setLikedItems = function (payload) { return ({ type: store_lib_1.TYPE.SET_LIKED_ITEMS, payload: payload }); };
+exports.setLikedItems = setLikedItems;
+var reducer = function (state, _a) {
+    var type = _a.type, payload = _a.payload;
+    switch (type) {
+        case store_lib_1.TYPE.SET_RANGE: {
+            return __assign(__assign({}, state), { range: payload });
+        }
+        case store_lib_1.TYPE.SET_SEARCH_TERM: {
+            return __assign(__assign({}, state), { searchTerm: payload });
+        }
+        case store_lib_1.TYPE.SET_CURRENT_PAGE: {
+            return __assign(__assign({}, state), { currentPage: payload });
+        }
+        case store_lib_1.TYPE.SET_REMOVED_URLS: {
+            return __assign(__assign({}, state), { removedUrls: payload });
+        }
+        case store_lib_1.TYPE.SET_HISTORIES: {
+            return __assign(__assign({}, state), { histories: payload });
+        }
+        case store_lib_1.TYPE.SET_LIKED_ITEMS: {
+            return __assign(__assign({}, state), { likedItems: payload });
+        }
+    }
+};
+Store_1.default.setInitialState(initialState);
+Store_1.default.setReducer(reducer);
+exports.default = Store_1.default;
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.useEffect = exports.useState = exports.setStore = void 0;
 var initialApp = (function init() {
     var rootComponent = null;
     var rootElement = null;
     var hooks = [];
     var currentHook = 0;
+    var store = null;
     var App = {
+        renderOnce: function (component, target) {
+            target.appendChild(component()());
+        },
         render: function (component, target) {
             if (!rootComponent)
                 rootComponent = component;
             if (!rootElement)
                 rootElement = target;
-            target.textContent = '';
+            rootElement.textContent = '';
             currentHook = 0;
-            target.appendChild(component()());
+            rootElement.appendChild(rootComponent()());
         }
     };
+    function setStore(newStore) {
+        if (!store) {
+            store = newStore;
+            store.setSubscriber(App.render);
+        }
+        else {
+            throw Error('setStore only can be called once');
+        }
+    }
     function useState(initialState) {
         hooks[currentHook] = hooks[currentHook] || initialState;
         var setStateHookIndex = currentHook;
@@ -183,24 +328,44 @@ var initialApp = (function init() {
         var deps = hooks[currentHook];
         var hasChangedDeps = deps ? !depArray.every(function (el, i) { return el === deps[i]; }) : true;
         if (hasNoDeps || hasChangedDeps) {
-            callback();
             hooks[currentHook] = depArray;
+            callback();
         }
         currentHook++;
     }
     return {
         App: App,
+        setStore: setStore,
         useState: useState,
         useEffect: useEffect,
     };
 })();
+exports.setStore = initialApp.setStore;
 exports.useState = initialApp.useState;
 exports.useEffect = initialApp.useEffect;
 exports.default = initialApp.App;
 
 
 /***/ }),
-/* 2 */
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DEFAULT_PAGE = exports.DEFAULT_RANGE = exports.PAGES = exports.LIKED_PAGE = exports.MAIN_PAGE = void 0;
+exports.MAIN_PAGE = 'Main';
+exports.LIKED_PAGE = 'Liked';
+exports.PAGES = [
+    exports.MAIN_PAGE,
+    exports.LIKED_PAGE,
+];
+exports.DEFAULT_RANGE = '7';
+exports.DEFAULT_PAGE = exports.MAIN_PAGE;
+
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -245,7 +410,6 @@ var Filter = /** @class */ (function () {
         return this;
     };
     Filter.prototype.filterByCurrentPage = function (currentPage) {
-        console.log(this.histories);
         this.histories = this.histories.filter(function (history) {
             var regex = new RegExp(currentPage);
             return regex.test(history.url);
@@ -296,305 +460,99 @@ exports.filterDetail = filterDetail;
 
 
 /***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(4);
-
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var App_1 = __webpack_require__(1);
-var Element_1 = __webpack_require__(0);
-var PageRouter_1 = __webpack_require__(5);
-__webpack_require__(13);
-__webpack_require__(14);
-function Main() {
-    return Element_1.render(Element_1.Div({ class: 'Main-Wrapper' })(PageRouter_1.default()()));
-}
-var root = document.querySelector('#root');
-App_1.default.render(Main, root);
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var App_1 = __webpack_require__(1);
-var Element_1 = __webpack_require__(0);
-var Header_1 = __webpack_require__(6);
-var Contents_1 = __webpack_require__(8);
-var DetailContents_1 = __webpack_require__(10);
-var filterHistory_1 = __webpack_require__(2);
-__webpack_require__(12);
-function MainPage(_a) {
-    var range = _a.range, searchTerm = _a.searchTerm, removedUrls = _a.removedUrls, setCurrentPage = _a.setCurrentPage, setRemovedUrls = _a.setRemovedUrls, histories = _a.histories;
-    var filteredHistories = filterHistory_1.filterHistory(histories, {
-        range: Number(range),
-        searchTerm: searchTerm,
-        removedUrls: removedUrls,
-    });
-    var handleRemoveUrls = function (val) {
-        setRemovedUrls(__spreadArrays(removedUrls, [val]));
-    };
-    return Element_1.render(Contents_1.default({ histories: filteredHistories, setCurrentPage: setCurrentPage, setRemovedUrls: handleRemoveUrls })());
-}
-function LikedPage(_a) {
-    var likedItems = _a.likedItems;
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    return Element_1.render(Element_1.Div({ class: 'DetailContents-Wrapper' })(Element_1.H1()('Liked'), Element_1.Div()(Element_1.Ul().apply(void 0, likedItems.map(function (item) {
-        return Element_1.Li()(Element_1.A({
-            href: item.url,
-            target: '_blank',
-            title: item.url,
-        })(item.title));
-    })))));
-}
-function PageRouter() {
-    var _this = this;
-    var initialHistories = [];
-    var initialLikedItems = [];
-    var initialRemovedItems = [];
-    var _a = App_1.useState(initialHistories), histories = _a[0], setHistories = _a[1];
-    var _b = App_1.useState(initialLikedItems), likedItems = _b[0], setLikedItems = _b[1];
-    var _c = App_1.useState(initialRemovedItems), removedUrls = _c[0], setRemovedUrls = _c[1];
-    var _d = App_1.useState('7'), range = _d[0], setRange = _d[1];
-    var _e = App_1.useState(''), searchTerm = _e[0], setSearchTerm = _e[1];
-    var _f = App_1.useState('Main'), currentPage = _f[0], setCurrentPage = _f[1];
-    App_1.useEffect(function () {
-        if (!chrome.history) {
-            (function () { return __awaiter(_this, void 0, void 0, function () {
-                var histories, parsed;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, fetch('./mockHistory.json')];
-                        case 1:
-                            histories = _a.sent();
-                            return [4 /*yield*/, histories.json()];
-                        case 2:
-                            parsed = _a.sent();
-                            setHistories(parsed);
-                            setLikedItems([
-                                { title: 'mocktitle', url: 'https://www.google.com' },
-                                { title: 'mocktitle', url: 'https://www.google.com' },
-                                { title: 'mocktitle', url: 'https://www.google.com' },
-                                { title: 'mocktitle', url: 'https://www.google.com' },
-                                { title: 'mocktitle', url: 'https://www.google.com' },
-                                { title: 'mocktitle', url: 'https://www.google.com' },
-                                { title: 'mocktitle', url: 'https://www.google.com' },
-                                { title: 'mocktitle', url: 'https://www.google.com' },
-                                { title: 'mocktitle', url: 'https://www.google.com' },
-                            ]);
-                            return [2 /*return*/];
-                    }
-                });
-            }); })();
-        }
-        else {
-            var query = { text: '', maxResults: 0, startTime: (new Date()).getTime() - (7 * 24 * 3600 * 1000), endTime: (new Date()).getTime() };
-            chrome.history.search(query, function (history) {
-                setHistories(history);
-            });
-            chrome.storage.sync.get(function (_a) {
-                var likedItems = _a.likedItems;
-                setLikedItems(likedItems);
-            });
-        }
-    }, []);
-    if (currentPage === 'Main') {
-        return Element_1.render(Element_1.Div()(Header_1.default({ range: range, setRange: setRange, setSearchTerm: setSearchTerm, changeMenu: setCurrentPage, setRemovedUrls: setRemovedUrls })(), MainPage({ range: range, searchTerm: searchTerm, removedUrls: removedUrls, setCurrentPage: setCurrentPage, setRemovedUrls: setRemovedUrls, histories: histories })()));
-    }
-    else if (currentPage === 'Liked') {
-        return Element_1.render(Element_1.Div()(Header_1.default({ range: range, setRange: setRange, setSearchTerm: setSearchTerm, changeMenu: setCurrentPage, setRemovedUrls: setRemovedUrls })(), LikedPage({ likedItems: likedItems })()));
-    }
-    else {
-        return Element_1.render(Element_1.Div()(Header_1.default({ range: range, setRange: setRange, setSearchTerm: setSearchTerm, changeMenu: setCurrentPage, setRemovedUrls: setRemovedUrls })(), DetailContents_1.default({ currentPage: currentPage, histories: histories })()));
-    }
-}
-exports.default = PageRouter;
-
-
-/***/ }),
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Element_1 = __webpack_require__(0);
-__webpack_require__(7);
-function Header(_a) {
-    var range = _a.range, setRange = _a.setRange, setSearchTerm = _a.setSearchTerm, changeMenu = _a.changeMenu, setRemovedUrls = _a.setRemovedUrls;
-    var navMenu = ['Main', 'Liked'];
-    var handleReset = function () {
-        setRange('7');
-        setSearchTerm('');
-        changeMenu('Main');
-        setRemovedUrls([]);
-    };
-    return Element_1.render(Element_1.Div({ class: 'Header-Wrapper' })(Element_1.Nav()(Element_1.Ul().apply(void 0, navMenu.map(function (menu) { return Element_1.Li({
-        event: {
-            type: 'click',
-            callback: function (ev) { return changeMenu(ev.target.textContent); },
-        }
-    })(menu); }))), Element_1.Div({ class: 'Header-Column' })(Element_1.Img({
-        src: './main-icon-128.png',
-        event: {
-            type: 'click',
-            callback: handleReset,
-        }
-    })(), Element_1.Input({
-        class: 'Search-Input',
-        placeholder: '검색을 껌색하세요!',
-        event: {
-            type: 'change',
-            callback: function (ev) { return setSearchTerm(ev.target.value); }
-        }
-    })()), Element_1.Input({
-        type: 'range',
-        min: '0',
-        max: '7',
-        value: range,
-        class: 'Range-Input',
-        event: {
-            type: 'change',
-            callback: function (ev) { return setRange(ev.target.value); },
-        }
-    })()));
-}
-exports.default = Header;
+module.exports = __webpack_require__(7);
 
 
 /***/ }),
 /* 7 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
-
-
-/***/ }),
-/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+__webpack_require__(8);
+var App_1 = __webpack_require__(3);
 var Element_1 = __webpack_require__(0);
-__webpack_require__(9);
-function SiteCard(_a) {
-    var sites = _a.sites, setCurrentPage = _a.setCurrentPage, setRemovedUrls = _a.setRemovedUrls;
-    var origin = sites[0].origin.replace(/(^\w+:|^)\/\//, '');
-    var handleSetCurrentPage = function (ev) {
-        setCurrentPage(ev.target.textContent);
+var store_1 = __webpack_require__(2);
+var Header_1 = __webpack_require__(10);
+var PageRouter_1 = __webpack_require__(12);
+__webpack_require__(20);
+__webpack_require__(21);
+var root = document.querySelector('#root');
+var header = document.querySelector('#header');
+App_1.setStore(store_1.default);
+App_1.default.renderOnce(Header_1.default, header);
+App_1.default.render(function () {
+    return Element_1.render(Element_1.Div({ class: 'Main-Wrapper' })(PageRouter_1.default()()));
+}, root);
+
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports) {
+
+(function devSetting() {
+  if (!chrome || !chrome.history) {
+    window.chrome = {};
+
+    window.chrome.history = {
+      search: async (query, callback) => {
+        const histories = await fetch('./mockHistory.json');
+        const parsed = await histories.json();
+        callback(parsed);
+      }
     };
-    var handleSearchInSite = function (ev) {
-        if (chrome.search) {
-            chrome.search.query({
-                text: ev.target.value + ' ' + ("site:" + origin),
-                disposition: 'NEW_TAB',
-            }, function () { });
-        }
-        else {
-            console.log('searched!');
-        }
+
+    window.chrome.search = {
+      query: (option, callback) => {
+        console.log(option);
+        callback();
+      }
     };
-    return Element_1.render(Element_1.Div({ class: 'SiteCard-Wrapper' })(Element_1.Button({
-        class: 'Close-Button',
-        event: {
-            type: 'click',
-            callback: function () { return setRemovedUrls(origin); },
+
+    window.chrome.storage = {
+      sync: {
+        get: (callback) => {
+          callback({
+            likedItems: [
+              { title: 'mocktitle', url: 'https://www.google.com', count: 1 },
+              { title: 'mocktitle', url: 'https://www.google.com', count: 2 },
+              { title: 'mocktitle', url: 'https://www.google.com', count: 11 },
+              { title: 'mocktitle', url: 'https://www.google.com', count: 21 },
+            ]
+          });
         }
-    })('X'), Element_1.Img({
-        src: "https://www.google.com/s2/favicons?domain=" + origin
-    })(), Element_1.H1({
-        event: {
-            type: 'click',
-            callback: handleSetCurrentPage
-        }
-    })(origin), Element_1.Input({
-        event: {
-            type: 'change',
-            callback: handleSearchInSite
-        }
-    })(), Element_1.Ul().apply(void 0, sites.map(function (site) {
-        return Element_1.Li()(Element_1.A({
-            href: site.url,
-            target: '_blank',
-            title: site.url,
-        })(site.title));
-    }))));
-}
-function Contents(_a) {
-    var histories = _a.histories, setCurrentPage = _a.setCurrentPage, setRemovedUrls = _a.setRemovedUrls;
-    return Element_1.render(Element_1.Div({ class: 'Contents-Wrapper' }).apply(void 0, histories.map(function (history) { return SiteCard({
-        sites: history.slice(0, 10),
-        setCurrentPage: setCurrentPage,
-        setRemovedUrls: setRemovedUrls,
-    })(); })));
-}
-exports.default = Contents;
+      }
+    };
+  }
+})();
 
 
 /***/ }),
 /* 9 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.NAV_MENU = exports.TYPE = void 0;
+var TYPE;
+(function (TYPE) {
+    TYPE[TYPE["SET_RANGE"] = 0] = "SET_RANGE";
+    TYPE[TYPE["SET_SEARCH_TERM"] = 1] = "SET_SEARCH_TERM";
+    TYPE[TYPE["SET_CURRENT_PAGE"] = 2] = "SET_CURRENT_PAGE";
+    TYPE[TYPE["SET_REMOVED_URLS"] = 3] = "SET_REMOVED_URLS";
+    TYPE[TYPE["SET_HISTORIES"] = 4] = "SET_HISTORIES";
+    TYPE[TYPE["SET_LIKED_ITEMS"] = 5] = "SET_LIKED_ITEMS";
+})(TYPE = exports.TYPE || (exports.TYPE = {}));
+var NAV_MENU;
+(function (NAV_MENU) {
+    NAV_MENU[NAV_MENU["MAIN"] = 0] = "MAIN";
+    NAV_MENU[NAV_MENU["LIKED"] = 1] = "LIKED";
+})(NAV_MENU = exports.NAV_MENU || (exports.NAV_MENU = {}));
 
 
 /***/ }),
@@ -605,8 +563,127 @@ __webpack_require__.r(__webpack_exports__);
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Element_1 = __webpack_require__(0);
+var Store_1 = __webpack_require__(1);
+var store_1 = __webpack_require__(2);
+var constants_1 = __webpack_require__(4);
 __webpack_require__(11);
-var filterHistory_1 = __webpack_require__(2);
+function Header() {
+    var navMenu = constants_1.PAGES;
+    var dispatch = Store_1.useDispatch();
+    var handleSetSearchTerm = function (val) {
+        dispatch(store_1.setSearchTerm(val));
+    };
+    var handleSetRange = function (val) {
+        dispatch(store_1.setRange(val));
+    };
+    var handleSetCurrentPage = function (val) {
+        dispatch(store_1.setCurrentPage(val));
+    };
+    var handleReset = function () {
+        dispatch(store_1.setRange(constants_1.DEFAULT_RANGE));
+        dispatch(store_1.setSearchTerm(''));
+        dispatch(store_1.setCurrentPage(constants_1.DEFAULT_PAGE));
+        dispatch(store_1.setRemovedUrls([]));
+    };
+    return Element_1.render(Element_1.Div({ class: 'Header-Wrapper' })(Element_1.Nav()(Element_1.Ul().apply(void 0, navMenu.map(function (currentPage) { return Element_1.Li({
+        event: {
+            type: 'click',
+            callback: function (ev) { return handleSetCurrentPage(ev.target.textContent); },
+        }
+    })(currentPage); }))), Element_1.Div({ class: 'Header-Column' })(Element_1.Img({
+        src: './main-icon-128.png',
+        event: {
+            type: 'click',
+            callback: handleReset,
+        }
+    })(), Element_1.Input({
+        class: 'Search-Input',
+        placeholder: '검색을 껌색하세요!',
+        event: {
+            type: 'input',
+            callback: function (ev) { return handleSetSearchTerm(ev.target.value); }
+        }
+    })()), Element_1.Input({
+        type: 'range',
+        min: '0',
+        max: '7',
+        class: 'Range-Input',
+        event: {
+            type: 'input',
+            callback: function (ev) { return handleSetRange(ev.target.value); },
+        }
+    })()));
+}
+exports.default = Header;
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var App_1 = __webpack_require__(3);
+var Store_1 = __webpack_require__(1);
+var Element_1 = __webpack_require__(0);
+var DetailContents_1 = __webpack_require__(13);
+var MainPage_1 = __webpack_require__(15);
+var LikedPage_1 = __webpack_require__(18);
+var store_1 = __webpack_require__(2);
+var constants_1 = __webpack_require__(4);
+__webpack_require__(19);
+function PageRouter() {
+    var _a = Store_1.useSelector(), histories = _a.histories, likedItems = _a.likedItems, currentPage = _a.currentPage;
+    var dispatch = Store_1.useDispatch();
+    App_1.useEffect(function () {
+        var WEEK_BY_MILLISECOND = (7 * 24 * 3600 * 1000);
+        var query = {
+            text: '',
+            maxResults: 0,
+            startTime: (new Date()).getTime() - WEEK_BY_MILLISECOND,
+            endTime: (new Date()).getTime()
+        };
+        chrome.history.search(query, function (history) {
+            dispatch(store_1.setHistories(history));
+        });
+        chrome.storage.sync.get(function (_a) {
+            var likedItems = _a.likedItems;
+            dispatch(store_1.setLikedItems(likedItems));
+        });
+    }, []);
+    if (currentPage === constants_1.MAIN_PAGE) {
+        return Element_1.render(Element_1.Div()(MainPage_1.default({ histories: histories })()));
+    }
+    else if (currentPage === constants_1.LIKED_PAGE) {
+        return Element_1.render(Element_1.Div()(LikedPage_1.default({ likedItems: likedItems })()));
+    }
+    else {
+        return Element_1.render(Element_1.Div()(DetailContents_1.default({ currentPage: currentPage, histories: histories })()));
+    }
+}
+exports.default = PageRouter;
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Element_1 = __webpack_require__(0);
+__webpack_require__(14);
+var filterHistory_1 = __webpack_require__(5);
 function DetailContents(_a) {
     var currentPage = _a.currentPage, histories = _a.histories;
     var filteredHistories = filterHistory_1.filterDetail(histories, { currentPage: currentPage });
@@ -622,34 +699,183 @@ exports.default = DetailContents;
 
 
 /***/ }),
-/* 11 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
-
-
-/***/ }),
-/* 12 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
-
-
-/***/ }),
-/* 13 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
-
-
-/***/ }),
 /* 14 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Element_1 = __webpack_require__(0);
+var Store_1 = __webpack_require__(1);
+var Contents_1 = __webpack_require__(16);
+var filterHistory_1 = __webpack_require__(5);
+function MainPage(_a) {
+    var histories = _a.histories;
+    var _b = Store_1.useSelector(), range = _b.range, searchTerm = _b.searchTerm, removedUrls = _b.removedUrls;
+    var filteredHistories = filterHistory_1.filterHistory(histories, {
+        range: Number(range),
+        searchTerm: searchTerm,
+        removedUrls: removedUrls,
+    });
+    return Element_1.render(Contents_1.default({ histories: filteredHistories })());
+}
+exports.default = MainPage;
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var Element_1 = __webpack_require__(0);
+var Store_1 = __webpack_require__(1);
+var store_1 = __webpack_require__(2);
+__webpack_require__(17);
+function SiteCard(_a) {
+    var sites = _a.sites;
+    var dispatch = Store_1.useDispatch();
+    var removedUrls = Store_1.useSelector(function (state) { return state.removedUrls; });
+    var origin = sites[0].origin.replace(/(^\w+:|^)\/\//, '');
+    var handleSetCurrentPage = function (val) {
+        dispatch(store_1.setCurrentPage(val));
+    };
+    var handleSetRemoveUrls = function () {
+        dispatch(store_1.setRemovedUrls(__spreadArrays(removedUrls, [origin])));
+    };
+    var handleSearchInSite = function (val) {
+        chrome.search.query({
+            text: val + " site:" + origin,
+            disposition: 'NEW_TAB',
+        }, function () { });
+    };
+    return Element_1.render(Element_1.Div({ class: 'SiteCard-Wrapper' })(Element_1.Button({
+        class: '.Close-Button',
+        event: {
+            type: 'click',
+            callback: function () { return handleSetRemoveUrls(); },
+        }
+    })('X'), Element_1.Img({
+        src: "https://www.google.com/s2/favicons?domain=" + origin
+    })(), Element_1.H1({
+        event: {
+            type: 'click',
+            callback: function (ev) { return handleSetCurrentPage(ev.target.textContent); },
+        }
+    })(origin), Element_1.Input({
+        event: {
+            type: 'change',
+            callback: function (ev) { return handleSearchInSite(ev.target.value); },
+        }
+    })(), Element_1.Ul().apply(void 0, sites.map(function (site) {
+        return Element_1.Li()(Element_1.A({
+            href: site.url,
+            target: '_blank',
+            title: site.url,
+        })(site.title));
+    }))));
+}
+function Contents(_a) {
+    var histories = _a.histories;
+    return Element_1.render(Element_1.Div({ class: 'Contents-Wrapper' }).apply(void 0, histories.map(function (history) { return SiteCard({
+        sites: history.slice(0, 10),
+    })(); })));
+}
+exports.default = Contents;
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Element_1 = __webpack_require__(0);
+function LikedPage(_a) {
+    var likedItems = _a.likedItems;
+    likedItems.sort(function (a, b) {
+        return b.count - a.count;
+    });
+    var handleCountUp = function (url) {
+        chrome.storage.sync.get(function (_a) {
+            var likedItems = _a.likedItems;
+            likedItems = likedItems.map(function (item) {
+                if (item.url === url) {
+                    item.count += 1;
+                    return item;
+                }
+                else {
+                    return item;
+                }
+            });
+            console.log(likedItems);
+            chrome.storage.sync.set({
+                likedItems: likedItems
+            }, function () { });
+        });
+    };
+    return Element_1.render(Element_1.Div({ class: 'DetailContents-Wrapper' })(Element_1.H1()('Liked'), Element_1.Div()(Element_1.Ul().apply(void 0, likedItems.map(function (item) {
+        return Element_1.Li()(Element_1.A({
+            href: item.url,
+            target: '_blank',
+            title: item.url,
+            event: {
+                type: 'click',
+                callback: function () { return handleCountUp(item.url); },
+            }
+        })(item.count + ' 번 검색한' + ' ' + item.title));
+    })))));
+}
+exports.default = LikedPage;
+
+
+/***/ }),
+/* 19 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+/* 20 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+/* 21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

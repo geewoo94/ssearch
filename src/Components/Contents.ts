@@ -10,10 +10,11 @@ function SiteCard({ sites }: { sites: history[] }) {
   const searchTerm = useSelector((state) => state.searchTerm);
   const removedUrls = useSelector((state) => state.removedUrls);
 
-  let origin = sites[0].origin.replace(/(^\w+:|^)\/\//, '');
+  const origin = sites[0].origin.replace(/(^\w+:|^)\/\//, '');
+  let tempOrigin = '';
   if (origin.includes(searchTerm)) {
     const regex = new RegExp(searchTerm);
-    origin = origin.replace(regex, `<i>${searchTerm}</i>`);
+    tempOrigin = origin.replace(regex, `<i>${searchTerm}</i>`);
   }
 
   const handleSetCurrentPage = (val: string) => {
@@ -34,13 +35,15 @@ function SiteCard({ sites }: { sites: history[] }) {
 
   return render(
     Div({ class: 'SiteCard-Wrapper' })(
-      Button({
-        class: '.Close-Button',
-        event: {
-          type: 'click',
-          callback: () => handleSetRemoveUrls(),
-        }
-      })('X'),
+      Div()(
+        Button({
+          class: '.Close-Button',
+          event: {
+            type: 'click',
+            callback: () => handleSetRemoveUrls(),
+          }
+        })('✄'),
+      ),
       Img({
         src: `https://www.google.com/s2/favicons?domain=${origin}`
       })(),
@@ -49,7 +52,7 @@ function SiteCard({ sites }: { sites: history[] }) {
           type: 'click',
           callback: (ev: Event) => handleSetCurrentPage((ev.target as HTMLElement).textContent),
         }
-      })(origin),
+      })(tempOrigin),
       Input({
         event: {
           type: 'change',

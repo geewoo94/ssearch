@@ -44,9 +44,6 @@ function SiteCard({ sites }: { sites: history[] }) {
           }
         })('✄'),
       ),
-      Img({
-        src: `https://www.google.com/s2/favicons?domain=${origin}`
-      })(),
       H1({
         event: {
           type: 'click',
@@ -72,6 +69,9 @@ function SiteCard({ sites }: { sites: history[] }) {
           }
 
           return Li()(
+            Img({
+              src: chrome.runtime ? `chrome://favicon/https://${origin}` : './main-icon16.png'
+            })(),
             A({
               href: site.url,
               target: '_blank',

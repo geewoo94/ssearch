@@ -91,7 +91,7 @@
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Form = exports.A = exports.Button = exports.Input = exports.Img = exports.H6 = exports.H5 = exports.H4 = exports.H3 = exports.H2 = exports.H1 = exports.Li = exports.Ul = exports.Ol = exports.Nav = exports.Div = exports.render = void 0;
+exports.Form = exports.P = exports.A = exports.Button = exports.Input = exports.Img = exports.H6 = exports.H5 = exports.H4 = exports.H3 = exports.H2 = exports.H1 = exports.Li = exports.Ul = exports.Ol = exports.Nav = exports.Div = exports.render = void 0;
 function render(el) {
     return (function () {
         var _this = this;
@@ -100,7 +100,7 @@ function render(el) {
             children[_i] = arguments[_i];
         }
         if (typeof children[0] === 'string' || typeof children[0] === 'number') {
-            this.textContent = String(children[0]);
+            this.innerHTML = String(children[0]);
             return this;
         }
         if (children[0] === null)
@@ -142,6 +142,7 @@ exports.Img = elementFactory('img');
 exports.Input = elementFactory('input');
 exports.Button = elementFactory('button');
 exports.A = elementFactory('a');
+exports.P = elementFactory('p');
 exports.Form = elementFactory('form');
 
 
@@ -385,15 +386,8 @@ var Filter = /** @class */ (function () {
     };
     Filter.prototype.filterBySearchTerm = function (searchTerm) {
         this.histories = this.histories.filter(function (history) {
-            if (history.url.includes(searchTerm)) {
-                return true;
-            }
-            else if (history.title.includes(searchTerm)) {
-                return true;
-            }
-            else {
-                return false;
-            }
+            return (history.url.includes(searchTerm) ||
+                history.title.includes(searchTerm));
         });
         return this;
     };
@@ -524,6 +518,9 @@ App_1.default.render(function () {
               { title: 'mocktitle', url: 'https://www.google.com', count: 21 },
             ]
           });
+        },
+        set: (item) => {
+          console.log(item);
         }
       }
     };
@@ -603,16 +600,16 @@ function Header() {
             type: 'input',
             callback: function (ev) { return handleSetSearchTerm(ev.target.value); }
         }
-    })()), Element_1.Input({
+    })()), Element_1.Div()(Element_1.Input({
         type: 'range',
-        min: '0',
+        min: '1',
         max: '7',
         class: 'Range-Input',
         event: {
             type: 'input',
             callback: function (ev) { return handleSetRange(ev.target.value); },
         }
-    })()));
+    })(), Element_1.P()('1 ⏐ 3 ⏐ 5 ⏐ 7'))));
 }
 exports.default = Header;
 
@@ -752,8 +749,14 @@ __webpack_require__(17);
 function SiteCard(_a) {
     var sites = _a.sites;
     var dispatch = Store_1.useDispatch();
+    var searchTerm = Store_1.useSelector(function (state) { return state.searchTerm; });
     var removedUrls = Store_1.useSelector(function (state) { return state.removedUrls; });
     var origin = sites[0].origin.replace(/(^\w+:|^)\/\//, '');
+    var tempOrigin = '';
+    if (origin.includes(searchTerm)) {
+        var regex = new RegExp(searchTerm);
+        tempOrigin = origin.replace(regex, "<i>" + searchTerm + "</i>");
+    }
     var handleSetCurrentPage = function (val) {
         dispatch(store_1.setCurrentPage(val));
     };
@@ -766,30 +769,39 @@ function SiteCard(_a) {
             disposition: 'NEW_TAB',
         }, function () { });
     };
-    return Element_1.render(Element_1.Div({ class: 'SiteCard-Wrapper' })(Element_1.Button({
+    return Element_1.render(Element_1.Div({ class: 'SiteCard-Wrapper' })(Element_1.Div()(Element_1.Button({
         class: '.Close-Button',
         event: {
             type: 'click',
             callback: function () { return handleSetRemoveUrls(); },
         }
-    })('X'), Element_1.Img({
-        src: "https://www.google.com/s2/favicons?domain=" + origin
-    })(), Element_1.H1({
+    })('✄')), Element_1.H1({
         event: {
             type: 'click',
             callback: function (ev) { return handleSetCurrentPage(ev.target.textContent); },
         }
-    })(origin), Element_1.Input({
+    })(tempOrigin), Element_1.Input({
+        placeholder: origin + " \uC5D0\uC11C \uAC80\uC0C9",
         event: {
             type: 'change',
             callback: function (ev) { return handleSearchInSite(ev.target.value); },
         }
     })(), Element_1.Ul().apply(void 0, sites.map(function (site) {
-        return Element_1.Li()(Element_1.A({
+        var tempTitle = '';
+        if (site.title.includes(searchTerm)) {
+            var regex = new RegExp(searchTerm);
+            tempTitle = site.title.replace(regex, "<i>" + searchTerm + "</i>");
+        }
+        else {
+            tempTitle = site.title;
+        }
+        return Element_1.Li()(Element_1.Img({
+            src: "chrome://favicon/https://" + origin
+        })(), Element_1.A({
             href: site.url,
             target: '_blank',
             title: site.url,
-        })(site.title));
+        })(tempTitle));
     }))));
 }
 function Contents(_a) {
@@ -835,14 +847,15 @@ function LikedPage(_a) {
                     return item;
                 }
             });
-            console.log(likedItems);
             chrome.storage.sync.set({
                 likedItems: likedItems
-            }, function () { });
+                // eslint-disable-next-line @typescript-eslint/no-empty-function
+            });
         });
     };
     return Element_1.render(Element_1.Div({ class: 'DetailContents-Wrapper' })(Element_1.H1()('Liked'), Element_1.Div()(Element_1.Ul().apply(void 0, likedItems.map(function (item) {
         return Element_1.Li()(Element_1.A({
+            style: "font-size: " + (item.count + 10) + "px;",
             href: item.url,
             target: '_blank',
             title: item.url,

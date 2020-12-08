@@ -7,8 +7,14 @@ import './Contents.scss';
 
 function SiteCard({ sites }: { sites: history[] }) {
   const dispatch = useDispatch();
+  const searchTerm = useSelector((state) => state.searchTerm);
   const removedUrls = useSelector((state) => state.removedUrls);
-  const origin = sites[0].origin.replace(/(^\w+:|^)\/\//, '');
+
+  let origin = sites[0].origin.replace(/(^\w+:|^)\/\//, '');
+  if (origin.includes(searchTerm)) {
+    const regex = new RegExp(searchTerm);
+    origin = origin.replace(regex, `<i>${searchTerm}</i>`);
+  }
 
   const handleSetCurrentPage = (val: string) => {
     dispatch(setCurrentPage(val));
@@ -52,12 +58,21 @@ function SiteCard({ sites }: { sites: history[] }) {
       })(),
       Ul()(
         ...sites.map((site) => {
+          let tempTitle = '';
+
+          if (site.title.includes(searchTerm)) {
+            const regex = new RegExp(searchTerm);
+            tempTitle = site.title.replace(regex, `<i>${searchTerm}</i>`);
+          } else {
+            tempTitle = site.title;
+          }
+
           return Li()(
             A({
               href: site.url,
               target: '_blank',
               title: site.url,
-            })(site.title)
+            })(tempTitle)
           );
         })
       )

@@ -4,7 +4,7 @@ export type render = (...children: renderChildren) => Element
 export function render(el: Element): render {
   return (function(...children: renderChildren): Element {
     if (typeof children[0] === 'string' || typeof children[0] === 'number') {
-      this.textContent = String(children[0]);
+      this.innerHTML = String(children[0]);
       return this;
     }
 

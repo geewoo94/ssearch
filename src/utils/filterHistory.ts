@@ -19,13 +19,10 @@ class Filter {
 
   filterBySearchTerm(searchTerm: string) {
     this.histories = this.histories.filter((history) => {
-      if (history.url.includes(searchTerm)) {
-        return true;
-      } else if (history.title.includes(searchTerm)) {
-        return true;
-      } else {
-        return false;
-      }
+      return (
+        history.url.includes(searchTerm) ||
+        history.title.includes(searchTerm)
+      );
     });
 
     return this;

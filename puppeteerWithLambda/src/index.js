@@ -32,6 +32,7 @@ module.exports.handler = async (event) => {
 
   try {
     await page.goto(url);
+    page.waitForTimeout(1000);
 
     const shot = await page.screenshot({
       encoding: 'base64'

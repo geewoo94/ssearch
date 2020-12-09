@@ -12,12 +12,18 @@ module.exports.handler = async (event) => {
   const page = await browser.newPage();
 
   const url = event.queryStringParameters && event.queryStringParameters.url;
+  const headers = {
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'OPTIONS,POST,GET'
+  };
 
   if (!url) {
     await browser.close();
 
     return {
       statusCode: 400,
+      headers,
       body: JSON.stringify({
         message: 'queryString url is required ex) url="https://example.com"'
       })
@@ -25,7 +31,7 @@ module.exports.handler = async (event) => {
   }
 
   try {
-  await page.goto(url);
+    await page.goto(url);
 
     const shot = await page.screenshot({
       encoding: 'base64'
@@ -34,6 +40,7 @@ module.exports.handler = async (event) => {
     await browser.close();
     return {
       statusCode: 200,
+      headers,
       body: JSON.stringify({
         base64: shot,
       })
@@ -43,6 +50,7 @@ module.exports.handler = async (event) => {
 
     return {
       statusCode: 400,
+      headers,
       body: JSON.stringify({
         error
       })

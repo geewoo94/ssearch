@@ -2,8 +2,11 @@ import { Button, Div, H1, Img, Input, Li, render, Ul, A } from '../_Factory/Elem
 import { useDispatch, useSelector } from '../_Factory/Store';
 
 import { history } from '../types';
-import { setCurrentPage, setRemovedUrls } from '../store';
+import { setCurrentPage, setPreviews, setRemovedUrls } from '../store';
 import './Contents.scss';
+import '../types/global.ts';
+
+const SCREENSHOT_URL = 'https://clm36vsh02.execute-api.ap-northeast-2.amazonaws.com/dev/start';
 
 function SiteCard({ sites }: { sites: history[] }) {
   const dispatch = useDispatch();
@@ -31,6 +34,41 @@ function SiteCard({ sites }: { sites: history[] }) {
       disposition: 'NEW_TAB',
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     }, () => {});
+  };
+
+  const popupScreenshot = async (inputUrl: string) => {
+    Toastify({
+      text: 'Saving...',
+      duration: 2000,
+      newWindow: true,
+      close: true,
+      gravity: 'top',
+      position: 'right',
+      backgroundColor: 'linear-gradient(to right, #00b09b, #96c93d)',
+      stopOnFocus: false,
+    }).showToast();
+
+    const url = `${SCREENSHOT_URL}?url=${inputUrl}`;
+    const result = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const { base64 } = await result.json();
+
+    const previews = useSelector((state) => state.previews);
+    dispatch(setPreviews([...previews, { url: inputUrl, base64 }]));
+
+    Toastify({
+      text: 'Saved!',
+      duration: 2000,
+      newWindow: true,
+      close: true,
+      gravity: 'top',
+      position: 'right',
+      backgroundColor: 'linear-gradient(to right, #f857a6, #ff5858)',
+      stopOnFocus: false,
+    }).showToast();
   };
 
   return render(
@@ -70,13 +108,19 @@ function SiteCard({ sites }: { sites: history[] }) {
 
           return Li()(
             Img({
+              event: {
+                type: 'click',
+                callback: () => popupScreenshot(site.url)
+              },
               src: chrome.runtime ? `chrome://favicon/https://${origin}` : './main-icon16.png'
             })(),
-            A({
-              href: site.url,
-              target: '_blank',
-              title: site.url,
-            })(tempTitle)
+            Div()(
+              A({
+                href: site.url,
+                target: '_blank',
+                title: site.url,
+              })(tempTitle)
+            )
           );
         })
       )

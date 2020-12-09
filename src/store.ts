@@ -9,6 +9,7 @@ import {
   SetRemovedUrls,
   SetHistories,
   SetLikedItems,
+  SetPreviews,
 } from './types/store-lib';
 
 const DEFAULT_RANGE = '7';
@@ -21,6 +22,7 @@ const initialState: InitialState = {
   currentPage: DEFAULT_PAGE,
   histories: [],
   likedItems: [],
+  previews: [],
 };
 
 export const setRange: SetRange = (payload) => (
@@ -40,6 +42,9 @@ export const setHistories: SetHistories = (payload) => (
 );
 export const setLikedItems: SetLikedItems = (payload) => (
   { type: TYPE.SET_LIKED_ITEMS, payload }
+);
+export const setPreviews: SetPreviews = (payload) => (
+  { type: TYPE.SET_PREVIEWS, payload }
 );
 
 const reducer = (state: State, { type, payload }: Action): State => {
@@ -78,6 +83,12 @@ const reducer = (state: State, { type, payload }: Action): State => {
       return {
         ...state,
         likedItems: payload,
+      };
+    }
+    case TYPE.SET_PREVIEWS: {
+      return {
+        ...state,
+        previews: payload,
       };
     }
   }

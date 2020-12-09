@@ -18,12 +18,14 @@
 
     h1 {
       font-size: 25px;
-      transition: all 0.5s;
+      transition: all 0.3s;
       cursor: pointer;
       display: inline-block;
+      margin-left: 40px;
+      margin-top: 10px;
 
       &:hover {
-        transform: scale(1.4);
+        transform: scale(1.08);
       }
     }
 
@@ -41,14 +43,38 @@
     li {
       width: 100%;
       padding: 0 5px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
       transition: all 0.3s;
       padding: 10px;
+      display: flex;
 
-      &:hover {
-        transform: translate(20px);
+      div {
+        display: inline-block;
+        width: 100%;
+        transition: all 0.3s;
+        display: inline-block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      &:hover div {
+        transform: translate(10px);
+      }
+
+      img {
+        display: inline-block;
+        transition: all 0.3s;
+        opacity: 0;
+        margin-top: 5px;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+
+      &:hover img {
+        height: 20px;
+        opacity: 1;
       }
     }
 

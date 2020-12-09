@@ -5,11 +5,13 @@ import { A, Div, H1, Li, render, Ul } from '../_Factory/Element';
 import DetailContents from '../Components/DetailContents';
 import MainPage from '../Components/MainPage';
 import LikedPage from '../Components/LikedPage';
+import PreviewPage from '../Components/PreviewPage';
 
 import { setHistories, setLikedItems } from '../store';
 import {
   MAIN_PAGE,
   LIKED_PAGE,
+  PREVIEW_PAGE,
 } from '../constants';
 import './PageContainer.scss';
 
@@ -44,6 +46,12 @@ function PageRouter(): render {
     return render(
       Div()(
         LikedPage({ likedItems })()
+      )
+    );
+  } else if (currentPage === PREVIEW_PAGE) {
+    return render(
+      Div()(
+        PreviewPage()()
       )
     );
   } else {

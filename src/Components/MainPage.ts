@@ -7,8 +7,6 @@ import { filterHistory } from '../utils/filterHistory';
 import { useEffect, useState } from '../_Factory/App';
 import { setScrollPage } from '../store';
 
-let hasScroll = false;
-
 function MainPage({ histories }: { histories: history[] }) {
   const {
     range,
@@ -17,17 +15,20 @@ function MainPage({ histories }: { histories: history[] }) {
     scrollPage,
   } = useSelector();
   const dispatch = useDispatch();
+  const [ hasScroll, setHasScroll ] = useState(false);
 
   useEffect(() => {
     if (hasScroll) return;
 
-    hasScroll = true;
+    setHasScroll(true);
 
     function addPage() {
-      if (
-        document.documentElement.scrollTop +
-        document.documentElement.clientHeight === document.documentElement.scrollHeight
-      ) {
+      const {
+        scrollTop,
+        clientHeight,
+        scrollHeight,
+      } = document.documentElement;
+      if ((scrollTop + clientHeight) === scrollHeight) {
         const scrollPage = useSelector((state) => state.scrollPage);
         dispatch(setScrollPage(scrollPage + 1));
       }

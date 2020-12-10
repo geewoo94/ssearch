@@ -18,10 +18,7 @@ function LikedPage({ likedItems }: { likedItems: history[] }) {
         }
       });
 
-      chrome.storage.sync.set({
-        likedItems
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      });
+      chrome.storage.sync.set({ likedItems });
     });
   };
 

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from '../_Factory/Store';
 
 import { history } from '../types';
 import { setCurrentPage, setPreviews, setRemovedUrls } from '../store';
+
 import './Contents.scss';
 import '../types/global.ts';
 
@@ -52,27 +53,40 @@ function SiteCard({ sites }: { sites: history[] }) {
       stopOnFocus: false,
     }).showToast();
 
-    const url = `${SCREENSHOT_URL}?url=${inputUrl}`;
-    const result = await fetch(url, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    const { base64 } = await result.json();
+    try {
+      const url = `${SCREENSHOT_URL}?url=${inputUrl}`;
+      const result = await fetch(url, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const { base64 } = await result.json();
 
-    const previews = useSelector((state) => state.previews);
-    dispatch(setPreviews([...previews, { url: inputUrl, base64 }]));
+      const previews = useSelector((state) => state.previews);
+      dispatch(setPreviews([...previews, { url: inputUrl, base64 }]));
 
-    Toastify({
-      text: 'Saved!',
-      duration: 2000,
-      newWindow: true,
-      close: true,
-      gravity: 'top',
-      position: 'right',
-      backgroundColor: 'linear-gradient(to right, #f857a6, #ff5858)',
-      stopOnFocus: false,
-    }).showToast();
+      Toastify({
+        text: 'Saved!',
+        duration: 2000,
+        newWindow: true,
+        close: true,
+        gravity: 'top',
+        position: 'right',
+        backgroundColor: 'linear-gradient(to right, #f857a6, #ff5858)',
+        stopOnFocus: false,
+      }).showToast();
+    } catch (err) {
+      Toastify({
+        text: 'Error occured... please tyy again',
+        duration: 2000,
+        newWindow: true,
+        close: true,
+        gravity: 'top',
+        position: 'right',
+        backgroundColor: 'linear-gradient(to right, #f857a6, #ff5858)',
+        stopOnFocus: false,
+      }).showToast();
+    }
   };
 
   return render(

@@ -6,6 +6,7 @@ import {
   setRemovedUrls,
   setSearchTerm,
   setCurrentPage,
+  setScrollPage,
 } from '../store';
 import {
   PAGES,
@@ -36,6 +37,7 @@ function Header(): render {
     dispatch(setSearchTerm(''));
     dispatch(setCurrentPage(DEFAULT_PAGE));
     dispatch(setRemovedUrls([]));
+    dispatch(setScrollPage(1));
   };
 
   return render(

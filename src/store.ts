@@ -10,6 +10,7 @@ import {
   SetHistories,
   SetLikedItems,
   SetPreviews,
+  SetScrollPage,
 } from './types/store-lib';
 
 const DEFAULT_RANGE = '7';
@@ -23,6 +24,7 @@ const initialState: InitialState = {
   histories: [],
   likedItems: [],
   previews: [],
+  scrollPage: 1,
 };
 
 export const setRange: SetRange = (payload) => (
@@ -45,6 +47,9 @@ export const setLikedItems: SetLikedItems = (payload) => (
 );
 export const setPreviews: SetPreviews = (payload) => (
   { type: TYPE.SET_PREVIEWS, payload }
+);
+export const setScrollPage: SetScrollPage = (payload) => (
+  { type: TYPE.SET_SCROLL_PAGE, payload }
 );
 
 const reducer = (state: State, { type, payload }: Action): State => {
@@ -89,6 +94,12 @@ const reducer = (state: State, { type, payload }: Action): State => {
       return {
         ...state,
         previews: payload,
+      };
+    }
+    case TYPE.SET_SCROLL_PAGE: {
+      return {
+        ...state,
+        scrollPage: payload,
       };
     }
   }

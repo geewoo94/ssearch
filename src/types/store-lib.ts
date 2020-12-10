@@ -5,6 +5,7 @@ export type currentPage = string;
 export type histories = chrome.history.HistoryItem[];
 export type likedItems = { title: string, url: string, count: number }[];
 export type previews = { url: string, base64: string }[];
+export type scrollPage = number;
 
 export interface InitialState {
   range?: range;
@@ -14,6 +15,7 @@ export interface InitialState {
   histories?: histories;
   likedItems?: likedItems;
   previews?: previews;
+  scrollPage?: scrollPage;
 }
 
 export enum TYPE {
@@ -24,6 +26,7 @@ export enum TYPE {
   'SET_HISTORIES',
   'SET_LIKED_ITEMS',
   'SET_PREVIEWS',
+  'SET_SCROLL_PAGE',
 }
 
 export enum NAV_MENU {
@@ -32,7 +35,7 @@ export enum NAV_MENU {
   'PREVIEWS',
 }
 
-export type payload = NAV_MENU | range | searchTerm | removedUrls | currentPage | histories | likedItems | previews;
+export type payload = NAV_MENU | range | searchTerm | removedUrls | currentPage | histories | likedItems | previews | scrollPage;
 export type Action = { type: TYPE, payload: payload };
 
 export type SetRange = (payload: string) => Action;
@@ -46,3 +49,4 @@ export type SetLikedItems = (payload: {
   count: number,
 }[]) => Action;
 export type SetPreviews = (payload: previews) => Action;
+export type SetScrollPage = (payload: scrollPage) => Action;

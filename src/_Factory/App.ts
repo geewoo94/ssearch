@@ -56,6 +56,7 @@ const initialApp = (function init() {
     if (hasNoDeps || hasChangedDeps) {
       hooks[currentHook] = depArray;
       callback();
+      App.render(rootComponent, rootElement);
     }
 
     currentHook++;

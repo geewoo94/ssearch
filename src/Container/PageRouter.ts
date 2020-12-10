@@ -1,6 +1,6 @@
 import { useEffect } from '../_Factory/App';
 import { useDispatch, useSelector } from '../_Factory/Store';
-import { A, Div, H1, Li, render, Ul } from '../_Factory/Element';
+import { Div, render } from '../_Factory/Element';
 
 import DetailContents from '../Components/DetailContents';
 import MainPage from '../Components/MainPage';

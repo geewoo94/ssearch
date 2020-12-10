@@ -24,6 +24,7 @@ function SiteCard({ sites }: { sites: history[] }) {
   }
 
   const handleSetCurrentPage = (val: string) => {
+    window.scrollTo({ top: 0 });
     dispatch(setCurrentPage(val));
   };
 

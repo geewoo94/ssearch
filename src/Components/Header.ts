@@ -31,6 +31,7 @@ function Header(): render {
   };
 
   const handleReset = () => {
+    window.scrollTo({ top:0 });
     dispatch(setRange(DEFAULT_RANGE));
     dispatch(setSearchTerm(''));
     dispatch(setCurrentPage(DEFAULT_PAGE));

@@ -18,7 +18,6 @@ body {
   padding: 0;
   width: 100vw;
   height: 100vh;
-  overflow-x: hidden;
 }
 
 * {
@@ -181,5 +180,17 @@ i {
       top: 0;
       left: 8%;
     }
+  }
+}
+
+.sticky > div {
+  background: rgb(77, 77, 77);
+  height: 90px;
+  transition: all 1s;
+  color: white;
+  border-bottom: none;
+
+  .Search-Input {
+    display: none;
   }
 }

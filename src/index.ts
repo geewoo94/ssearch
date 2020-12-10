@@ -7,6 +7,7 @@ import store from './store';
 import Header from './Components/Header';
 import PageRouter from './Container/PageRouter';
 
+import './utils/stickyHeader';
 import './style/global.scss';
 import './index.scss';
 

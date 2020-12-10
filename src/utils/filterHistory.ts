@@ -39,6 +39,21 @@ class Filter {
     return this;
   }
 
+  filterDuplicateUrl() {
+    const set = new Set();
+
+    this.histories = this.histories.filter((history) => {
+      if (set.has(history.title)) {
+        return false;
+      } else {
+        set.add(history.title);
+        return true;
+      }
+    });
+
+    return this;
+  }
+
   sortByTime() {
     return this;
   }
@@ -92,6 +107,7 @@ function filterHistory(
       .filterByRange(range)
       .filterBySearchTerm(searchTerm)
       .filterByRemovedUrls(removedUrls)
+      .filterDuplicateUrl()
       .sortByTime()
       .nomalize()
   );

@@ -15,9 +15,12 @@ function SiteCard({ sites }: { sites: history[] }) {
 
   const origin = sites[0].origin.replace(/(^\w+:|^)\/\//, '');
   let tempOrigin = '';
-  if (origin.includes(searchTerm)) {
+
+  if (origin.toLowerCase().includes(searchTerm.toLowerCase())) {
     const regex = new RegExp(searchTerm);
     tempOrigin = origin.replace(regex, `<i>${searchTerm}</i>`);
+  } else {
+    tempOrigin = origin;
   }
 
   const handleSetCurrentPage = (val: string) => {
@@ -99,9 +102,9 @@ function SiteCard({ sites }: { sites: history[] }) {
         ...sites.map((site) => {
           let tempTitle = '';
 
-          if (site.title.includes(searchTerm)) {
-            const regex = new RegExp(searchTerm);
-            tempTitle = site.title.replace(regex, `<i>${searchTerm}</i>`);
+          if (site.title.toLowerCase().includes(searchTerm.toLowerCase())) {
+            const regex = new RegExp(searchTerm.toLowerCase());
+            tempTitle = site.title.toLowerCase().replace(regex, `<i>${searchTerm}</i>`);
           } else {
             tempTitle = site.title;
           }

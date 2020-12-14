@@ -26,6 +26,7 @@
     "@typescript-eslint/eslint-plugin": "^4.9.0",
     "@typescript-eslint/parser": "^4.9.0",
     "@types/lodash": "^4.14.165",
+    "@types/chrome": "0.0.127",
     "@types/toastify-js": "^1.9.1",
     "@webpack-cli/init": "^1.0.3",
     "css-loader": "^5.0.1",

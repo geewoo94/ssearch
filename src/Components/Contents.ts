@@ -42,51 +42,51 @@ function SiteCard({ sites }: { sites: history[] }) {
   };
 
   const popupScreenshot = async (inputUrl: string) => {
-    Toastify({
-      text: 'Saving...',
-      duration: 2000,
-      newWindow: true,
-      close: true,
-      gravity: 'top',
-      position: 'right',
-      backgroundColor: 'linear-gradient(to right, #00b09b, #96c93d)',
-      stopOnFocus: false,
-    }).showToast();
+    // Toastify({
+    //   text: 'Saving...',
+    //   duration: 2000,
+    //   newWindow: true,
+    //   close: true,
+    //   gravity: 'top',
+    //   position: 'right',
+    //   backgroundColor: 'linear-gradient(to right, #00b09b, #96c93d)',
+    //   stopOnFocus: false,
+    // }).showToast();
 
-    try {
-      const url = `${SCREENSHOT_URL}?url=${inputUrl}`;
-      const result = await fetch(url, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      const { base64 } = await result.json();
+    // try {
+    //   const url = `${SCREENSHOT_URL}?url=${inputUrl}`;
+    //   const result = await fetch(url, {
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //   });
+    //   const { base64 } = await result.json();
 
-      const previews = useSelector((state) => state.previews);
-      dispatch(setPreviews([...previews, { url: inputUrl, base64 }]));
+    //   const previews = useSelector((state) => state.previews);
+    //   dispatch(setPreviews([...previews, { url: inputUrl, base64 }]));
 
-      Toastify({
-        text: 'Saved!',
-        duration: 2000,
-        newWindow: true,
-        close: true,
-        gravity: 'top',
-        position: 'right',
-        backgroundColor: 'linear-gradient(to right, #f857a6, #ff5858)',
-        stopOnFocus: false,
-      }).showToast();
-    } catch (err) {
-      Toastify({
-        text: 'Error occured... please tyy again',
-        duration: 2000,
-        newWindow: true,
-        close: true,
-        gravity: 'top',
-        position: 'right',
-        backgroundColor: 'linear-gradient(to right, #f857a6, #ff5858)',
-        stopOnFocus: false,
-      }).showToast();
-    }
+    //   Toastify({
+    //     text: 'Saved!',
+    //     duration: 2000,
+    //     newWindow: true,
+    //     close: true,
+    //     gravity: 'top',
+    //     position: 'right',
+    //     backgroundColor: 'linear-gradient(to right, #f857a6, #ff5858)',
+    //     stopOnFocus: false,
+    //   }).showToast();
+    // } catch (err) {
+    //   Toastify({
+    //     text: 'Error occured... please tyy again',
+    //     duration: 2000,
+    //     newWindow: true,
+    //     close: true,
+    //     gravity: 'top',
+    //     position: 'right',
+    //     backgroundColor: 'linear-gradient(to right, #f857a6, #ff5858)',
+    //     stopOnFocus: false,
+    //   }).showToast();
+    // }
   };
 
   return render(

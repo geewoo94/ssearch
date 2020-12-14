@@ -1,1 +1,1 @@
-declare const Toastify: any;
+// declare const Toastify: any;

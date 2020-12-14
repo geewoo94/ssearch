@@ -111,6 +111,7 @@
         font-size: 20px;
         font-weight: bold;
         color: $blue;
+        overflow: visible;
 
         &:hover {
           transform: scale(1.2);

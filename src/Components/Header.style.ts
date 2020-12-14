@@ -1,4 +1,4 @@
-import { $headerHeight, $white } from '../style/theme';
+import { $blue, $headerHeight, $red } from '../style/theme';
 
 const style = `
   .Header-Wrapper {
@@ -10,22 +10,30 @@ const style = `
     display: flex;
     align-items: center;
     justify-content: space-around;
-    background: ${$white};
-    border-bottom: 1px solid black;
+    border-image-width: 0 0 0 20px;
     z-index: 2;
+
+    box-sizing: border-box;
+    border-style: solid;
+    border-image: linear-gradient(to right, #01c9ca 0%, #3886FF 100%);
+    border-image-slice: 1;
+    background: #f7f7f7;
+    border-image-width: 0 0 4px 0px;
 
     nav ul {
       display: flex;
       padding: 0;
 
       li {
-        font-size: 16px;
+        font-size: 20px;
         margin: 20px;
         cursor: pointer;
         transition: all 0.3s;
         list-style-type: none;
+        color: ${$blue};
 
         &:hover {
+          color: ${$red};
           transform: scale(1.1);
         }
       }
@@ -54,7 +62,7 @@ const style = `
         border-radius: 20px;
         color: #292929;
         border: none;
-        border: 1px solid #c4c4c4;
+        border: 2px solid #c4c4c4;
         padding: 0 20px;
         outline: none;
       }
@@ -68,10 +76,13 @@ const style = `
       }
 
       p {
+        margin-top: 0;
         position: absolute;
-        letter-spacing: 9.2px;
+        letter-spacing: 9.1px;
         left: 7px;
         width: 200px;
+        color: gray;
+        font-weight: bold;
       }
     }
   }

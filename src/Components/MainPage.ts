@@ -1,51 +1,249 @@
-import { render } from '../_Factory/Element';
-import { useDispatch, useSelector } from '../_Factory/Store';
+import simpleShadowDom from '../_Factory/simpleShadowDom';
+import store, {
+  SEARCH_TERM,
+  RANGE_VALUE,
+  PREVIEWS,
+  HISTORIES,
+  REMOVED_URLS,
+  CURRENT_PAGE,
+  PAGE_COUNT,
+  PAGES,
+} from '../_Factory/shadowStore';
+import { throttle } from 'lodash';
+import * as Toastify from 'toastify-js';
 
-import Contents from './Contents';
 import { history } from '../types';
 import { filterHistory } from '../utils/filterHistory';
-import { useEffect, useState } from '../_Factory/App';
-import { setScrollPage } from '../store';
+import style from './MainPage.style';
 
-function MainPage({ histories }: { histories: history[] }) {
-  const {
-    range,
-    searchTerm,
-    removedUrls,
-    scrollPage,
-  } = useSelector();
-  const dispatch = useDispatch();
-  const [ hasScroll, setHasScroll ] = useState(false);
+const SiteCard = (sites: history[]) => {
+  const origin = sites[0].origin.replace(/(^\w+:|^)\/\//, '');
+  const filteredOrigin = origin.replace(/www./, '').replace(/.com/, '');
 
-  useEffect(() => {
-    if (hasScroll) return;
+  return `
+    <div class='SiteCard-Wrapper'>
+      <div class='Close-Button-Wrapper'>
+        <button class='Close-Button' data-origin=${origin}>✄</button>
+      </div>
+      <h1 class='Origin' data-origin=${origin}>${filteredOrigin}</h1>
+      <input placeholder='${origin} 에서 검색' data-origin=${origin}></input>
+      <ul>
+        ${sites.map((site) => {
+          return `
+            <li>
+              <div>
+                <img src=${chrome.runtime ? `chrome://favicon/https://${origin}` : './main-icon16.png'} class='Image-Save' data-url=${site.url}></img>
+                <p>10분 전</p>
+              </div>
+              <div class='Anchor-Wrapper'>
+                <a href=${site.url} target='_blank' title=${site.url}>${site.title}</a>
+              </div>
+            </li>
+          `;
+        }).join('')}
+      </ul>
+    </div>`;
+};
 
-    setHasScroll(true);
+type Props = { histories: history[][], isCurrentPage: boolean, pageCount: number };
 
-    function addPage() {
+const template = ({ histories, isCurrentPage, pageCount }: Props) => {
+  const cardCount = pageCount * 6;
+
+  return (`
+    <div class='Contents-Wrapper ${isCurrentPage ? '' : 'hide'}'>
+      ${histories.slice(0, cardCount).map((history) => {
+        return SiteCard(history.slice(0, 10));
+      }).join('')}
+    </div>
+  `);
+};
+
+class MainPage extends simpleShadowDom {
+  _isTriggered = false;
+
+  constructor() {
+    super();
+
+    const WEEK_BY_MILLISECOND = (7 * 24 * 3600 * 1000);
+    const query = {
+      text: '',
+      maxResults: 0,
+      startTime: (new Date()).getTime() - WEEK_BY_MILLISECOND,
+      endTime: (new Date()).getTime()
+    };
+
+    chrome.history.search(query, (history) => {
+      store.setItem(HISTORIES, history);
+    });
+
+    this.setTemplate(template);
+    this.setStyle(style);
+    this.setState({ histories: [], isCurrentPage: true, pageCount: 1 });
+    this.render();
+  }
+
+  async contentClickEvent(e: Event) {
+    if ((e.target as HTMLButtonElement).classList.contains('Close-Button')) {
+      const origin = (e.target as HTMLButtonElement).dataset.origin;
+      const removedUrls = store.getItem(REMOVED_URLS);
+      store.setItem(REMOVED_URLS, [...removedUrls, origin]);
+      return;
+    }
+
+    if ((e.target as HTMLButtonElement).classList.contains('Image-Save')) {
+      const SCREENSHOT_URL = 'https://clm36vsh02.execute-api.ap-northeast-2.amazonaws.com/dev/start';
+      const inputUrl = (e.target as HTMLImageElement).dataset.url;
+
+      Toastify({
+        text: 'Saving...',
+        duration: 2000,
+        newWindow: true,
+        close: true,
+        gravity: 'top',
+        position: 'right',
+        backgroundColor: 'linear-gradient(to right, #00b09b, #96c93d)',
+        stopOnFocus: false,
+      }).showToast();
+
+      try {
+        const url = `${SCREENSHOT_URL}?url=${inputUrl}`;
+        const result = await fetch(url, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        const { base64 } = await result.json();
+
+        const previews = store.getItem(PREVIEWS);
+        store.setItem(PREVIEWS, [...previews, { url: inputUrl, base64 }]);
+
+        Toastify({
+          text: 'Saved!',
+          duration: 2000,
+          newWindow: true,
+          close: true,
+          gravity: 'top',
+          position: 'right',
+          backgroundColor: 'linear-gradient(to right, #f857a6, #ff5858)',
+          stopOnFocus: false,
+        }).showToast();
+      } catch (err) {
+        Toastify({
+          text: 'Error occured... please tyy again',
+          duration: 2000,
+          newWindow: true,
+          close: true,
+          gravity: 'top',
+          position: 'right',
+          backgroundColor: 'linear-gradient(to right, #f857a6, #ff5858)',
+          stopOnFocus: false,
+        }).showToast();
+      }
+    }
+
+    if ((e.target as HTMLHeadingElement).classList.contains('Origin')) {
+      const origin = (e.target as HTMLHeadingElement).dataset.origin;
+      store.setItem(CURRENT_PAGE, origin);
+      window.scrollTo({ top: 0 });
+    }
+  }
+
+  filter(histories: history[]) {
+    const searchTerm = store.getItem(SEARCH_TERM);
+    const range = store.getItem(RANGE_VALUE);
+    const removedUrls = store.getItem(REMOVED_URLS);
+
+    const filteredHistories = filterHistory(histories, {
+      range,
+      searchTerm,
+      removedUrls,
+    });
+
+    return filteredHistories;
+  }
+
+  contentKeydownEvent(e: KeyboardEvent) {
+    if (e.key === 'Enter' && !this._isTriggered) {
+      const target = e.target as HTMLInputElement;
+      const origin = target.dataset.origin;
+
+      chrome.search.query({
+        text: `${target.value} site:${origin}`,
+        disposition: 'NEW_TAB',
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+      }, () => { });
+
+      this._isTriggered = true;
+    }
+  }
+
+  contentKeyupEvent(e: KeyboardEvent) {
+    if (e.key === 'Enter') {
+      this._isTriggered = false;
+    }
+  }
+
+  connectedCallback() {
+    store.subscribe(HISTORIES, (histories: history[]) => {
+      const filteredHistories = this.filter(histories);
+      this.setState((prev: Props) => ({...prev, histories: filteredHistories}));
+      this.render();
+    });
+
+    store.subscribe(REMOVED_URLS, () => {
+      const histories = store.getItem(HISTORIES);
+      const filteredHistories = this.filter(histories);
+      this.setState((prev: Props) => ({...prev, histories: filteredHistories}));
+      this.render();
+    });
+
+    store.subscribe(SEARCH_TERM, () => {
+      const histories = store.getItem(HISTORIES);
+      const filteredHistories = this.filter(histories);
+      this.setState((prev: Props) => ({...prev, histories: filteredHistories}));
+      this.render();
+    });
+
+    store.subscribe(RANGE_VALUE, () => {
+      const histories = store.getItem(HISTORIES);
+      const filteredHistories = this.filter(histories);
+      this.setState((prev: Props) => ({...prev, histories: filteredHistories}));
+      this.render();
+    });
+
+    store.subscribe(CURRENT_PAGE, (page) => {
+      if(page === PAGES.main) {
+        this.setState((prev: Props) => ({...prev, isCurrentPage: true}));
+        this.render();
+      } else {
+        this.setState((prev: Props) => ({ ...prev, isCurrentPage: false }));
+        this.render();
+      }
+    });
+
+    this.shadowRoot.addEventListener('click', this.contentClickEvent.bind(this));
+    this.shadowRoot.addEventListener('keydown', this.contentKeydownEvent.bind(this));
+    this.shadowRoot.addEventListener('keyup', this.contentKeyupEvent.bind(this));
+
+    const throttleAddPage = throttle(() => {
       const {
         scrollTop,
         clientHeight,
         scrollHeight,
       } = document.documentElement;
-      if ((scrollTop + clientHeight) === scrollHeight) {
-        const scrollPage = useSelector((state) => state.scrollPage);
-        dispatch(setScrollPage(scrollPage + 1));
+      const currentPage = store.getItem(CURRENT_PAGE);
+      if ((scrollTop + clientHeight) === scrollHeight && currentPage === PAGES.main) {
+        const pageCount = store.getItem(PAGE_COUNT) + 1;
+        store.setItem(PAGE_COUNT, pageCount);
+
+        this.setState((prev: Props) => ({...prev, pageCount }));
+        this.render();
       }
-    }
+    }, 1000, { leading: false });
 
-    window.addEventListener('scroll', addPage);
-  }, []);
-
-  const filteredHistories = filterHistory(histories, {
-    range: Number(range),
-    searchTerm,
-    removedUrls,
-  });
-
-  return render(
-    Contents({ histories: filteredHistories.slice(0, 4 * scrollPage) })(),
-  );
+    window.addEventListener('scroll', throttleAddPage);
+  }
 }
 
 export default MainPage;

@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ 	return __webpack_require__(__webpack_require__.s = 7);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -17246,176 +17246,152 @@
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.RANGE_VALUE = exports.SEARCH_TERM = void 0;
-const ShadowComponent_js_1 = __webpack_require__(2);
-const constants_1 = __webpack_require__(19);
-__webpack_require__(20);
-const ShadowHeader_style_1 = __webpack_require__(21);
-// function Header(): render {
-//   const navMenu = PAGES;
-//   const dispatch = useDispatch();
-//   const handleSetSearchTerm = (val: string) => {
-//     dispatch(setSearchTerm(val));
-//   };
-//   const handleSetRange = (val: string) => {
-//     dispatch(setRange(val));
-//   };
-//   const handleSetCurrentPage = (val: string) => {
-//     dispatch(setCurrentPage(val));
-//   };
-//   const handleReset = () => {
-//     window.scrollTo({ top: 0 });
-//     dispatch(setRange(DEFAULT_RANGE));
-//     dispatch(setSearchTerm(''));
-//     dispatch(setCurrentPage(DEFAULT_PAGE));
-//     dispatch(setRemovedUrls([]));
-//     dispatch(setScrollPage(1));
-//   };
-//   return render(
-//     Div({ class: 'Header-Wrapper' })(
-//       Nav()(
-//         Ul()(
-//           ...navMenu.map((currentPage) => Li({
-//             event: {
-//               type: 'click',
-//               callback: (ev: Event) => handleSetCurrentPage((ev.target as HTMLElement).textContent),
-//             }
-//           })(currentPage))
-//         )
-//       ),
-//       Div({ class: 'Header-Column' })(
-//         Img({
-//           src: './main-icon-128.png',
-//           event: {
-//             type: 'click',
-//             callback: handleReset,
-//           }
-//         })(),
-//         Input({
-//           class: 'Search-Input',
-//           placeholder: '검색을 껌색하세요!',
-//           event: {
-//             type: 'input',
-//             callback: (ev: Event) => handleSetSearchTerm((ev.target as HTMLInputElement).value)
-//           }
-//         })(),
-//       ),
-//       Div()(
-//         Input({
-//           type: 'range',
-//           min: '1',
-//           max: '7',
-//           class: 'Range-Input',
-//           event: {
-//             type: 'input',
-//             callback: (ev: Event) => handleSetRange((ev.target as HTMLInputElement).value),
-//           }
-//         })(),
-//         P()('1 ⏐ 3 ⏐ 5 ⏐ 7'),
-//       )
-//     )
-//   );
-// }
-const template = () => {
-    const navMenu = constants_1.PAGES;
-    return (`
-    <div class='Header-Wrapper'>
-      <nav>
-        <ul>
-          ${navMenu.reduce((acc, menu) => acc + `<li>${menu}</li>`, '')}
-        </ul>
-      </nav>
-      <div class='Header-column'>
-        <img src='./main-icon-128.png' />
-        <input class='Search-Input' placeholder='검색을 껌색하세요!'></input>
-      </div>
-      <div>
-        <input type='range' min='1' max='7' class='Range-Input'></input>
-        <p>1 ⏐ 3 ⏐ 5 ⏐ 7</p>
-      </div>
-    </div>
-  `);
-};
-exports.SEARCH_TERM = 'header/searchTerm';
-exports.RANGE_VALUE = 'header/rangeValue';
-class Header extends ShadowComponent_js_1.default {
-    constructor() {
-        super();
-        this.setState(exports.SEARCH_TERM, '');
-        this.setState(exports.RANGE_VALUE, '7');
-        this.style(ShadowHeader_style_1.default);
-        this.render(template, null);
-    }
-    setSearchTerm(ev) {
-        this.setState(exports.SEARCH_TERM, ev.target.value);
-    }
-    setRangeValue(ev) {
-        this.setState(exports.RANGE_VALUE, ev.target.value);
-    }
-    connectedCallback() {
-        this.shadowRoot.querySelector('.Search-Input').addEventListener('input', this.setSearchTerm.bind(this));
-        this.shadowRoot.querySelector('.Range-Input').addEventListener('input', this.setSearchTerm.bind(this));
-    }
-    disconnectedCallback() {
-        this.shadowRoot.querySelector('.Search-Input').removeEventListener('input', this.setSearchTerm);
-        this.shadowRoot.querySelector('.Range-Input').removeEventListener('input', this.setSearchTerm);
-    }
-}
-exports.default = Header;
-//TODO: eventListener 개선
-//global style 어떡할지 정하기.
-
-
-/***/ }),
-/* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return TinyComponent; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createTemplate", function() { return createTemplate; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createRoot", function() { return createRoot; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "store", function() { return store; });
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var css_flatten__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
+/* harmony import */ var css_flatten__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6);
 /* harmony import */ var css_flatten__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(css_flatten__WEBPACK_IMPORTED_MODULE_1__);
 
 
 
-const outState = {};
+
+//utils
+const minify = (css) =>
+  css.trim().replace(/\s*(;|,|{|})\s*/g, '$1');
+
+const reduce = (fn, acc, iter) => {
+  if (!iter) {
+    iter = acc[Symbol.iterator]();
+    acc = iter.next().value;
+  }
+
+  for (const a of iter) {
+    acc = fn(acc, a);
+  }
+
+  return acc;
+};
+
+const go = (arg, ...fn) => reduce((acc, fn) => fn(acc), arg, fn);
+
+const curry = (fn) => (...arg) =>
+  (arg.length >= fn.length) ? fn(...arg) : curry(fn.bind(null, ...arg));
+
+const setInnerHTML = curry((el, template) =>
+  ((el.innerHTML = template), el));
+
+const setTextContent = curry((el, text) =>
+  ((el.textContent = text), el));
+
+const createTemplate = curry((template, state) =>
+  (typeof template === 'function') ? template(state) : template);
+
+const makeEl = (template) =>
+  setInnerHTML(document.createElement('div'), template).children[0];
+
+const createEl = (type) =>
+  document.createElement(type);
+
+const append = curry((parent, child) =>
+  parent.appendChild(child));
+
+const remove = curry((parent, child) =>
+  parent.removeChild(child));
+
+const each = curry((fn, iter) => {
+  for (const a of iter) {
+    fn(a);
+  }
+});
+
+const matchTagName = (markup) => {
+  const pattern = /<([^\s>]+)(\s|>)+/;
+  return markup.match(pattern)[1];
+};
+
+//utils
+
+const state = {};
 const subscriber = {};
 
 class TinyComponent extends HTMLElement {
-  constructor() {
-    super();
-    this.attachShadow({ mode: 'open' });
-  }
-
-  style(nestedTemplate) {
-    const flat = css_flatten__WEBPACK_IMPORTED_MODULE_1___default()(nestedTemplate);
-    const styleTag = document.createElement('style');
-
-    styleTag.textContent = flat;
-
-    this.shadowRoot.appendChild(styleTag);
-  }
-
-  setState(path, value) {
-    Object(lodash__WEBPACK_IMPORTED_MODULE_0__["set"])(outState, path, value);
-    if (!Object(lodash__WEBPACK_IMPORTED_MODULE_0__["get"])(subscriber, path)) Object(lodash__WEBPACK_IMPORTED_MODULE_0__["set"])(subscriber, path, []);
-    const subscribers = Object(lodash__WEBPACK_IMPORTED_MODULE_0__["get"])(subscriber, path);
-    for (const subscriber of subscribers) {
-      subscriber(value);
+  static render(root, shadowClass, tagName) {
+    if (Object(lodash__WEBPACK_IMPORTED_MODULE_0__["startsWith"])(tagName, '<')) {
+      go(makeEl(tagName),
+        append(root));
+      customElements.define(matchTagName(tagName), shadowClass);
+    } else {
+      go(createEl(tagName),
+        append(root));
+      customElements.define(tagName, shadowClass);
     }
   }
 
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this._template = null;
+    this._el = null;
+    this._styleEl = null;
+    this._state = null;
+    this._isRendered = false;
+  }
+
+  setTemplate(template) {
+    this._template = template;
+  }
+
+  _setStyleEl(style) {
+    this._styleEl = style;
+  }
+
+  setStyle(css) {
+    go(css,
+      css_flatten__WEBPACK_IMPORTED_MODULE_1___default.a,
+      minify,
+      setTextContent(createEl('style')),
+      append(this.shadowRoot));
+  }
+
+  setState(state) {
+    this._state = (typeof state === 'function') ? state(this._state) : state;
+    if (this._state === undefined) throw Error('Can not set undefined');
+  }
+
+  _setEl(el) {
+    this._el = el;
+    this._isRendered = true;
+  }
+
+  _render() {
+    go(createTemplate(this._template, this._state),
+      makeEl,
+      append(this.shadowRoot),
+      this._setEl.bind(this));
+  }
+
+  render() {
+    (this._isRendered) ?
+      (remove(this.shadowRoot, this._el), this._render.bind(this)()) :
+      this._render.bind(this)();
+  }
+
+  // setState(path, value) {
+  //   set(state, path, value);
+  //   if (!get(subscriber, path)) set(subscriber, path, []);
+  //   const subscribers = get(subscriber, path);
+  //   for (const subscriber of subscribers) {
+  //     subscriber(value);
+  //   }
+  // }
+
   getState(path) {
-    return Object(lodash__WEBPACK_IMPORTED_MODULE_0__["get"])(outState, path);
+    return Object(lodash__WEBPACK_IMPORTED_MODULE_0__["get"])(state, path);
   }
 
   subscribe(path, callback) {
@@ -17432,38 +17408,140 @@ class TinyComponent extends HTMLElement {
     this.shadowRoot.appendChild(content);
   }
 
-  render(template, props) {
-    if (!this.template) this.template = template;
 
-    const { content } = createTemplate(template, props);
-    this.shadowRoot.appendChild(content);
-  }
+
+  // render(template, props, className, tagName) {
+  //   if (!this.template) this.template = template;
+
+  //   const { content } = createTemplate(template, props);
+  //   const children = this.shadowRoot.children;
+  //   let style = document.createElement('style');
+
+  //   for (const child of children) {
+  //     if (child.tagName === 'STYLE') {
+  //       style = child;
+  //     }
+  //   }
+
+  //   this.shadowRoot.innerHTML = '';
+  //   this.shadowRoot.appendChild(style);
+  //   this.shadowRoot.appendChild(content);
+  // }
 }
 
-const createTemplate = (template, props) => {
-  const temp = document.createElement('template');
-  if (typeof template === 'string') {
-    temp.innerHTML = template;
-  } else {
-    temp.innerHTML = template(props);
-  }
+//store 구조 짜기
+//이제 상태와 컴포넌트가 완전히 분리됐음
 
-  return { template, content: temp.content };
-};
+const store = (() => {
+  const _store = {};
+  const _subscribers = {};
 
-const createRoot = (tagName, parent = document.getElementById('root')) => {
-  const node = document.createElement(tagName);
-  parent.appendChild(node);
+  const getState = (path) => Object(lodash__WEBPACK_IMPORTED_MODULE_0__["get"])(_store, path);
+
+  const setState = (path, value) =>{
+    Object(lodash__WEBPACK_IMPORTED_MODULE_0__["set"])(_store, path, value);
+    if (!_subscribers[path]) _subscribers[path] = new Set();
+    each((subscriber) => subscriber(value), _subscribers[path]);
+  };
+
+  const subscribe = (path, callback) =>
+    (_subscribers[path] || new Set()).add(callback);
 
   return {
-    parent,
-    node,
+    getState,
+    setState,
+    subscribe,
   };
+})();
+
+//go 함수 테스트 하기
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.initialSetting = exports.PREVIEWS = exports.PAGE_COUNT = exports.LIKED = exports.REMOVED_URLS = exports.HISTORIES = exports.CURRENT_PAGE = exports.RANGE_VALUE = exports.SEARCH_TERM = exports.PAGES = void 0;
+const lodash_1 = __webpack_require__(0);
+const curry = (fn) => (...arg) => (arg.length >= fn.length) ? fn(...arg) : curry(fn.bind(null, ...arg));
+const each = curry((fn, iter) => {
+    for (const a of iter) {
+        fn(a);
+    }
+});
+const store = (() => {
+    const _store = {};
+    const _subscribers = {};
+    const getItem = (path) => lodash_1.get(_store, path);
+    const setItem = (path, value) => {
+        lodash_1.set(_store, path, value);
+        if (!_subscribers[path])
+            _subscribers[path] = new Set();
+        each((subscriber) => subscriber(value), _subscribers[path]);
+    };
+    const subscribe = (path, callback) => (_subscribers[path] || new Set()).add(callback);
+    return {
+        getItem,
+        setItem,
+        subscribe,
+    };
+})();
+exports.PAGES = {
+    main: 'Main',
+    liked: 'Liked',
+    previews: 'Previews',
 };
+exports.SEARCH_TERM = 'header/searchTerm';
+exports.RANGE_VALUE = 'header/rangeValue';
+exports.CURRENT_PAGE = 'header/currentPage';
+exports.HISTORIES = 'mainPage/histories';
+exports.REMOVED_URLS = 'mainPage/removedUrls';
+exports.LIKED = 'mainPage/liked';
+exports.PAGE_COUNT = 'mainPage/pageCount';
+exports.PREVIEWS = 'previewPage/previews';
+const initialSetting = () => {
+    store.setItem(exports.SEARCH_TERM, '');
+    store.setItem(exports.RANGE_VALUE, '7');
+    store.setItem(exports.CURRENT_PAGE, exports.PAGES.main);
+    store.setItem(exports.REMOVED_URLS, []);
+    store.setItem(exports.PAGE_COUNT, 1);
+};
+exports.initialSetting = initialSetting;
+store.setItem(exports.SEARCH_TERM, '');
+store.setItem(exports.RANGE_VALUE, '7');
+store.setItem(exports.CURRENT_PAGE, exports.PAGES.main);
+store.setItem(exports.HISTORIES, []);
+store.setItem(exports.REMOVED_URLS, []);
+store.setItem(exports.LIKED, []);
+store.setItem(exports.PAGE_COUNT, 1);
+store.setItem(exports.PREVIEWS, []);
+exports.default = store;
 
 
 /***/ }),
 /* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.$headerHeight = exports.$navWidth = exports.$gray = exports.$green = exports.$yellow = exports.$red = exports.$white = exports.$darkBlue = exports.$blue = void 0;
+exports.$blue = '#0075FF';
+exports.$darkBlue = 'rgb(4, 48, 190)';
+exports.$white = 'white';
+exports.$red = '#EA4335';
+exports.$yellow = '#FBBC04';
+exports.$green = '#34A853';
+exports.$gray = '#c4c4c4';
+exports.$navWidth = 230;
+exports.$headerHeight = 130;
+
+
+/***/ }),
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17480,24 +17558,106 @@ exports.TOKEN_TYPE = TOKEN_TYPE;
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.$headerHeight = exports.$navWidth = exports.$gray = exports.$red = exports.$white = exports.$darkBlue = exports.$blue = void 0;
-exports.$blue = '#0075FF';
-exports.$darkBlue = 'rgb(4, 48, 190)';
-exports.$white = 'white';
-exports.$red = 'tomato';
-exports.$gray = '#c4c4c4';
-exports.$navWidth = '230px';
-exports.$headerHeight = '130px';
+exports.filterDetail = exports.filterHistory = void 0;
+class Filter {
+    constructor(histories) {
+        this.histories = histories;
+    }
+    filterByRange(range) {
+        this.histories = this.histories.filter((history) => {
+            const startTime = (new Date()).getTime() - (range * 24 * 3600 * 1000);
+            return history.lastVisitTime >= startTime;
+        });
+        return this;
+    }
+    filterBySearchTerm(searchTerm) {
+        this.histories = this.histories.filter((history) => {
+            return (history.url.includes(searchTerm) ||
+                history.title.includes(searchTerm));
+        });
+        return this;
+    }
+    filterByRemovedUrls(removedUrls) {
+        this.histories = this.histories.filter((history) => {
+            return !removedUrls.some((url) => {
+                const regex = new RegExp(url);
+                return regex.test(history.url);
+            });
+        });
+        return this;
+    }
+    filterDuplicateUrl() {
+        const set = new Set();
+        this.histories = this.histories.filter((history) => {
+            if (set.has(history.title)) {
+                return false;
+            }
+            else {
+                set.add(history.title);
+                return true;
+            }
+        });
+        return this;
+    }
+    sortByTime() {
+        return this;
+    }
+    filterByCurrentPage(currentPage) {
+        this.histories = this.histories.filter((history) => {
+            const regex = new RegExp(currentPage);
+            return regex.test(history.url);
+        });
+        return this;
+    }
+    nomalize() {
+        const regex = /https:\/\/[-a-zA-Z0-9@:%._+~#=]{1,256}/;
+        const nomalized = this.histories.reduce((acc, cur) => {
+            const matched = cur.url.match(regex);
+            if (!matched)
+                return acc;
+            const root = matched[0];
+            if (!acc[root])
+                acc[root] = [];
+            cur.origin = root;
+            acc[root].push(cur);
+            return acc;
+        }, {});
+        const urls = [];
+        for (const prop in nomalized) {
+            urls.push(nomalized[prop]);
+        }
+        urls.sort((a, b) => b.length - a.length);
+        urls.forEach((url) => url.sort((a, b) => a.lastVisitTime - b.lastVisitTime));
+        return urls;
+    }
+}
+function filterHistory(histories, { range, searchTerm, removedUrls }) {
+    return (new Filter(histories)
+        .filterByRange(range)
+        .filterBySearchTerm(searchTerm)
+        .filterByRemovedUrls(removedUrls)
+        .filterDuplicateUrl()
+        .sortByTime()
+        .nomalize());
+}
+exports.filterHistory = filterHistory;
+function filterDetail(histories, { currentPage }) {
+    return (new Filter(histories)
+        .filterByCurrentPage(currentPage)
+        .sortByTime()
+        .nomalize());
+}
+exports.filterDetail = filterDetail;
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17546,48 +17706,39 @@ Object.defineProperty(module.exports, "__esModule", { value: true });
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(7);
+module.exports = __webpack_require__(8);
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-__webpack_require__(8);
-// import App, { setStore } from './_Factory/App';
-// import { Div, render } from './_Factory/Element';
-// import store from './store';
-// import Header from './Components/Header';
-// import PageRouter from './Container/PageRouter';
-// import './utils/stickyHeader';
 __webpack_require__(9);
-// import './index.scss';
-// const root = document.querySelector('#root');
-// const header = document.querySelector('#header');
-// setStore(store);
-// App.renderOnce(Header, header);
-// App.render(() => {
-//   return render(
-//     Div({ class: 'Main-Wrapper' })(
-//       PageRouter()(),
-//     )
-//   );
-// }, root);
-const ShadowHeader_1 = __webpack_require__(1);
+const ShadowComponent_js_1 = __webpack_require__(1);
+__webpack_require__(19);
+const ShadowHeader_1 = __webpack_require__(20);
 const ShadowMainPage_1 = __webpack_require__(22);
-const selector_1 = __webpack_require__(25);
-selector_1.default('#root').add('shadow-header').define('shadow-header', ShadowHeader_1.default);
-selector_1.default('#root').add('shadow-main').define('shadow-main', ShadowMainPage_1.default);
+const ShadowLikedPage_1 = __webpack_require__(25);
+const ShadowPreviewPage_1 = __webpack_require__(27);
+const ShadowDetailPage_1 = __webpack_require__(29);
+const root = document.getElementById('root');
+ShadowComponent_js_1.default.render(root, ShadowHeader_1.default, 'shadow-header');
+ShadowComponent_js_1.default.render(root, ShadowMainPage_1.default, 'shadow-main');
+ShadowComponent_js_1.default.render(root, ShadowLikedPage_1.default, 'shadow-liked');
+ShadowComponent_js_1.default.render(root, ShadowPreviewPage_1.default, 'shadow-preview');
+ShadowComponent_js_1.default.render(root, ShadowDetailPage_1.default, 'shadow-detail');
+//TODO: eventListener 개선
+//global style 어떡할지 정하기.
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports) {
 
 (function devSetting() {
@@ -17628,15 +17779,6 @@ selector_1.default('#root').add('shadow-main').define('shadow-main', ShadowMainP
     };
   }
 })();
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
 
 
 /***/ }),
@@ -17720,7 +17862,7 @@ Object.defineProperty(module.exports, "__esModule", { value: true });
 /* IMPORT */
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokenizer_1 = __webpack_require__(14);
-var types_1 = __webpack_require__(3);
+var types_1 = __webpack_require__(4);
 var SELECTOR = types_1.TOKEN_TYPE.SELECTOR, BODY_START = types_1.TOKEN_TYPE.BODY_START, BODY_END = types_1.TOKEN_TYPE.BODY_END;
 /* GET NODE BODY */
 function getNodeBody(node, css) {
@@ -17791,7 +17933,7 @@ exports.default = parse;
 /* IMPORT */
 Object.defineProperty(exports, "__esModule", { value: true });
 var string_indexes_1 = __webpack_require__(15);
-var types_1 = __webpack_require__(3);
+var types_1 = __webpack_require__(4);
 var SELECTOR = types_1.TOKEN_TYPE.SELECTOR, BODY_START = types_1.TOKEN_TYPE.BODY_START, BODY_END = types_1.TOKEN_TYPE.BODY_END;
 /* MERGE TOKENS */
 function mergeTokensSorted(t1, t2) {
@@ -17982,31 +18124,77 @@ exports.default = Resolve;
 
 /***/ }),
 /* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.DEFAULT_PAGE = exports.DEFAULT_RANGE = exports.PAGES = exports.PREVIEW_PAGE = exports.LIKED_PAGE = exports.MAIN_PAGE = void 0;
-exports.MAIN_PAGE = 'Main';
-exports.LIKED_PAGE = 'Liked';
-exports.PREVIEW_PAGE = 'Preview';
-exports.PAGES = [
-    exports.MAIN_PAGE,
-    exports.LIKED_PAGE,
-    exports.PREVIEW_PAGE,
-];
-exports.DEFAULT_RANGE = '7';
-exports.DEFAULT_PAGE = exports.MAIN_PAGE;
-
-
-/***/ }),
-/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
+
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const ShadowComponent_js_1 = __webpack_require__(1);
+const shadowStore_1 = __webpack_require__(2);
+const ShadowHeader_style_1 = __webpack_require__(21);
+const template = `
+  <div class='Header-Wrapper'>
+    <nav>
+      <ul>
+        <li>${shadowStore_1.PAGES.main}</li>
+        <li>${shadowStore_1.PAGES.liked}</li>
+        <li>${shadowStore_1.PAGES.previews}</li>
+      </ul>
+    </nav>
+    <div class='Header-column'>
+      <img src='./main-icon-128.png' />
+      <input class='Search-Input' placeholder='검색을 껌색하세요!'></input>
+    </div>
+    <div>
+      <input type='range' min='1' max='7' value='7' class='Range-Input'></input>
+      <p>1 ⏐ 3 ⏐ 5 ⏐ 7</p>
+    </div>
+  </div>
+`;
+class Header extends ShadowComponent_js_1.default {
+    constructor() {
+        super();
+        this.setStyle(ShadowHeader_style_1.default);
+        this.setTemplate(template);
+        this.render();
+    }
+    headerInputEvent(e) {
+        if (e.target.classList.contains('Search-Input')) {
+            shadowStore_1.default.setItem(shadowStore_1.SEARCH_TERM, e.target.value);
+            return;
+        }
+        if (e.target.classList.contains('Range-Input')) {
+            shadowStore_1.default.setItem(shadowStore_1.RANGE_VALUE, e.target.value);
+            return;
+        }
+    }
+    headerClickEvent(e) {
+        if (e.target.tagName === 'LI') {
+            window.scrollTo({ top: 0 });
+            shadowStore_1.default.setItem(shadowStore_1.CURRENT_PAGE, e.target.textContent);
+            return;
+        }
+        if (e.target.tagName === 'IMG') {
+            window.scrollTo({ top: 0 });
+            shadowStore_1.initialSetting();
+            return;
+        }
+    }
+    connectedCallback() {
+        this.shadowRoot.addEventListener('input', this.headerInputEvent.bind(this));
+        this.shadowRoot.addEventListener('click', this.headerClickEvent.bind(this));
+    }
+}
+exports.default = Header;
 
 
 /***/ }),
@@ -18016,33 +18204,41 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const theme_1 = __webpack_require__(4);
+const theme_1 = __webpack_require__(3);
 const style = `
   .Header-Wrapper {
     position: fixed;
-    height: ${theme_1.$headerHeight};
+    height: ${theme_1.$headerHeight}px;
     top: 0;
     width: 100vw;
     min-width: 800px;
     display: flex;
     align-items: center;
     justify-content: space-around;
-    background: ${theme_1.$white};
-    border-bottom: 1px solid black;
+    border-image-width: 0 0 0 20px;
     z-index: 2;
+
+    box-sizing: border-box;
+    border-style: solid;
+    border-image: linear-gradient(to right, #01c9ca 0%, #3886FF 100%);
+    border-image-slice: 1;
+    background: #f7f7f7;
+    border-image-width: 0 0 4px 0px;
 
     nav ul {
       display: flex;
       padding: 0;
 
       li {
-        font-size: 16px;
+        font-size: 20px;
         margin: 20px;
         cursor: pointer;
         transition: all 0.3s;
         list-style-type: none;
+        color: ${theme_1.$blue};
 
         &:hover {
+          color: ${theme_1.$red};
           transform: scale(1.1);
         }
       }
@@ -18071,7 +18267,7 @@ const style = `
         border-radius: 20px;
         color: #292929;
         border: none;
-        border: 1px solid #c4c4c4;
+        border: 2px solid #c4c4c4;
         padding: 0 20px;
         outline: none;
       }
@@ -18085,10 +18281,13 @@ const style = `
       }
 
       p {
+        margin-top: 0;
         position: absolute;
-        letter-spacing: 9.2px;
+        letter-spacing: 9.1px;
         left: 7px;
         width: 200px;
+        color: gray;
+        font-weight: bold;
       }
     }
   }
@@ -18102,92 +18301,63 @@ exports.default = style;
 
 "use strict";
 
-// import { render } from '../_Factory/Element';
-// import { useDispatch, useSelector } from '../_Factory/Store';
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const filterHistory_1 = __webpack_require__(23);
-// import { useEffect, useState } from '../_Factory/App';
-// import { setScrollPage } from '../store';
-// function MainPage({ histories }: { histories: history[] }) {
-//   const {
-//     range,
-//     searchTerm,
-//     removedUrls,
-//     scrollPage,
-//   } = useSelector();
-//   const dispatch = useDispatch();
-//   const [hasScroll, setHasScroll] = useState(false);
-//   useEffect(() => {
-//     if (hasScroll) return;
-//     setHasScroll(true);
-//     function addPage() {
-//       const {
-//         scrollTop,
-//         clientHeight,
-//         scrollHeight,
-//       } = document.documentElement;
-//       if ((scrollTop + clientHeight) === scrollHeight) {
-//         const scrollPage = useSelector((state) => state.scrollPage);
-//         dispatch(setScrollPage(scrollPage + 1));
-//       }
-//     }
-//     window.addEventListener('scroll', addPage);
-//   }, []);
-//   const filteredHistories = filterHistory(histories, {
-//     range: Number(range),
-//     searchTerm,
-//     removedUrls,
-//   });
-//   return render(
-//     Contents({ histories: filteredHistories.slice(0, 4 * scrollPage) })(),
-//   );
-// }
-// export default MainPage;
-const ShadowComponent_1 = __webpack_require__(2);
-const ShadowHeader_1 = __webpack_require__(1);
+const ShadowComponent_1 = __webpack_require__(1);
+const shadowStore_1 = __webpack_require__(2);
+const lodash_1 = __webpack_require__(0);
+const Toastify = __webpack_require__(23);
+const filterHistory_1 = __webpack_require__(5);
 const ShadowMainPage_style_1 = __webpack_require__(24);
 const SiteCard = (sites) => {
     const origin = sites[0].origin.replace(/(^\w+:|^)\/\//, '');
+    const filteredOrigin = origin.replace(/www./, '').replace(/.com/, '');
     return `
     <div class='SiteCard-Wrapper'>
-      <div>
-        <button class='Close-Button'>✄</button>
+      <div class='Close-Button-Wrapper'>
+        <button class='Close-Button' data-origin=${origin}>✄</button>
       </div>
-      <h1>${origin}</h1>
-      <input placeholder='${origin} 에서 검색'></input>
+      <h1 class='Origin' data-origin=${origin}>${filteredOrigin}</h1>
+      <input placeholder='${origin} 에서 검색' data-origin=${origin}></input>
       <ul>
         ${sites.map((site) => {
         return `
             <li>
-              <img src=${chrome.runtime ? `chrome://favicon/https://${origin}` : './main-icon16.png'}/>
               <div>
+                <img src=${chrome.runtime ? `chrome://favicon/https://${origin}` : './main-icon16.png'} class='Image-Save' data-url=${site.url}></img>
+                <p>10분 전</p>
+              </div>
+              <div class='Anchor-Wrapper'>
                 <a href=${site.url} target='_blank' title=${site.url}>${site.title}</a>
               </div>
-              </li>
+            </li>
           `;
-    })}
+    }).join('')}
       </ul>
-    </div>
-  `;
+    </div>`;
 };
-const template = (histories) => {
+const template = ({ histories, isCurrentPage, pageCount }) => {
+    const cardCount = pageCount * 6;
     return (`
-    <div class='Contents-Wrapper'>
-      ${histories.map((history) => {
+    <div class='Contents-Wrapper ${isCurrentPage ? '' : 'hide'}'>
+      ${histories.slice(0, cardCount).map((history) => {
         return SiteCard(history.slice(0, 10));
-    })}
+    }).join('')}
     </div>
   `);
 };
-const HISTORIES = 'mainPage/histories';
-const REMOVED_URLS = 'mainPage/removedUrls';
 class MainPage extends ShadowComponent_1.default {
     constructor() {
         super();
-        const initialHistories = [];
-        const initialRemovedUrls = [];
-        this.setState(HISTORIES, initialHistories);
-        this.setState(REMOVED_URLS, initialRemovedUrls);
+        this._isTriggered = false;
         const WEEK_BY_MILLISECOND = (7 * 24 * 3600 * 1000);
         const query = {
             text: '',
@@ -18196,26 +18366,150 @@ class MainPage extends ShadowComponent_1.default {
             endTime: (new Date()).getTime()
         };
         chrome.history.search(query, (history) => {
-            this.setState(HISTORIES, history);
+            shadowStore_1.default.setItem(shadowStore_1.HISTORIES, history);
         });
-        this.style(ShadowMainPage_style_1.default);
-        this.render(template, initialHistories);
+        this.setTemplate(template);
+        this.setStyle(ShadowMainPage_style_1.default);
+        this.setState({ histories: [], isCurrentPage: true, pageCount: 1 });
+        this.render();
+    }
+    contentClickEvent(e) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (e.target.classList.contains('Close-Button')) {
+                const origin = e.target.dataset.origin;
+                const removedUrls = shadowStore_1.default.getItem(shadowStore_1.REMOVED_URLS);
+                shadowStore_1.default.setItem(shadowStore_1.REMOVED_URLS, [...removedUrls, origin]);
+                return;
+            }
+            if (e.target.classList.contains('Image-Save')) {
+                const SCREENSHOT_URL = 'https://clm36vsh02.execute-api.ap-northeast-2.amazonaws.com/dev/start';
+                const inputUrl = e.target.dataset.url;
+                Toastify({
+                    text: 'Saving...',
+                    duration: 2000,
+                    newWindow: true,
+                    close: true,
+                    gravity: 'top',
+                    position: 'right',
+                    backgroundColor: 'linear-gradient(to right, #00b09b, #96c93d)',
+                    stopOnFocus: false,
+                }).showToast();
+                try {
+                    const url = `${SCREENSHOT_URL}?url=${inputUrl}`;
+                    const result = yield fetch(url, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+                    const { base64 } = yield result.json();
+                    const previews = shadowStore_1.default.getItem(shadowStore_1.PREVIEWS);
+                    shadowStore_1.default.setItem(shadowStore_1.PREVIEWS, [...previews, { url: inputUrl, base64 }]);
+                    Toastify({
+                        text: 'Saved!',
+                        duration: 2000,
+                        newWindow: true,
+                        close: true,
+                        gravity: 'top',
+                        position: 'right',
+                        backgroundColor: 'linear-gradient(to right, #f857a6, #ff5858)',
+                        stopOnFocus: false,
+                    }).showToast();
+                }
+                catch (err) {
+                    Toastify({
+                        text: 'Error occured... please tyy again',
+                        duration: 2000,
+                        newWindow: true,
+                        close: true,
+                        gravity: 'top',
+                        position: 'right',
+                        backgroundColor: 'linear-gradient(to right, #f857a6, #ff5858)',
+                        stopOnFocus: false,
+                    }).showToast();
+                }
+            }
+            if (e.target.classList.contains('Origin')) {
+                const origin = e.target.dataset.origin;
+                shadowStore_1.default.setItem(shadowStore_1.CURRENT_PAGE, origin);
+                window.scrollTo({ top: 0 });
+            }
+        });
+    }
+    filter(histories) {
+        const searchTerm = shadowStore_1.default.getItem(shadowStore_1.SEARCH_TERM);
+        const range = shadowStore_1.default.getItem(shadowStore_1.RANGE_VALUE);
+        const removedUrls = shadowStore_1.default.getItem(shadowStore_1.REMOVED_URLS);
+        const filteredHistories = filterHistory_1.filterHistory(histories, {
+            range,
+            searchTerm,
+            removedUrls,
+        });
+        return filteredHistories;
+    }
+    contentKeydownEvent(e) {
+        if (e.key === 'Enter' && !this._isTriggered) {
+            const target = e.target;
+            const origin = target.dataset.origin;
+            chrome.search.query({
+                text: `${target.value} site:${origin}`,
+                disposition: 'NEW_TAB',
+            }, () => { });
+            this._isTriggered = true;
+        }
+    }
+    contentKeyupEvent(e) {
+        if (e.key === 'Enter') {
+            this._isTriggered = false;
+        }
     }
     connectedCallback() {
-        this.subscribe(HISTORIES, (histories) => {
-            console.log(3);
-            const searchTerm = this.getState(ShadowHeader_1.SEARCH_TERM);
-            const range = this.getState(ShadowHeader_1.RANGE_VALUE);
-            const removedUrls = this.getState(REMOVED_URLS);
-            const filteredHistories = filterHistory_1.filterHistory(histories, {
-                range,
-                searchTerm,
-                removedUrls,
-            });
-            this.render(template, filteredHistories);
+        shadowStore_1.default.subscribe(shadowStore_1.HISTORIES, (histories) => {
+            const filteredHistories = this.filter(histories);
+            this.setState((prev) => (Object.assign(Object.assign({}, prev), { histories: filteredHistories })));
+            this.render();
         });
-    }
-    disconnectedCallback() {
+        shadowStore_1.default.subscribe(shadowStore_1.REMOVED_URLS, () => {
+            const histories = shadowStore_1.default.getItem(shadowStore_1.HISTORIES);
+            const filteredHistories = this.filter(histories);
+            this.setState((prev) => (Object.assign(Object.assign({}, prev), { histories: filteredHistories })));
+            this.render();
+        });
+        shadowStore_1.default.subscribe(shadowStore_1.SEARCH_TERM, () => {
+            const histories = shadowStore_1.default.getItem(shadowStore_1.HISTORIES);
+            const filteredHistories = this.filter(histories);
+            this.setState((prev) => (Object.assign(Object.assign({}, prev), { histories: filteredHistories })));
+            this.render();
+        });
+        shadowStore_1.default.subscribe(shadowStore_1.RANGE_VALUE, () => {
+            const histories = shadowStore_1.default.getItem(shadowStore_1.HISTORIES);
+            const filteredHistories = this.filter(histories);
+            this.setState((prev) => (Object.assign(Object.assign({}, prev), { histories: filteredHistories })));
+            this.render();
+        });
+        shadowStore_1.default.subscribe(shadowStore_1.CURRENT_PAGE, (page) => {
+            if (page === shadowStore_1.PAGES.main) {
+                this.setState((prev) => (Object.assign(Object.assign({}, prev), { isCurrentPage: true })));
+                this.render();
+            }
+            else {
+                this.setState((prev) => (Object.assign(Object.assign({}, prev), { isCurrentPage: false })));
+                this.render();
+            }
+        });
+        this.shadowRoot.addEventListener('click', this.contentClickEvent.bind(this));
+        this.shadowRoot.addEventListener('keydown', this.contentKeydownEvent.bind(this));
+        this.shadowRoot.addEventListener('keyup', this.contentKeyupEvent.bind(this));
+        const throttleAddPage = lodash_1.throttle(() => {
+            const { scrollTop, clientHeight, scrollHeight, } = document.documentElement;
+            const currentPage = shadowStore_1.default.getItem(shadowStore_1.CURRENT_PAGE);
+            if ((scrollTop + clientHeight) === scrollHeight && currentPage === shadowStore_1.PAGES.main) {
+                const pageCount = shadowStore_1.default.getItem(shadowStore_1.PAGE_COUNT) + 1;
+                shadowStore_1.default.setItem(shadowStore_1.PAGE_COUNT, pageCount);
+                this.setState((prev) => (Object.assign(Object.assign({}, prev), { pageCount })));
+                this.render();
+            }
+        }, 1000, { leading: false });
+        window.addEventListener('scroll', throttleAddPage);
     }
 }
 exports.default = MainPage;
@@ -18225,99 +18519,400 @@ exports.default = MainPage;
 /* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
+/*!
+ * Toastify js 1.9.3
+ * https://github.com/apvarun/toastify-js
+ * @license MIT licensed
+ *
+ * Copyright (C) 2018 Varun A P
+ */
+(function(root, factory) {
+  if ( true && module.exports) {
+    module.exports = factory();
+  } else {
+    root.Toastify = factory();
+  }
+})(this, function(global) {
+  // Object initialization
+  var Toastify = function(options) {
+      // Returning a new init object
+      return new Toastify.lib.init(options);
+    },
+    // Library version
+    version = "1.9.3";
 
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.filterDetail = exports.filterHistory = void 0;
-class Filter {
-    constructor(histories) {
-        this.histories = histories;
-    }
-    filterByRange(range) {
-        this.histories = this.histories.filter((history) => {
-            const startTime = (new Date()).getTime() - (range * 24 * 3600 * 1000);
-            return history.lastVisitTime >= startTime;
-        });
-        return this;
-    }
-    filterBySearchTerm(searchTerm) {
-        this.histories = this.histories.filter((history) => {
-            return (history.url.includes(searchTerm) ||
-                history.title.includes(searchTerm));
-        });
-        return this;
-    }
-    filterByRemovedUrls(removedUrls) {
-        this.histories = this.histories.filter((history) => {
-            return !removedUrls.some((url) => {
-                const regex = new RegExp(url);
-                return regex.test(history.url);
-            });
-        });
-        return this;
-    }
-    filterDuplicateUrl() {
-        const set = new Set();
-        this.histories = this.histories.filter((history) => {
-            if (set.has(history.title)) {
-                return false;
-            }
-            else {
-                set.add(history.title);
-                return true;
-            }
-        });
-        return this;
-    }
-    sortByTime() {
-        return this;
-    }
-    filterByCurrentPage(currentPage) {
-        this.histories = this.histories.filter((history) => {
-            const regex = new RegExp(currentPage);
-            return regex.test(history.url);
-        });
-        return this;
-    }
-    nomalize() {
-        const regex = /https:\/\/[-a-zA-Z0-9@:%._+~#=]{1,256}/;
-        const nomalized = this.histories.reduce((acc, cur) => {
-            const matched = cur.url.match(regex);
-            if (!matched)
-                return acc;
-            const root = matched[0];
-            if (!acc[root])
-                acc[root] = [];
-            cur.origin = root;
-            acc[root].push(cur);
-            return acc;
-        }, {});
-        const urls = [];
-        for (const prop in nomalized) {
-            urls.push(nomalized[prop]);
+  // Defining the prototype of the object
+  Toastify.lib = Toastify.prototype = {
+    toastify: version,
+
+    constructor: Toastify,
+
+    // Initializing the object with required parameters
+    init: function(options) {
+      // Verifying and validating the input object
+      if (!options) {
+        options = {};
+      }
+
+      // Creating the options object
+      this.options = {};
+
+      this.toastElement = null;
+
+      // Validating the options
+      this.options.text = options.text || "Hi there!"; // Display message
+      this.options.node = options.node // Display content as node
+      this.options.duration = options.duration === 0 ? 0 : options.duration || 3000; // Display duration
+      this.options.selector = options.selector; // Parent selector
+      this.options.callback = options.callback || function() {}; // Callback after display
+      this.options.destination = options.destination; // On-click destination
+      this.options.newWindow = options.newWindow || false; // Open destination in new window
+      this.options.close = options.close || false; // Show toast close icon
+      this.options.gravity = options.gravity === "bottom" ? "toastify-bottom" : "toastify-top"; // toast position - top or bottom
+      this.options.positionLeft = options.positionLeft || false; // toast position - left or right
+      this.options.position = options.position || ''; // toast position - left or right
+      this.options.backgroundColor = options.backgroundColor; // toast background color
+      this.options.avatar = options.avatar || ""; // img element src - url or a path
+      this.options.className = options.className || ""; // additional class names for the toast
+      this.options.stopOnFocus = options.stopOnFocus === undefined? true: options.stopOnFocus; // stop timeout on focus
+      this.options.onClick = options.onClick; // Callback after click
+
+      this.options.offset = options.offset || { x: 0, y: 0 }; // toast offset
+
+      // Returning the current object for chaining functions
+      return this;
+    },
+
+    // Building the DOM element
+    buildToast: function() {
+      // Validating if the options are defined
+      if (!this.options) {
+        throw "Toastify is not initialized";
+      }
+
+      // Creating the DOM object
+      var divElement = document.createElement("div");
+      divElement.className = "toastify on " + this.options.className;
+
+      // Positioning toast to left or right or center
+      if (!!this.options.position) {
+        divElement.className += " toastify-" + this.options.position;
+      } else {
+        // To be depreciated in further versions
+        if (this.options.positionLeft === true) {
+          divElement.className += " toastify-left";
+          console.warn('Property `positionLeft` will be depreciated in further versions. Please use `position` instead.')
+        } else {
+          // Default position
+          divElement.className += " toastify-right";
         }
-        urls.sort((a, b) => b.length - a.length);
-        urls.forEach((url) => url.sort((a, b) => a.lastVisitTime - b.lastVisitTime));
-        return urls;
+      }
+
+      // Assigning gravity of element
+      divElement.className += " " + this.options.gravity;
+
+      if (this.options.backgroundColor) {
+        divElement.style.background = this.options.backgroundColor;
+      }
+
+      // Adding the toast message/node
+      if (this.options.node && this.options.node.nodeType === Node.ELEMENT_NODE) {
+        // If we have a valid node, we insert it
+        divElement.appendChild(this.options.node)
+      } else {
+        divElement.innerHTML = this.options.text;
+
+        if (this.options.avatar !== "") {
+          var avatarElement = document.createElement("img");
+          avatarElement.src = this.options.avatar;
+
+          avatarElement.className = "toastify-avatar";
+
+          if (this.options.position == "left" || this.options.positionLeft === true) {
+            // Adding close icon on the left of content
+            divElement.appendChild(avatarElement);
+          } else {
+            // Adding close icon on the right of content
+            divElement.insertAdjacentElement("afterbegin", avatarElement);
+          }
+        }
+      }
+
+      // Adding a close icon to the toast
+      if (this.options.close === true) {
+        // Create a span for close element
+        var closeElement = document.createElement("span");
+        closeElement.innerHTML = "&#10006;";
+
+        closeElement.className = "toast-close";
+
+        // Triggering the removal of toast from DOM on close click
+        closeElement.addEventListener(
+          "click",
+          function(event) {
+            event.stopPropagation();
+            this.removeElement(this.toastElement);
+            window.clearTimeout(this.toastElement.timeOutValue);
+          }.bind(this)
+        );
+
+        //Calculating screen width
+        var width = window.innerWidth > 0 ? window.innerWidth : screen.width;
+
+        // Adding the close icon to the toast element
+        // Display on the right if screen width is less than or equal to 360px
+        if ((this.options.position == "left" || this.options.positionLeft === true) && width > 360) {
+          // Adding close icon on the left of content
+          divElement.insertAdjacentElement("afterbegin", closeElement);
+        } else {
+          // Adding close icon on the right of content
+          divElement.appendChild(closeElement);
+        }
+      }
+
+      // Clear timeout while toast is focused
+      if (this.options.stopOnFocus && this.options.duration > 0) {
+        var self = this;
+        // stop countdown
+        divElement.addEventListener(
+          "mouseover",
+          function(event) {
+            window.clearTimeout(divElement.timeOutValue);
+          }
+        )
+        // add back the timeout
+        divElement.addEventListener(
+          "mouseleave",
+          function() {
+            divElement.timeOutValue = window.setTimeout(
+              function() {
+                // Remove the toast from DOM
+                self.removeElement(divElement);
+              },
+              self.options.duration
+            )
+          }
+        )
+      }
+      
+      // Adding an on-click destination path
+      if (typeof this.options.destination !== "undefined") {
+        divElement.addEventListener(
+          "click",
+          function(event) {
+            event.stopPropagation();
+            if (this.options.newWindow === true) {
+              window.open(this.options.destination, "_blank");
+            } else {
+              window.location = this.options.destination;
+            }
+          }.bind(this)
+        );
+      }
+
+      if (typeof this.options.onClick === "function" && typeof this.options.destination === "undefined") {
+        divElement.addEventListener(
+          "click",
+          function(event) {
+            event.stopPropagation();
+            this.options.onClick();            
+          }.bind(this)
+        );
+      }
+
+      // Adding offset
+      if(typeof this.options.offset === "object") {
+
+        var x = getAxisOffsetAValue("x", this.options);
+        var y = getAxisOffsetAValue("y", this.options);
+        
+        var xOffset = this.options.position == "left" ? x : "-" + x;
+        var yOffset = this.options.gravity == "toastify-top" ? y : "-" + y;
+
+        divElement.style.transform = "translate(" + xOffset + "," + yOffset + ")";
+
+      }
+
+      // Returning the generated element
+      return divElement;
+    },
+
+    // Displaying the toast
+    showToast: function() {
+      // Creating the DOM object for the toast
+      this.toastElement = this.buildToast();
+
+      // Getting the root element to with the toast needs to be added
+      var rootElement;
+      if (typeof this.options.selector === "undefined") {
+        rootElement = document.body;
+      } else {
+        rootElement = document.getElementById(this.options.selector);
+      }
+
+      // Validating if root element is present in DOM
+      if (!rootElement) {
+        throw "Root element is not defined";
+      }
+
+      // Adding the DOM element
+      rootElement.insertBefore(this.toastElement, rootElement.firstChild);
+
+      // Repositioning the toasts in case multiple toasts are present
+      Toastify.reposition();
+
+      if (this.options.duration > 0) {
+        this.toastElement.timeOutValue = window.setTimeout(
+          function() {
+            // Remove the toast from DOM
+            this.removeElement(this.toastElement);
+          }.bind(this),
+          this.options.duration
+        ); // Binding `this` for function invocation
+      }
+
+      // Supporting function chaining
+      return this;
+    },
+
+    hideToast: function() {
+      if (this.toastElement.timeOutValue) {
+        clearTimeout(this.toastElement.timeOutValue);
+      }
+      this.removeElement(this.toastElement);
+    },
+
+    // Removing the element from the DOM
+    removeElement: function(toastElement) {
+      // Hiding the element
+      // toastElement.classList.remove("on");
+      toastElement.className = toastElement.className.replace(" on", "");
+
+      // Removing the element from DOM after transition end
+      window.setTimeout(
+        function() {
+          // remove options node if any
+          if (this.options.node && this.options.node.parentNode) {
+            this.options.node.parentNode.removeChild(this.options.node);
+          }
+
+          // Remove the elemenf from the DOM, only when the parent node was not removed before.
+          if (toastElement.parentNode) {
+            toastElement.parentNode.removeChild(toastElement);
+          }
+
+          // Calling the callback function
+          this.options.callback.call(toastElement);
+
+          // Repositioning the toasts again
+          Toastify.reposition();
+        }.bind(this),
+        400
+      ); // Binding `this` for function invocation
+    },
+  };
+
+  // Positioning the toasts on the DOM
+  Toastify.reposition = function() {
+
+    // Top margins with gravity
+    var topLeftOffsetSize = {
+      top: 15,
+      bottom: 15,
+    };
+    var topRightOffsetSize = {
+      top: 15,
+      bottom: 15,
+    };
+    var offsetSize = {
+      top: 15,
+      bottom: 15,
+    };
+
+    // Get all toast messages on the DOM
+    var allToasts = document.getElementsByClassName("toastify");
+
+    var classUsed;
+
+    // Modifying the position of each toast element
+    for (var i = 0; i < allToasts.length; i++) {
+      // Getting the applied gravity
+      if (containsClass(allToasts[i], "toastify-top") === true) {
+        classUsed = "toastify-top";
+      } else {
+        classUsed = "toastify-bottom";
+      }
+
+      var height = allToasts[i].offsetHeight;
+      classUsed = classUsed.substr(9, classUsed.length-1)
+      // Spacing between toasts
+      var offset = 15;
+
+      var width = window.innerWidth > 0 ? window.innerWidth : screen.width;
+
+      // Show toast in center if screen with less than or qual to 360px
+      if (width <= 360) {
+        // Setting the position
+        allToasts[i].style[classUsed] = offsetSize[classUsed] + "px";
+
+        offsetSize[classUsed] += height + offset;
+      } else {
+        if (containsClass(allToasts[i], "toastify-left") === true) {
+          // Setting the position
+          allToasts[i].style[classUsed] = topLeftOffsetSize[classUsed] + "px";
+
+          topLeftOffsetSize[classUsed] += height + offset;
+        } else {
+          // Setting the position
+          allToasts[i].style[classUsed] = topRightOffsetSize[classUsed] + "px";
+
+          topRightOffsetSize[classUsed] += height + offset;
+        }
+      }
     }
-}
-function filterHistory(histories, { range, searchTerm, removedUrls }) {
-    return (new Filter(histories)
-        .filterByRange(range)
-        .filterBySearchTerm(searchTerm)
-        .filterByRemovedUrls(removedUrls)
-        .filterDuplicateUrl()
-        .sortByTime()
-        .nomalize());
-}
-exports.filterHistory = filterHistory;
-function filterDetail(histories, { currentPage }) {
-    return (new Filter(histories)
-        .filterByCurrentPage(currentPage)
-        .sortByTime()
-        .nomalize());
-}
-exports.filterDetail = filterDetail;
+
+    // Supporting function chaining
+    return this;
+  };
+
+  // Helper function to get offset.
+  function getAxisOffsetAValue(axis, options) {
+
+    if(options.offset[axis]) {
+      if(isNaN(options.offset[axis])) {
+        return options.offset[axis];
+      }
+      else {
+        return options.offset[axis] + 'px';
+      }
+    }
+
+    return '0px';
+
+  }
+
+  function containsClass(elem, yourClass) {
+    if (!elem || typeof yourClass !== "string") {
+      return false;
+    } else if (
+      elem.className &&
+      elem.className
+        .trim()
+        .split(/\s+/gi)
+        .indexOf(yourClass) > -1
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  // Setting up the prototype for the init object
+  Toastify.lib.init.prototype = Toastify.lib;
+
+  // Returning the Toastify function to be assigned to the window object/module
+  return Toastify;
+});
 
 
 /***/ }),
@@ -18327,127 +18922,141 @@ exports.filterDetail = filterDetail;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-const theme_1 = __webpack_require__(4);
+const theme_1 = __webpack_require__(3);
 const style = `
   .Contents-Wrapper {
-    display: grid;
-    width: 100vw;
-    grid-template-columns: 1fr 1fr;
-    grid-auto-flow: row;
-    gap: 10px;
-    padding: 0 50px;
+    margin-top: ${theme_1.$headerHeight + 30}px;
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: 10px;
+    margin-right: 20px;
+    justify-content: space-around;
+    overflow-x: hidden;
+    padding: 10px;
 
     .SiteCard-Wrapper {
+      display: flex;
       position: relative;
-      border: 1px solid ${theme_1.$gray};
-      padding: 20px;
-      min-width: 250px;
-      line-height: 30px;
+      flex-direction: column;
+      width: 30vw;
+      border: 1px solid ${theme_1.$blue};
+      margin-bottom: 30px;
+      background: white;
 
       h1 {
-        font-size: 25px;
+        font-size: 26px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding-left: 30px;
+        width: calc(30vw - 100px);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
         transition: all 0.3s;
         cursor: pointer;
-        display: inline-block;
-        margin-left: 40px;
-        margin-top: 10px;
 
         &:hover {
-          transform: scale(1.08);
+          transform: scale(1.1);
+          color: ${theme_1.$blue};
         }
       }
 
       input {
-        width: 100%;
         height: 30px;
-        border-radius: 10px;
-        border: none;
+        width: 80%;
+        border-radius: 15px;
         border: 1px solid ${theme_1.$gray};
-        margin: 15px 0;
+        padding-left: 10px;
+        align-self: center;
+        margin-top: 10px;
         outline: none;
-        padding: 0 10px;
       }
 
-      li {
-        width: 100%;
-        padding: 0 5px;
-        transition: all 0.3s;
-        padding: 10px;
-        display: flex;
+      ul {
+        padding: 20px;
+        margin: 0;
 
-        div {
-          display: inline-block;
-          width: 100%;
-          transition: all 0.3s;
-          display: inline-block;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
+        li {
+          list-style-type: none;
+          padding: 10px;
+          border-bottom: 1px solid ${theme_1.$blue};
+
+          img {
+            width: 20px;
+            display: inline-block;
+            transition: all 0.3s;
+            cursor: pointer;
+
+            &:hover {
+              transform: rotate(30deg) scale(1.5);
+            }
+          }
+
+          p {
+            display: inline-block;
+            color: gray;
+            margin-left: 10px;
+            font-size: 14px;
+          }
+
+          .Anchor-Wrapper {
+            transition: all 0.3s;
+            cursor: pointer;
+
+            a {
+              text-decoration: none;
+            }
+
+            a:visited {
+              color: inherit;
+            }
+
+            &:hover {
+              transform: translate(20px);
+              color: ${theme_1.$blue};
+            }
+          }
         }
+      }
 
-        &:hover div {
-          transform: translate(10px);
-        }
+      .Close-Button-Wrapper {
+        position: absolute;
+        right: -1px;
+        top: -1px;
+        width: 50px;
+        height: 50px;
+        background: white;
+        border-left: 1px solid ${theme_1.$blue};
+        border-bottom: 1px solid ${theme_1.$blue};
 
-        img {
-          display: inline-block;
+        button {
+          position: absolute;
+          right: 0;
+          top: 0;
+          width: 40px;
+          height: 40px;
+          font-size: 20px;
+          background: ${theme_1.$white};
+          border: 1px solid ${theme_1.$blue};
+          z-index: 1;
           transition: all 0.3s;
-          opacity: 0;
-          margin-top: 5px;
+          overflow: visible;
+          outline: none;
 
           &:hover {
             cursor: pointer;
-          }
-        }
-
-        &:hover img {
-          height: 20px;
-          opacity: 1;
-        }
-      }
-
-      li:nth-child(n + 2) {
-        border-top: 1px solid ${theme_1.$gray};
-      }
-
-      li:nth-child(2n) {
-        color: ${theme_1.$blue};
-        border-top: 1px solid ${theme_1.$gray};
-      }
-
-      div:first-child {
-        position: absolute;
-        top: -1px;
-        right: -1px;
-        width: 50px;
-        height: 50px;
-        background: ${theme_1.$white};
-        border-left: 1px solid ${theme_1.$gray};
-        border-bottom: 1px solid ${theme_1.$gray};
-
-        button {
-          left: 10px;
-          position: absolute;
-          height: 40px;
-          width: 40px;
-          outline: none;
-          background: ${theme_1.$white};
-          transition: all 0.2s;
-          cursor: pointer;
-          border: 1px solid ${theme_1.$gray};
-          z-index: 1;
-          font-size: 20px;
-          font-weight: bold;
-          color: ${theme_1.$blue};
-
-          &:hover {
             transform: scale(1.2);
+            color: white;
             background: ${theme_1.$blue};
-            color: ${theme_1.$white};
           }
         }
       }
     }
+  }
+
+  .hide {
+    display: none;
   }
 `;
 exports.default = style;
@@ -18460,19 +19069,421 @@ exports.default = style;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-function default_1(sel) {
-    const element = document.querySelector(sel);
-    const $ = {
-        append: null,
-        add: null,
-        define: null,
-    };
-    $.append = (el) => (element.appendChild(el), $);
-    $.add = (tagName) => ($.append(document.createElement(tagName)), $);
-    $.define = (tagName, shadow) => (customElements.define(tagName, shadow), $);
-    return $;
+const ShadowComponent_js_1 = __webpack_require__(1);
+const shadowStore_1 = __webpack_require__(2);
+const ShadowLikedPage_style_1 = __webpack_require__(26);
+const template = ({ likedItems, isCurrentPage }) => {
+    const list = likedItems.sort((a, b) => b.count - a.count);
+    return (`
+    <div class='LikedPage-Wrapper ${isCurrentPage ? '' : 'hide'}'>
+      <h1>Liked</h1>
+      <div>
+        <ul>
+          ${list.map((item) => {
+        return (`
+              <li>
+                <a
+                  class='Liked-Anchor'
+                  style='font-size: ${item.count + 10}px;'
+                  href=${item.url}
+                  target='_blank'
+                  title=${item.url}
+                  data-url=${item.url}
+                >
+                  ${item.count} 번 검색한 ${item.title}
+                </a>
+              </li>
+            `);
+    }).join('')}
+        </ul>
+      </div>
+    </div>
+  `);
+};
+class LikedPage extends ShadowComponent_js_1.default {
+    constructor() {
+        super();
+        chrome.storage.sync.get(({ likedItems }) => {
+            shadowStore_1.default.setItem(shadowStore_1.LIKED, likedItems);
+        });
+        this.setState({ likedItems: [], isCurrentPage: false });
+        this.setStyle(ShadowLikedPage_style_1.default);
+        this.setTemplate(template);
+        this.render();
+    }
+    likedPAgeInputEvent(e) {
+        if (e.target.classList.contains('Liked-Anchor')) {
+            const url = e.target.dataset.url;
+            chrome.storage.sync.get(({ likedItems }) => {
+                likedItems = likedItems.map((item) => (item.url === url) ? ((item.count += 1), item) : item);
+                chrome.storage.sync.set({ likedItems });
+            });
+            return;
+        }
+    }
+    connectedCallback() {
+        shadowStore_1.default.subscribe(shadowStore_1.CURRENT_PAGE, (page) => {
+            if (page === shadowStore_1.PAGES.liked) {
+                this.setState((prev) => (Object.assign(Object.assign({}, prev), { isCurrentPage: true })));
+                this.render();
+            }
+            else {
+                this.setState((prev) => (Object.assign(Object.assign({}, prev), { isCurrentPage: false })));
+                this.render();
+            }
+        });
+        shadowStore_1.default.subscribe(shadowStore_1.LIKED, (likedItems) => {
+            this.setState((prev) => (Object.assign(Object.assign({}, prev), { likedItems })));
+            this.render();
+        });
+        this.shadowRoot.addEventListener('click', this.likedPAgeInputEvent.bind(this));
+    }
 }
-exports.default = default_1;
+exports.default = LikedPage;
+
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const theme_1 = __webpack_require__(3);
+const style = `
+  .LikedPage-Wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: calc(130px + 10px);
+    padding: 20px;
+    width: 100vw;
+    min-width: 700px;
+
+    ul {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 70vw;
+
+      li {
+        width: 100%;
+        padding: 0 5px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        line-height: 40px;
+      }
+
+      li:nth-child(n + 2) {
+        border-top: 1px solid ${theme_1.$gray};
+      }
+
+      li:nth-child(2n) {
+        color: ${theme_1.$blue};
+        border-top: 1px solid ${theme_1.$gray};
+      }
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    a:link {
+      color: black;
+
+      &:hover {
+        color: ${theme_1.$blue};
+      }
+    }
+
+    a:visited {
+      color: black;
+    }
+  }
+
+  .hide {
+    display: none;
+  }
+`;
+exports.default = style;
+
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const ShadowComponent_js_1 = __webpack_require__(1);
+const shadowStore_1 = __webpack_require__(2);
+const ShadowPreviewPage_style_1 = __webpack_require__(28);
+const template = ({ list, isCurrentPage }) => {
+    return (`
+    <div class='Preview-Page-Wrapper ${isCurrentPage ? '' : 'hide'}'>
+      ${list.map((item) => {
+        return (`
+          <img src='data:image/png;base64, ${item.base64}' data-url=${item.url}></img>
+        `);
+    }).join('')}
+    </div>
+  `);
+};
+class PreviewPage extends ShadowComponent_js_1.default {
+    constructor() {
+        super();
+        this.setStyle(ShadowPreviewPage_style_1.default);
+        this.setState({ list: [], isCurrentPage: false });
+        this.setTemplate(template);
+        this.render();
+    }
+    previewClickEvent(e) {
+        const { src, dataset: { url } } = e.target;
+        const $modal = document.querySelector('#modal');
+        const $moveTag = document.querySelector('.container a');
+        const $img = document.createElement('img');
+        $img.src = src;
+        $modal.classList.remove('hide');
+        $modal.appendChild($img);
+        $moveTag.href = url;
+        const closeModal = () => {
+            $modal.classList.add('hide');
+            $modal.removeChild($img);
+            $modal.removeEventListener('click', closeModal);
+        };
+        $modal.addEventListener('click', closeModal);
+    }
+    connectedCallback() {
+        shadowStore_1.default.subscribe(shadowStore_1.CURRENT_PAGE, (page) => {
+            if (page === shadowStore_1.PAGES.previews) {
+                this.setState((prev) => (Object.assign(Object.assign({}, prev), { isCurrentPage: true })));
+                this.render();
+            }
+            else {
+                this.setState((prev) => (Object.assign(Object.assign({}, prev), { isCurrentPage: false })));
+                this.render();
+            }
+        });
+        shadowStore_1.default.subscribe(shadowStore_1.PREVIEWS, (previews) => {
+            this.setState((prev) => (Object.assign(Object.assign({}, prev), { list: previews })));
+            this.render();
+        });
+        this.shadowRoot.addEventListener('click', this.previewClickEvent.bind(this));
+    }
+}
+exports.default = PreviewPage;
+
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const style = `
+  .Preview-Page-Wrapper {
+    margin-top: calc(130px + 10px);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-around;
+    width: 100vw;
+    min-width: 650px;
+
+    img {
+      margin: 20px;
+      width: 400px;
+      box-shadow: 5px 5px 10px rgb(133, 132, 132);
+    }
+  }
+
+  .hide {
+    display: none;
+  }
+`;
+exports.default = style;
+
+
+/***/ }),
+/* 29 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const ShadowComponent_js_1 = __webpack_require__(1);
+const shadowStore_1 = __webpack_require__(2);
+const filterHistory_1 = __webpack_require__(5);
+const ShadowDetailPage_style_1 = __webpack_require__(30);
+const template = ({ histories, currentPage, isCurrentPage }) => {
+    var _a;
+    const filteredHistories = filterHistory_1.filterDetail(histories, { currentPage })[0] || [];
+    const origin = (_a = filteredHistories[0]) === null || _a === void 0 ? void 0 : _a.origin.replace(/(^\w+:|^)\/\//, '');
+    const filteredOrigin = origin === null || origin === void 0 ? void 0 : origin.replace(/www./, '').replace(/.com/, '');
+    return (`
+    <div class='DetailContents-Wrapper ${isCurrentPage ? '' : 'hide'}'>
+      <h1>${filteredOrigin}</h1>
+      <div>
+        <ul>
+          ${filteredHistories.map((history) => {
+        return (`
+              <li>
+                <div>
+                  <img src=${chrome.runtime ? `chrome://favicon/https://${origin}` : './main-icon16.png'} class='Image-Save' data-url=${history.url}></img>
+                  <p>10분전</p>
+                </div>
+                <div>
+                  <a href=${history.url} target='_blank' title=${history.url}>${history.title}</a>
+                </div>
+              </li>
+            `);
+    }).join('')}
+        </ul>
+      </div>
+    </div>
+  `);
+};
+const includes = (target, iter) => {
+    for (const a of iter) {
+        if (a === target)
+            return true;
+    }
+    return false;
+};
+class ShadowDetailPage extends ShadowComponent_js_1.default {
+    constructor() {
+        super();
+        chrome.storage.sync.get(({ likedItems }) => {
+            shadowStore_1.default.setItem(shadowStore_1.LIKED, likedItems);
+        });
+        this.setState({ histories: [], currentPage: '', isCurrentPage: false });
+        this.setStyle(ShadowDetailPage_style_1.default);
+        this.setTemplate(template);
+        this.render();
+    }
+    connectedCallback() {
+        shadowStore_1.default.subscribe(shadowStore_1.CURRENT_PAGE, (currentPage) => {
+            if (!includes(currentPage, Object.values(shadowStore_1.PAGES))) {
+                this.setState((pre) => (Object.assign(Object.assign({}, pre), { currentPage, isCurrentPage: true })));
+                this.render();
+            }
+            else {
+                this.setState((pre) => (Object.assign(Object.assign({}, pre), { isCurrentPage: false })));
+                this.render();
+            }
+        });
+        shadowStore_1.default.subscribe(shadowStore_1.HISTORIES, (histories) => {
+            this.setState((pre) => (Object.assign(Object.assign({}, pre), { histories })));
+            this.render();
+        });
+    }
+}
+exports.default = ShadowDetailPage;
+
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const theme_1 = __webpack_require__(3);
+const style = `
+  .DetailContents-Wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: calc(130px + 10px);
+    padding: 20px;
+    width: 100vw;
+    min-width: 700px;
+
+    h1 {
+      color: ${theme_1.$green};
+      margin-bottom: 0;
+    }
+
+    ul {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 70vw;
+
+      li {
+        width: 100%;
+        padding: 0 5px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        line-height: 40px;
+        transition: all 0.3s;
+
+        div:first-child {
+          height: 30px;
+
+          img {
+            display: inline-block;
+          }
+
+          p {
+            display: inline-block;
+            color: gray;
+            padding-left: 10px;
+          }
+        }
+
+        div:last-child {
+          margin-top: 20px;
+          transition: all 0.3s;
+
+          &:hover > a {
+            color: ${theme_1.$blue};
+          }
+
+          &:hover {
+            transform: translate(20px);
+          }
+        }
+      }
+
+      li:nth-child(n + 2) {
+        border-top: 1px solid ${theme_1.$gray};
+      }
+
+      li:nth-child(2n) {
+        border-top: 1px solid ${theme_1.$gray};
+      }
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    a:link {
+      color: black;
+
+      &:hover {
+        color: ${theme_1.$blue};
+      }
+    }
+
+    a:visited {
+      color: black;
+    }
+  }
+
+  .hide {
+    display: none;
+  }
+`;
+exports.default = style;
 
 
 /***/ })

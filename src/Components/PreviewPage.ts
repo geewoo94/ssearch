@@ -1,48 +1,72 @@
-import { Div, Img, render } from '../_Factory/Element';
-import { useSelector } from '../_Factory/Store';
+import simpleShadowDom from '../_Factory/simpleShadowDom.js';
+import store, { CURRENT_PAGE, PAGES, PREVIEWS } from '../_Factory/shadowStore';
 
-import './PreviewPage.scss';
+import style from './PreviewPage.style';
 
-function PreviewPage() {
-  const previews = useSelector((state) => state.previews);
+type Props = { list: { base64: string, url: string }[], isCurrentPage: boolean };
 
-  const openModal = ({ url, base64 }: { url: string, base64: string }) => {
+const template = ({ list, isCurrentPage }: Props) => {
+  return (`
+    <div class='Preview-Page-Wrapper ${isCurrentPage ? '' : 'hide'}'>
+      ${list.map((item) => {
+        return (`
+          <img src='data:image/png;base64, ${item.base64}' data-url=${item.url}></img>
+        `);
+      }).join('')}
+    </div>
+  `);
+};
+
+class PreviewPage extends simpleShadowDom {
+  constructor() {
+    super();
+
+    this.setStyle(style);
+    this.setState({ list: [], isCurrentPage: false });
+    this.setTemplate(template);
+    this.render();
+  }
+
+  previewClickEvent(e: Event) {
+    const { src, dataset: { url }} = (e.target as HTMLImageElement);
+
     const $modal = document.querySelector('#modal');
     const $moveTag = document.querySelector('.container a');
     const $img = document.createElement('img');
 
-    $img.src = base64;
+    $img.src = src;
 
-    $modal.classList.remove('close');
+    $modal.classList.remove('hide');
     $modal.appendChild($img);
     ($moveTag as HTMLAnchorElement).href = url;
 
     const closeModal = () => {
-      $modal.classList.add('close');
+      $modal.classList.add('hide');
       $modal.removeChild($img);
       $modal.removeEventListener('click', closeModal);
     };
 
     $modal.addEventListener('click', closeModal);
-  };
+  }
 
-  return render(
-    Div({
-      class: 'Preview-Page-Wrapper',
-    })(
-      ...previews.map((item: { url: string, base64: string }) => {
-        const base64 = `data:image/png;base64, ${item.base64}`;
+  connectedCallback() {
+    store.subscribe(CURRENT_PAGE, (page) => {
+      if (page === PAGES.previews) {
+        this.setState((prev: Props) => ({ ...prev, isCurrentPage: true }));
+        this.render();
+      } else {
+        this.setState((prev: Props) => ({ ...prev, isCurrentPage: false }));
+        this.render();
+      }
+    });
 
-        return Img({
-          src: base64,
-          event: {
-            type: 'click',
-            callback: () => openModal({ url: item.url, base64 }),
-          }
-        })();
-      })
-    )
-  );
+    store.subscribe(PREVIEWS, (previews) => {
+      this.setState((prev: Props) => ({ ...prev, list: previews }));
+      this.render();
+    });
+
+    this.shadowRoot.addEventListener('click', this.previewClickEvent.bind(this));
+  }
 }
 
 export default PreviewPage;

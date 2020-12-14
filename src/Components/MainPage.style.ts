@@ -131,6 +131,10 @@ const style = `
       }
     }
   }
+
+  .hide {
+    display: none;
+  }
 `;
 
 export default style;

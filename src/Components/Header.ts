@@ -1,89 +1,73 @@
-import { Div, Img, Input, Li, Nav, P, render, Ul } from '../_Factory/Element';
-import { useDispatch } from '../_Factory/Store';
-
-import {
-  setRange,
-  setRemovedUrls,
-  setSearchTerm,
-  setCurrentPage,
-  setScrollPage,
-} from '../store';
-import {
+import simpleShadowDom from '../_Factory/simpleShadowDom.js';
+import store, {
+  SEARCH_TERM,
+  RANGE_VALUE,
   PAGES,
-  DEFAULT_PAGE,
-  DEFAULT_RANGE,
-} from '../constants';
-import './Header.scss';
+  CURRENT_PAGE,
+  initialSetting,
+} from '../_Factory/shadowStore';
 
-function Header(): render {
-  const navMenu = PAGES;
-  const dispatch = useDispatch();
+import style from './Header.style';
 
-  const handleSetSearchTerm = (val: string) => {
-    dispatch(setSearchTerm(val));
-  };
+const template =  `
+  <div class='Header-Wrapper'>
+    <nav>
+      <ul>
+        <li>${PAGES.main}</li>
+        <li>${PAGES.liked}</li>
+        <li>${PAGES.previews}</li>
+      </ul>
+    </nav>
+    <div class='Header-column'>
+      <img src='./main-icon-128.png' />
+      <input class='Search-Input' placeholder='검색을 껌색하세요!'></input>
+    </div>
+    <div>
+      <input type='range' min='1' max='7' value='7' class='Range-Input'></input>
+      <p>1 ⏐ 3 ⏐ 5 ⏐ 7</p>
+    </div>
+  </div>
+`;
 
-  const handleSetRange = (val: string) => {
-    dispatch(setRange(val));
-  };
+class Header extends simpleShadowDom {
+  constructor() {
+    super();
 
-  const handleSetCurrentPage = (val: string) => {
-    dispatch(setCurrentPage(val));
-  };
+    this.setStyle(style);
+    this.setTemplate(template);
+    this.render();
+  }
 
-  const handleReset = () => {
-    window.scrollTo({ top:0 });
-    dispatch(setRange(DEFAULT_RANGE));
-    dispatch(setSearchTerm(''));
-    dispatch(setCurrentPage(DEFAULT_PAGE));
-    dispatch(setRemovedUrls([]));
-    dispatch(setScrollPage(1));
-  };
+  headerInputEvent(e: Event) {
+    if ((e.target as HTMLInputElement).classList.contains('Search-Input')) {
+      store.setItem(SEARCH_TERM, (e.target as HTMLInputElement).value);
+      return;
+    }
 
-  return render(
-    Div({ class: 'Header-Wrapper' })(
-      Nav()(
-        Ul()(
-          ...navMenu.map((currentPage) => Li({
-            event: {
-              type: 'click',
-              callback: (ev: Event) => handleSetCurrentPage((ev.target as HTMLElement).textContent),
-            }
-          })(currentPage))
-        )
-      ),
-      Div({ class: 'Header-Column' })(
-        Img({
-          src: './main-icon-128.png',
-          event: {
-            type: 'click',
-            callback: handleReset,
-          }
-        })(),
-        Input({
-          class: 'Search-Input',
-          placeholder: '검색을 껌색하세요!',
-          event: {
-            type: 'input',
-            callback: (ev: Event) => handleSetSearchTerm((ev.target as HTMLInputElement).value)
-          }
-        })(),
-      ),
-      Div()(
-        Input({
-          type: 'range',
-          min: '1',
-          max: '7',
-          class: 'Range-Input',
-          event: {
-            type: 'input',
-            callback: (ev: Event) => handleSetRange((ev.target as HTMLInputElement).value),
-          }
-        })(),
-        P()('1 ⏐ 3 ⏐ 5 ⏐ 7'),
-      )
-    )
-  );
+    if ((e.target as HTMLInputElement).classList.contains('Range-Input')) {
+      store.setItem(RANGE_VALUE, (e.target as HTMLInputElement).value);
+      return;
+    }
+  }
+
+  headerClickEvent(e: Event) {
+    if ((e.target as HTMLLIElement).tagName === 'LI') {
+      window.scrollTo({ top: 0 });
+      store.setItem(CURRENT_PAGE, (e.target as HTMLInputElement).textContent);
+      return;
+    }
+
+    if ((e.target as HTMLImageElement).tagName === 'IMG') {
+      window.scrollTo({ top: 0 });
+      initialSetting();
+      return;
+    }
+  }
+
+  connectedCallback() {
+    this.shadowRoot.addEventListener('input', this.headerInputEvent.bind(this));
+    this.shadowRoot.addEventListener('click', this.headerClickEvent.bind(this));
+  }
 }
 
 export default Header;

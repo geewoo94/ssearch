@@ -24,6 +24,10 @@ const go = (arg, ...fn) => reduce((acc, fn) => fn(acc), arg, fn);
 const curry = (fn) => (...arg) =>
   (arg.length >= fn.length) ? fn(...arg) : curry(fn.bind(null, ...arg));
 
+const pipe = (...fns) => (arg) => go(arg, ...fns);
+
+const minifyFlatten = pipe(flatten, minify);
+
 const setInnerHTML = curry((el, template) =>
   ((el.innerHTML = template), el));
 
@@ -74,6 +78,11 @@ export default class TinyComponent extends HTMLElement {
     }
   }
 
+  static setEachStyle(css) {
+    if (!css) return;
+    TinyComponent._eachStyle = minifyFlatten(css);
+  }
+
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
@@ -93,9 +102,9 @@ export default class TinyComponent extends HTMLElement {
   }
 
   setStyle(css) {
-    go(css,
-      flatten,
-      minify,
+    const eachStyle = TinyComponent._eachStyle || '';
+
+    go(minifyFlatten(css + eachStyle),
       setTextContent(createEl('style')),
       append(this.shadowRoot));
   }
@@ -123,15 +132,6 @@ export default class TinyComponent extends HTMLElement {
       this._render.bind(this)();
   }
 
-  // setState(path, value) {
-  //   set(state, path, value);
-  //   if (!get(subscriber, path)) set(subscriber, path, []);
-  //   const subscribers = get(subscriber, path);
-  //   for (const subscriber of subscribers) {
-  //     subscriber(value);
-  //   }
-  // }
-
   getState(path) {
     return get(state, path);
   }
@@ -149,51 +149,4 @@ export default class TinyComponent extends HTMLElement {
     this.shadowRoot.innerHTML = '';
     this.shadowRoot.appendChild(content);
   }
-
-
-
-  // render(template, props, className, tagName) {
-  //   if (!this.template) this.template = template;
-
-  //   const { content } = createTemplate(template, props);
-  //   const children = this.shadowRoot.children;
-  //   let style = document.createElement('style');
-
-  //   for (const child of children) {
-  //     if (child.tagName === 'STYLE') {
-  //       style = child;
-  //     }
-  //   }
-
-  //   this.shadowRoot.innerHTML = '';
-  //   this.shadowRoot.appendChild(style);
-  //   this.shadowRoot.appendChild(content);
-  // }
 }
-
-//store 구조 짜기
-//이제 상태와 컴포넌트가 완전히 분리됐음
-
-export const store = (() => {
-  const _store = {};
-  const _subscribers = {};
-
-  const getState = (path) => get(_store, path);
-
-  const setState = (path, value) =>{
-    set(_store, path, value);
-    if (!_subscribers[path]) _subscribers[path] = new Set();
-    each((subscriber) => subscriber(value), _subscribers[path]);
-  };
-
-  const subscribe = (path, callback) =>
-    (_subscribers[path] || new Set()).add(callback);
-
-  return {
-    getState,
-    setState,
-    subscribe,
-  };
-})();
-
-//go 함수 테스트 하기

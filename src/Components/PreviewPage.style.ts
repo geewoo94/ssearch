@@ -14,10 +14,6 @@ const style = `
       box-shadow: 5px 5px 10px rgb(133, 132, 132);
     }
   }
-
-  .hide {
-    display: none;
-  }
 `;
 
 export default style;

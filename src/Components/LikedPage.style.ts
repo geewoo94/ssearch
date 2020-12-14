@@ -36,26 +36,6 @@ const style = `
         border-top: 1px solid ${$gray};
       }
     }
-
-    a {
-      text-decoration: none;
-    }
-
-    a:link {
-      color: black;
-
-      &:hover {
-        color: ${$blue};
-      }
-    }
-
-    a:visited {
-      color: black;
-    }
-  }
-
-  .hide {
-    display: none;
   }
 `;
 

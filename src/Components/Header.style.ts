@@ -29,7 +29,6 @@ const style = `
         margin: 20px;
         cursor: pointer;
         transition: all 0.3s;
-        list-style-type: none;
         color: ${$blue};
 
         &:hover {

@@ -55,7 +55,6 @@ const style = `
         margin: 0;
 
         li {
-          list-style-type: none;
           padding: 10px;
           border-bottom: 1px solid ${$blue};
 
@@ -130,10 +129,6 @@ const style = `
         }
       }
     }
-  }
-
-  .hide {
-    display: none;
   }
 `;
 

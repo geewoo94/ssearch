@@ -1,5 +1,5 @@
-import simpleShadowDom from '../_Factory/simpleShadowDom.js';
-import store, { PAGES, LIKED, CURRENT_PAGE } from '../_Factory/shadowStore';
+import simpleShadowDom from 'simple-shadow-dom';
+import store, { PAGES, LIKED, CURRENT_PAGE } from '../store';
 
 import style from './LikedPage.style';
 

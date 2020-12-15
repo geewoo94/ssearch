@@ -1,8 +1,9 @@
-import simpleShadowDom from '../_Factory/simpleShadowDom.js';
-import store, { PAGES, LIKED, CURRENT_PAGE, HISTORIES } from '../_Factory/shadowStore';
+import simpleShadowDom from 'simple-shadow-dom';
+import store, { PAGES, LIKED, CURRENT_PAGE, HISTORIES } from '../store';
 
 import { history } from '../types';
 import { filterDetail } from '../utils/filterHistory';
+import { includes } from '../utils/functianal';
 import style from './DetailPage.style';
 
 type Props = { histories: history[], currentPage: string, isCurrentPage: boolean };
@@ -34,13 +35,6 @@ const template = ({ histories, currentPage, isCurrentPage}: Props) => {
       </div>
     </div>
   `);
-};
-
-const includes = (target: any, iter: any) => {
-  for (const a of iter) {
-    if (a === target) return true;
-  }
-  return false;
 };
 
 class DetailPage extends simpleShadowDom {

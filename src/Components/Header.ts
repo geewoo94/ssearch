@@ -1,11 +1,11 @@
-import simpleShadowDom from '../_Factory/simpleShadowDom.js';
+import simpleShadowDom from 'simple-shadow-dom';
 import store, {
   SEARCH_TERM,
   RANGE_VALUE,
   PAGES,
   CURRENT_PAGE,
   initialSetting,
-} from '../_Factory/shadowStore';
+} from '../store';
 
 import style from './Header.style';
 

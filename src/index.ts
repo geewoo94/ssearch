@@ -1,6 +1,6 @@
 import './utils/devSetting.js';
 
-import TinyComponent from './_Factory/simpleShadowDom.js';
+import simpleShadowDom from 'simple-shadow-dom';
 import eachStyle from './style/each';
 import './style/global.scss';
 
@@ -12,11 +12,10 @@ import DetailPage from './Components/DetailPage';
 
 const root = document.getElementById('root');
 
-TinyComponent.setEachStyle(eachStyle);
+simpleShadowDom.setEachStyle(eachStyle);
 
-TinyComponent.render(root, Header, 'shadow-header');
-TinyComponent.render(root, MainPage, 'shadow-main');
-TinyComponent.render(root, LikedPage, 'shadow-liked');
-TinyComponent.render(root, PreviewPage, 'shadow-preview');
-TinyComponent.render(root, DetailPage, 'shadow-detail');
-
+simpleShadowDom.render(root, Header, 'shadow-header');
+simpleShadowDom.render(root, MainPage, 'shadow-main');
+simpleShadowDom.render(root, LikedPage, 'shadow-liked');
+simpleShadowDom.render(root, PreviewPage, 'shadow-preview');
+simpleShadowDom.render(root, DetailPage, 'shadow-detail');

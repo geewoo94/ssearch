@@ -1,13 +1,5 @@
 import { get, set } from 'lodash';
-
-const curry = (fn: any) => (...arg: any) =>
-  (arg.length >= fn.length) ? fn(...arg) : curry(fn.bind(null, ...arg));
-
-const each = curry((fn: any, iter: any) => {
-  for (const a of iter) {
-    fn(a);
-  }
-});
+import { each } from './utils/functianal';
 
 const store = (() => {
   const _store = {};

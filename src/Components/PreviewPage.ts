@@ -1,5 +1,5 @@
-import simpleShadowDom from '../_Factory/simpleShadowDom.js';
-import store, { CURRENT_PAGE, PAGES, PREVIEWS } from '../_Factory/shadowStore';
+import simpleShadowDom from 'simple-shadow-dom';
+import store, { CURRENT_PAGE, PAGES, PREVIEWS } from '../store';
 
 import style from './PreviewPage.style';
 

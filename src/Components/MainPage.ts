@@ -1,4 +1,4 @@
-import simpleShadowDom from '../_Factory/simpleShadowDom';
+import simpleShadowDom from 'simple-shadow-dom';
 import store, {
   SEARCH_TERM,
   RANGE_VALUE,
@@ -8,7 +8,7 @@ import store, {
   CURRENT_PAGE,
   PAGE_COUNT,
   PAGES,
-} from '../_Factory/shadowStore';
+} from '../store';
 import { throttle } from 'lodash';
 import * as Toastify from 'toastify-js';
 

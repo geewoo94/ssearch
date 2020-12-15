@@ -1,5 +1,6 @@
 import simpleShadowDom from 'simple-shadow-dom';
-import store, { PAGES, LIKED, CURRENT_PAGE } from '../store';
+import { PAGES, State } from '../lib';
+import store from '../store';
 
 import style from './LikedPage.style';
 
@@ -41,7 +42,7 @@ class LikedPage extends simpleShadowDom {
     super();
 
     chrome.storage.sync.get(({ likedItems }) => {
-      store.setItem(LIKED, likedItems);
+      store.setItem(State.LIKED, likedItems);
     });
 
     this.setState({ likedItems: [], isCurrentPage: false });
@@ -66,7 +67,7 @@ class LikedPage extends simpleShadowDom {
   }
 
   connectedCallback() {
-    store.subscribe(CURRENT_PAGE, (page) => {
+    store.subscribe(State.CURRENT_PAGE, (page) => {
       if (page === PAGES.liked) {
         this.setState((prev: Props) => ({...prev, isCurrentPage: true}));
         this.render();
@@ -76,7 +77,7 @@ class LikedPage extends simpleShadowDom {
       }
     });
 
-    store.subscribe(LIKED, (likedItems) => {
+    store.subscribe(State.LIKED, (likedItems) => {
       this.setState((prev: Props) => ({ ...prev, likedItems }));
       this.render();
     });

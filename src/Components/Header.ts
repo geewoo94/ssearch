@@ -1,11 +1,6 @@
 import simpleShadowDom from 'simple-shadow-dom';
-import store, {
-  SEARCH_TERM,
-  RANGE_VALUE,
-  PAGES,
-  CURRENT_PAGE,
-  initialSetting,
-} from '../store';
+import { PAGES, State } from '../lib';
+import store, { initialSetting } from '../store';
 
 import style from './Header.style';
 
@@ -40,12 +35,12 @@ class Header extends simpleShadowDom {
 
   headerInputEvent(e: Event) {
     if ((e.target as HTMLInputElement).classList.contains('Search-Input')) {
-      store.setItem(SEARCH_TERM, (e.target as HTMLInputElement).value);
+      store.setItem(State.SEARCH_TERM, (e.target as HTMLInputElement).value);
       return;
     }
 
     if ((e.target as HTMLInputElement).classList.contains('Range-Input')) {
-      store.setItem(RANGE_VALUE, (e.target as HTMLInputElement).value);
+      store.setItem(State.RANGE_VALUE, (e.target as HTMLInputElement).value);
       return;
     }
   }
@@ -53,7 +48,7 @@ class Header extends simpleShadowDom {
   headerClickEvent(e: Event) {
     if ((e.target as HTMLLIElement).tagName === 'LI') {
       window.scrollTo({ top: 0 });
-      store.setItem(CURRENT_PAGE, (e.target as HTMLInputElement).textContent);
+      store.setItem(State.CURRENT_PAGE, (e.target as HTMLInputElement).textContent);
       return;
     }
 

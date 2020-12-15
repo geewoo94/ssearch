@@ -1,19 +1,20 @@
 import { get, set } from 'lodash';
+import { Store, State, Subscriber, Subscribers, PAGES } from './lib';
 import { each } from './utils/functianal';
 
 const store = (() => {
-  const _store = {};
-  const _subscribers: { [key: string]: any } = {};
+  const _store: Store = {};
+  const _subscribers: Subscribers<State> = {};
 
-  const getItem = (path: string) => get(_store, path);
+  const getItem = <S extends State>(path: S): Store[S] => get(_store, path);
 
-  const setItem = (path: string, value: any) => {
+  const setItem = <S extends State>(path: S, value: Store[S]) => {
     set(_store, path, value);
     if (!_subscribers[path]) _subscribers[path] = new Set();
-    each((subscriber: (val: any) => void) => subscriber(value), _subscribers[path]);
+    each((subscriber: Subscriber<S>) => subscriber(value), _subscribers[path]);
   };
 
-  const subscribe = (path: string, callback: (val: any) => void) =>
+  const subscribe = <S extends State>(path: S, callback: Subscriber<S>) =>
     (_subscribers[path] || new Set()).add(callback);
 
   return {
@@ -23,40 +24,23 @@ const store = (() => {
   };
 })();
 
-export const PAGES = {
-  main: 'Main',
-  liked: 'Liked',
-  previews: 'Previews',
-};
-
-export const SEARCH_TERM = 'header/searchTerm';
-export const RANGE_VALUE = 'header/rangeValue';
-export const CURRENT_PAGE = 'header/currentPage';
-
-export const HISTORIES = 'mainPage/histories';
-export const REMOVED_URLS = 'mainPage/removedUrls';
-export const LIKED = 'mainPage/liked';
-export const PAGE_COUNT = 'mainPage/pageCount';
-
-export const PREVIEWS = 'previewPage/previews';
-
 export const initialSetting = () => {
-  store.setItem(SEARCH_TERM, '');
-  store.setItem(RANGE_VALUE, '7');
-  store.setItem(CURRENT_PAGE, PAGES.main);
-  store.setItem(REMOVED_URLS, []);
-  store.setItem(PAGE_COUNT, 1);
+  store.setItem(State.SEARCH_TERM, '');
+  store.setItem(State.RANGE_VALUE, '7');
+  store.setItem(State.CURRENT_PAGE, PAGES.main);
+  store.setItem(State.REMOVED_URLS, []);
+  store.setItem(State.PAGE_COUNT, 1);
 };
 
-store.setItem(SEARCH_TERM, '');
-store.setItem(RANGE_VALUE, '7');
-store.setItem(CURRENT_PAGE, PAGES.main);
+store.setItem(State.SEARCH_TERM, '');
+store.setItem(State.RANGE_VALUE, '7');
+store.setItem(State.CURRENT_PAGE, PAGES.main);
 
-store.setItem(HISTORIES, []);
-store.setItem(REMOVED_URLS, []);
-store.setItem(LIKED, []);
-store.setItem(PAGE_COUNT, 1);
+store.setItem(State.HISTORIES, []);
+store.setItem(State.REMOVED_URLS, []);
+store.setItem(State.LIKED, []);
+store.setItem(State.PAGE_COUNT, 1);
 
-store.setItem(PREVIEWS, []);
+store.setItem(State.PREVIEWS, []);
 
 export default store;

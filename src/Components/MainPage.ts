@@ -1,20 +1,12 @@
 import simpleShadowDom from 'simple-shadow-dom';
-import store, {
-  SEARCH_TERM,
-  RANGE_VALUE,
-  PREVIEWS,
-  HISTORIES,
-  REMOVED_URLS,
-  CURRENT_PAGE,
-  PAGE_COUNT,
-  PAGES,
-} from '../store';
+import store from '../store';
 import { throttle } from 'lodash';
 import * as Toastify from 'toastify-js';
 
 import { history } from '../types';
 import { filterHistory } from '../utils/filterHistory';
 import style from './MainPage.style';
+import { PAGES, State } from '../lib';
 
 const SiteCard = (sites: history[]) => {
   const origin = sites[0].origin.replace(/(^\w+:|^)\/\//, '');
@@ -74,7 +66,7 @@ class MainPage extends simpleShadowDom {
     };
 
     chrome.history.search(query, (history) => {
-      store.setItem(HISTORIES, history);
+      store.setItem(State.HISTORIES, history);
     });
 
     this.setTemplate(template);
@@ -86,8 +78,8 @@ class MainPage extends simpleShadowDom {
   async contentClickEvent(e: Event) {
     if ((e.target as HTMLButtonElement).classList.contains('Close-Button')) {
       const origin = (e.target as HTMLButtonElement).dataset.origin;
-      const removedUrls = store.getItem(REMOVED_URLS);
-      store.setItem(REMOVED_URLS, [...removedUrls, origin]);
+      const removedUrls = store.getItem(State.REMOVED_URLS);
+      store.setItem(State.REMOVED_URLS, [...removedUrls, origin]);
       return;
     }
 
@@ -115,8 +107,8 @@ class MainPage extends simpleShadowDom {
         });
         const { base64 } = await result.json();
 
-        const previews = store.getItem(PREVIEWS);
-        store.setItem(PREVIEWS, [...previews, { url: inputUrl, base64 }]);
+        const previews = store.getItem(State.PREVIEWS);
+        store.setItem(State.PREVIEWS, [...previews, { url: inputUrl, base64 }]);
 
         Toastify({
           text: 'Saved!',
@@ -144,15 +136,15 @@ class MainPage extends simpleShadowDom {
 
     if ((e.target as HTMLHeadingElement).classList.contains('Origin')) {
       const origin = (e.target as HTMLHeadingElement).dataset.origin;
-      store.setItem(CURRENT_PAGE, origin);
+      store.setItem(State.CURRENT_PAGE, origin);
       window.scrollTo({ top: 0 });
     }
   }
 
   filter(histories: history[]) {
-    const searchTerm = store.getItem(SEARCH_TERM);
-    const range = store.getItem(RANGE_VALUE);
-    const removedUrls = store.getItem(REMOVED_URLS);
+    const searchTerm = store.getItem(State.SEARCH_TERM);
+    const range = Number(store.getItem(State.RANGE_VALUE));
+    const removedUrls = store.getItem(State.REMOVED_URLS);
 
     const filteredHistories = filterHistory(histories, {
       range,
@@ -185,34 +177,34 @@ class MainPage extends simpleShadowDom {
   }
 
   connectedCallback() {
-    store.subscribe(HISTORIES, (histories: history[]) => {
+    store.subscribe(State.HISTORIES, (histories) => {
       const filteredHistories = this.filter(histories);
       this.setState((prev: Props) => ({...prev, histories: filteredHistories}));
       this.render();
     });
 
-    store.subscribe(REMOVED_URLS, () => {
-      const histories = store.getItem(HISTORIES);
+    store.subscribe(State.REMOVED_URLS, () => {
+      const histories = store.getItem(State.HISTORIES);
       const filteredHistories = this.filter(histories);
       this.setState((prev: Props) => ({...prev, histories: filteredHistories}));
       this.render();
     });
 
-    store.subscribe(SEARCH_TERM, () => {
-      const histories = store.getItem(HISTORIES);
+    store.subscribe(State.SEARCH_TERM, () => {
+      const histories = store.getItem(State.HISTORIES);
       const filteredHistories = this.filter(histories);
       this.setState((prev: Props) => ({...prev, histories: filteredHistories}));
       this.render();
     });
 
-    store.subscribe(RANGE_VALUE, () => {
-      const histories = store.getItem(HISTORIES);
+    store.subscribe(State.RANGE_VALUE, () => {
+      const histories = store.getItem(State.HISTORIES);
       const filteredHistories = this.filter(histories);
       this.setState((prev: Props) => ({...prev, histories: filteredHistories}));
       this.render();
     });
 
-    store.subscribe(CURRENT_PAGE, (page) => {
+    store.subscribe(State.CURRENT_PAGE, (page) => {
       if(page === PAGES.main) {
         this.setState((prev: Props) => ({...prev, isCurrentPage: true}));
         this.render();
@@ -232,10 +224,10 @@ class MainPage extends simpleShadowDom {
         clientHeight,
         scrollHeight,
       } = document.documentElement;
-      const currentPage = store.getItem(CURRENT_PAGE);
+      const currentPage = store.getItem(State.CURRENT_PAGE);
       if ((scrollTop + clientHeight) === scrollHeight && currentPage === PAGES.main) {
-        const pageCount = store.getItem(PAGE_COUNT) + 1;
-        store.setItem(PAGE_COUNT, pageCount);
+        const pageCount = store.getItem(State.PAGE_COUNT) + 1;
+        store.setItem(State.PAGE_COUNT, pageCount);
 
         this.setState((prev: Props) => ({...prev, pageCount }));
         this.render();

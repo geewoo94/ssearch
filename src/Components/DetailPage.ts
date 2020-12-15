@@ -1,6 +1,7 @@
 import simpleShadowDom from 'simple-shadow-dom';
-import store, { PAGES, LIKED, CURRENT_PAGE, HISTORIES } from '../store';
+import { PAGES, State } from '../lib';
 
+import store from '../store';
 import { history } from '../types';
 import { filterDetail } from '../utils/filterHistory';
 import { includes } from '../utils/functianal';
@@ -42,7 +43,7 @@ class DetailPage extends simpleShadowDom {
     super();
 
     chrome.storage.sync.get(({ likedItems }) => {
-      store.setItem(LIKED, likedItems);
+      store.setItem(State.LIKED, likedItems);
     });
 
     this.setState({ histories: [], currentPage: '', isCurrentPage: false });
@@ -52,7 +53,7 @@ class DetailPage extends simpleShadowDom {
   }
 
   connectedCallback() {
-    store.subscribe(CURRENT_PAGE, (currentPage) => {
+    store.subscribe(State.CURRENT_PAGE, (currentPage) => {
       if (!includes(currentPage , Object.values(PAGES))) {
         this.setState((pre: Props) => ({ ...pre, currentPage, isCurrentPage: true }));
         this.render();
@@ -62,7 +63,7 @@ class DetailPage extends simpleShadowDom {
       }
     });
 
-    store.subscribe(HISTORIES, (histories: history[]) => {
+    store.subscribe(State.HISTORIES, (histories: history[]) => {
       this.setState((pre: Props) => ({ ...pre, histories }));
       this.render();
     });

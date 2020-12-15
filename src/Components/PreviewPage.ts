@@ -1,5 +1,6 @@
 import simpleShadowDom from 'simple-shadow-dom';
-import store, { CURRENT_PAGE, PAGES, PREVIEWS } from '../store';
+import { PAGES, State } from '../lib';
+import store from '../store';
 
 import style from './PreviewPage.style';
 
@@ -50,7 +51,7 @@ class PreviewPage extends simpleShadowDom {
   }
 
   connectedCallback() {
-    store.subscribe(CURRENT_PAGE, (page) => {
+    store.subscribe(State.CURRENT_PAGE, (page) => {
       if (page === PAGES.previews) {
         this.setState((prev: Props) => ({ ...prev, isCurrentPage: true }));
         this.render();
@@ -60,7 +61,7 @@ class PreviewPage extends simpleShadowDom {
       }
     });
 
-    store.subscribe(PREVIEWS, (previews) => {
+    store.subscribe(State.PREVIEWS, (previews) => {
       this.setState((prev: Props) => ({ ...prev, list: previews }));
       this.render();
     });

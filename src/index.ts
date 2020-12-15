@@ -11,11 +11,13 @@ import PreviewPage from './Components/PreviewPage';
 import DetailPage from './Components/DetailPage';
 
 const root = document.getElementById('root');
+const render = (shadowClass: typeof simpleShadowDom, tagName: string) =>
+  simpleShadowDom.render(root, shadowClass, tagName);
 
 simpleShadowDom.setEachStyle(eachStyle);
 
-simpleShadowDom.render(root, Header, 'shadow-header');
-simpleShadowDom.render(root, MainPage, 'shadow-main');
-simpleShadowDom.render(root, LikedPage, 'shadow-liked');
-simpleShadowDom.render(root, PreviewPage, 'shadow-preview');
-simpleShadowDom.render(root, DetailPage, 'shadow-detail');
+render(Header, 'shadow-header');
+render(MainPage, 'shadow-main');
+render(LikedPage, 'shadow-liked');
+render(PreviewPage, 'shadow-preview');
+render(DetailPage, 'shadow-detail');

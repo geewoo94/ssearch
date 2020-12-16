@@ -1,129 +1,61 @@
-import { history } from '../types';
+import { getTime } from 'date-fns';
+import { History } from '../lib';
+import { Curry, go } from './functianal';
 
-class Filter {
-  histories: history[];
+const byRange = (range: number, history: History) =>
+  history.lastVisitTime >= (getTime(new Date()) - (range * 24 * 3600 * 1000));
 
-  constructor(histories: history[]) {
-    this.histories = histories;
+const bySearchTerm = (searchTerm: string, history: History) => {
+  return (
+    history.url.includes(searchTerm) ||
+    history.title.includes(searchTerm)
+  );
+};
+
+const byRemovedUrls = (urls: string[], acc: History[], history: History) => {
+  if (!urls.some((url) => (new RegExp(url)).test(history.url))) {
+    acc.push(history);
+    return acc;
   }
+  return acc;
+};
 
-  filterByRange(range: number) {
-    this.histories = this.histories.filter((history) => {
-      const startTime = (new Date()).getTime() - (range * 24 * 3600 * 1000);
+const addOrigin = (history: History) => {
+  const regex = /https:\/\/[-a-zA-Z0-9@:%._+~#=]{1,256}/;
+  history.origin = history.url.match(regex) ? history.url.match(regex)[0] : history.title;
+  return history;
+};
 
-      return history.lastVisitTime >= startTime;
-    });
+const nomalize = (acc: any, history: History) => {
+  if (!acc[history.origin]) acc[history.origin] = [];
+  return (acc[history.origin].push(history), acc);
+};
 
-    return this;
-  }
+const byCurrentPage = (currentPage: string, history: History) =>
+  (new RegExp(currentPage)).test(history.url);
 
-  filterBySearchTerm(searchTerm: string) {
-    this.histories = this.histories.filter((history) => {
-      return (
-        history.url.includes(searchTerm) ||
-        history.title.includes(searchTerm)
-      );
-    });
-
-    return this;
-  }
-
-  filterByRemovedUrls(removedUrls: string[]) {
-    this.histories = this.histories.filter((history) => {
-      return !removedUrls.some((url) => {
-        const regex = new RegExp(url);
-        return regex.test(history.url);
-      });
-    });
-
-    return this;
-  }
-
-  filterDuplicateUrl() {
-    const set = new Set();
-
-    this.histories = this.histories.filter((history) => {
-      if (set.has(history.title)) {
-        return false;
-      } else {
-        set.add(history.title);
-        return true;
-      }
-    });
-
-    return this;
-  }
-
-  sortByTime() {
-    return this;
-  }
-
-  filterByCurrentPage(currentPage: string) {
-    this.histories = this.histories.filter((history) => {
-      const regex = new RegExp(currentPage);
-      return regex.test(history.url);
-    });
-
-    return this;
-  }
-
-  nomalize(): history[][] {
-    const regex = /https:\/\/[-a-zA-Z0-9@:%._+~#=]{1,256}/;
-    const nomalized = this.histories.reduce((acc: { [key: string]: history[] }, cur: history) => {
-      const matched = cur.url.match(regex);
-
-      if (!matched) return acc;
-
-      const root = matched[0];
-
-      if (!acc[root]) acc[root] = [];
-
-      cur.origin = root;
-      acc[root].push(cur);
-
-      return acc;
-    }, {});
-
-    const urls: history[][] = [];
-
-    for (const prop in nomalized) {
-      urls.push(nomalized[prop]);
-    }
-
-    urls.sort((a, b) => b.length - a.length);
-    urls.forEach((url) => url.sort((a, b) => a.lastVisitTime - b.lastVisitTime));
-
-    return urls;
-  }
-}
-
-function filterHistory(
-  histories: history[],
+const filterHistory = (
+  histories: History[],
   { range, searchTerm, removedUrls }:
   { range: number, searchTerm: string, removedUrls: string[] }
-): history[][] {
-  return (
-    new Filter(histories)
-      .filterByRange(range)
-      .filterBySearchTerm(searchTerm)
-      .filterByRemovedUrls(removedUrls)
-      .filterDuplicateUrl()
-      .sortByTime()
-      .nomalize()
-  );
-}
+): History[][] =>
+  go(histories,
+    Curry.uniqBy('title'),
+    Curry.filter(byRange.bind(null, range)),
+    Curry.filter(bySearchTerm.bind(null, searchTerm)),
+    Curry.reduce(byRemovedUrls.bind(null, removedUrls), []),
+    Curry.map(addOrigin),
+    Curry.reduce(nomalize, {}),
+    Curry.orederByDesc('length'),
+    Curry.orederByDesc('lastVisitTime'));
 
-function filterDetail(
-  histories: history[],
+const filterDetail = (
+  histories: History[],
   { currentPage }: { currentPage: string }
-): history[][] {
-  return (
-    new Filter(histories)
-      .filterByCurrentPage(currentPage)
-      .sortByTime()
-      .nomalize()
-  );
-}
+): History[] =>
+  go(histories,
+    Curry.filter(byCurrentPage.bind(null, currentPage)),
+    Curry.orederByDesc('lastVisitTime'));
 
 export {
   filterHistory,

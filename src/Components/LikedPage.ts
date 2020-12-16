@@ -1,6 +1,7 @@
 import simpleShadowDom from 'simple-shadow-dom';
 import { PAGES, State } from '../lib';
 import store from '../store';
+import { sort } from '../utils/functianal';
 
 import style from './LikedPage.style';
 
@@ -8,14 +9,14 @@ type LikedItem = { count: number, title: string, url: string };
 type Props = { likedItems: LikedItem[], isCurrentPage: boolean };
 
 const template = ({ likedItems, isCurrentPage }: Props) => {
-  const list = likedItems.sort((a, b) => b.count - a.count);
+  const list = sort((a: LikedItem, b: LikedItem) => b.count - a.count, likedItems);
 
   return (`
     <div class='LikedPage-Wrapper ${isCurrentPage ? '' : 'hide'}'>
       <h1>Liked</h1>
       <div>
         <ul>
-          ${list.map((item) => {
+          ${list.map((item: any) => {
             return (`
               <li>
                 <a

@@ -80,14 +80,6 @@ const style = `
             transition: all 0.3s;
             cursor: pointer;
 
-            a {
-              text-decoration: none;
-            }
-
-            a:visited {
-              color: inherit;
-            }
-
             &:hover {
               transform: translate(20px);
               color: ${$blue};

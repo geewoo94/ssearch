@@ -2,33 +2,38 @@ import simpleShadowDom from 'simple-shadow-dom';
 import store from '../store';
 import { throttle } from 'lodash';
 import * as Toastify from 'toastify-js';
+import { formatDistance, getTime } from 'date-fns';
+import * as sanitize from 'sanitize-html';
 
-import { history } from '../types';
 import { filterHistory } from '../utils/filterHistory';
 import style from './MainPage.style';
-import { PAGES, State } from '../lib';
+import { History, PAGES, State } from '../lib';
 
-const SiteCard = (sites: history[]) => {
+const SiteCard = (sites: History[]) => {
   const origin = sites[0].origin.replace(/(^\w+:|^)\/\//, '');
-  const filteredOrigin = origin.replace(/www./, '').replace(/.com/, '');
+  const currentTime = getTime(new Date());
 
   return `
     <div class='SiteCard-Wrapper'>
       <div class='Close-Button-Wrapper'>
         <button class='Close-Button' data-origin=${origin}>✄</button>
       </div>
-      <h1 class='Origin' data-origin=${origin}>${filteredOrigin}</h1>
+      <h1 class='Origin' data-origin=${origin}>${origin}</h1>
       <input placeholder='${origin} 에서 검색' data-origin=${origin}></input>
       <ul>
         ${sites.map((site) => {
+          const { lastVisitTime } = site;
+          const formatTime = formatDistance(currentTime, lastVisitTime);
+          const satitizedTitle = sanitize(site.title, { disallowedTagsMode: 'escape' });
+
           return `
             <li>
               <div>
                 <img src=${chrome.runtime ? `chrome://favicon/https://${origin}` : './main-icon16.png'} class='Image-Save' data-url=${site.url}></img>
-                <p>10분 전</p>
+                <p>${formatTime} ago</p>
               </div>
               <div class='Anchor-Wrapper'>
-                <a href=${site.url} target='_blank' title=${site.url}>${site.title}</a>
+                <a href=${site.url} target='_blank' title=${site.url}>${satitizedTitle}</a>
               </div>
             </li>
           `;
@@ -37,7 +42,7 @@ const SiteCard = (sites: history[]) => {
     </div>`;
 };
 
-type Props = { histories: history[][], isCurrentPage: boolean, pageCount: number };
+type Props = { histories: History[][], isCurrentPage: boolean, pageCount: number };
 
 const template = ({ histories, isCurrentPage, pageCount }: Props) => {
   const cardCount = pageCount * 6;
@@ -141,7 +146,7 @@ class MainPage extends simpleShadowDom {
     }
   }
 
-  filter(histories: history[]) {
+  filter(histories: History[]) {
     const searchTerm = store.getItem(State.SEARCH_TERM);
     const range = Number(store.getItem(State.RANGE_VALUE));
     const removedUrls = store.getItem(State.REMOVED_URLS);
@@ -204,6 +209,12 @@ class MainPage extends simpleShadowDom {
       this.render();
     });
 
+    store.subscribe(State.PAGE_COUNT, () => {
+      const pageCount = store.getItem(State.PAGE_COUNT);
+      this.setState((prev: Props) => ({ ...prev, pageCount }));
+      this.render();
+    });
+
     store.subscribe(State.CURRENT_PAGE, (page) => {
       if(page === PAGES.main) {
         this.setState((prev: Props) => ({...prev, isCurrentPage: true}));
@@ -228,9 +239,6 @@ class MainPage extends simpleShadowDom {
       if ((scrollTop + clientHeight) === scrollHeight && currentPage === PAGES.main) {
         const pageCount = store.getItem(State.PAGE_COUNT) + 1;
         store.setItem(State.PAGE_COUNT, pageCount);
-
-        this.setState((prev: Props) => ({...prev, pageCount }));
-        this.render();
       }
     }, 1000, { leading: false });
 

@@ -11,7 +11,8 @@ import style from './DetailPage.style';
 type Props = { histories: History[], currentPage: string, isCurrentPage: boolean };
 
 const template = ({ histories, currentPage, isCurrentPage}: Props) => {
-  const filtered = filterDetail(histories, { currentPage }) || [];
+  const searchTerm = store.getItem(State.SEARCH_TERM);
+  const filtered = filterDetail(histories, { currentPage, searchTerm }) || [];
   const origin = filtered[0]?.origin?.replace(/(^\w+:|^)\/\//, '');
   const filteredOrigin = origin?.replace(/www./, '').replace(/.com/, '');
   const currentTime = getTime(new Date());
@@ -26,6 +27,15 @@ const template = ({ histories, currentPage, isCurrentPage}: Props) => {
             const formatTime = formatDistance(currentTime, lastVisitTime);
             const sanitizedTitle = sanitize(history.title, { disallowedTagsMode: 'escape' });
 
+            let highlightedTitle = '';
+
+            if (sanitizedTitle.toLowerCase().includes(searchTerm.toLowerCase()) && searchTerm !== '') {
+              const regex = new RegExp(searchTerm, 'gi');
+              highlightedTitle = sanitizedTitle.replace(regex, `<i>${searchTerm}</i>`);
+            } else {
+              highlightedTitle = sanitizedTitle;
+            }
+
             return (`
               <li>
                 <div>
@@ -33,7 +43,7 @@ const template = ({ histories, currentPage, isCurrentPage}: Props) => {
                   <p>${formatTime} ago</p>
                 </div>
                 <div>
-                  <a href=${history.url} target='_blank' title=${history.url}>${sanitizedTitle}</a>
+                  <a href=${history.url} target='_blank' title=${history.url}>${highlightedTitle}</a>
                 </div>
               </li>
             `);
@@ -72,6 +82,10 @@ class DetailPage extends simpleShadowDom {
 
     store.subscribe(State.HISTORIES, (histories) => {
       this.setState((pre: Props) => ({ ...pre, histories }));
+      this.render();
+    });
+
+    store.subscribe(State.SEARCH_TERM, () => {
       this.render();
     });
   }

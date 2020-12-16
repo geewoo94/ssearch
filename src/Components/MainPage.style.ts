@@ -121,6 +121,10 @@ const style = `
         }
       }
     }
+
+    i {
+      background: yellow;
+    }
   }
 `;
 

@@ -12,19 +12,39 @@ import { History, PAGES, State } from '../lib';
 const SiteCard = (sites: History[]) => {
   const origin = sites[0].origin.replace(/(^\w+:|^)\/\//, '');
   const currentTime = getTime(new Date());
+  const searchTerm = store.getItem(State.SEARCH_TERM);
+  const sanitizedOrigin = sanitize(origin, { disallowedTagsMode: 'escape' });
+
+  let highlightedOrigin = '';
+
+  if (sanitizedOrigin.toLowerCase().includes(searchTerm.toLowerCase()) && searchTerm !== '') {
+    const regex = new RegExp(searchTerm, 'gi');
+    highlightedOrigin = sanitizedOrigin.replace(regex, `<i>${searchTerm}</i>`);
+  } else {
+    highlightedOrigin = sanitizedOrigin;
+  }
 
   return `
     <div class='SiteCard-Wrapper'>
       <div class='Close-Button-Wrapper'>
         <button class='Close-Button' data-origin=${origin}>✄</button>
       </div>
-      <h1 class='Origin' data-origin=${origin}>${origin}</h1>
+      <h1 class='Origin' data-origin=${origin}>${highlightedOrigin}</h1>
       <input placeholder='${origin} 에서 검색' data-origin=${origin}></input>
       <ul>
         ${sites.map((site) => {
           const { lastVisitTime } = site;
           const formatTime = formatDistance(currentTime, lastVisitTime);
-          const satitizedTitle = sanitize(site.title, { disallowedTagsMode: 'escape' });
+          const sanitizedTitle = sanitize(site.title, { disallowedTagsMode: 'escape' });
+
+          let highlightedTitle = '';
+
+          if (sanitizedTitle.toLowerCase().includes(searchTerm.toLowerCase()) && searchTerm !== '') {
+            const regex = new RegExp(searchTerm, 'gi');
+            highlightedTitle = sanitizedTitle.replace(regex, `<i>${searchTerm}</i>`);
+          } else {
+            highlightedTitle = sanitizedTitle;
+          }
 
           return `
             <li>
@@ -33,7 +53,7 @@ const SiteCard = (sites: History[]) => {
                 <p>${formatTime} ago</p>
               </div>
               <div class='Anchor-Wrapper'>
-                <a href=${site.url} target='_blank' title=${site.url}>${satitizedTitle}</a>
+                <a href=${site.url} target='_blank' title=${site.url}>${highlightedTitle}</a>
               </div>
             </li>
           `;

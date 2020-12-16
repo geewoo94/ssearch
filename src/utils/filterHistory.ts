@@ -7,7 +7,7 @@ const byRange = (range: number, history: History) =>
 
 const bySearchTerm = (searchTerm: string, history: History) => {
   return (
-    history.url.includes(searchTerm) ||
+    history.origin.includes(searchTerm) ||
     history.title.includes(searchTerm)
   );
 };
@@ -40,21 +40,22 @@ const filterHistory = (
   { range: number, searchTerm: string, removedUrls: string[] }
 ): History[][] =>
   go(histories,
+    Curry.map(addOrigin),
     Curry.uniqBy('title'),
     Curry.filter(byRange.bind(null, range)),
     Curry.filter(bySearchTerm.bind(null, searchTerm)),
     Curry.reduce(byRemovedUrls.bind(null, removedUrls), []),
-    Curry.map(addOrigin),
     Curry.reduce(nomalize, {}),
     Curry.orederByDesc('length'),
     Curry.orederByDesc('lastVisitTime'));
 
 const filterDetail = (
   histories: History[],
-  { currentPage }: { currentPage: string }
+  { currentPage, searchTerm }: { currentPage: string, searchTerm: string }
 ): History[] =>
   go(histories,
     Curry.filter(byCurrentPage.bind(null, currentPage)),
+    Curry.filter(bySearchTerm.bind(null, searchTerm)),
     Curry.orederByDesc('lastVisitTime'));
 
 export {

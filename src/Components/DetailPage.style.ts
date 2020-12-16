@@ -68,6 +68,10 @@ const style = `
         border-top: 1px solid ${$gray};
       }
     }
+
+    i {
+      background: yellow;
+    }
   }
 `;
 

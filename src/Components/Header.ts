@@ -19,7 +19,7 @@ const template =  `
     </div>
     <div>
       <input type='range' min='1' max='7' value='7' class='Range-Input'></input>
-      <p>1 ⏐ 3 ⏐ 5 ⏐ 7</p>
+      <p><b>1</b><b>⏐</b><b>3</b><b>⏐</b><b>5</b><b>⏐</b><b>7</b></p>
     </div>
   </div>
 `;
@@ -59,9 +59,32 @@ class Header extends simpleShadowDom {
     }
   }
 
+  headerScrollEvent(e: Event) {
+    if (window.scrollY >= 10) {
+      const header = this.shadowRoot.querySelector('.Header-Wrapper');
+      header.setAttribute('style', 'height: 70px; background: #1C3035;');
+      [...header.querySelectorAll('li')].forEach((el) => {
+        el.setAttribute('style', 'color: yellow;');
+      });
+      header.querySelector('img').classList.add('hide');
+      header.querySelector('p').setAttribute('style', 'display: none;');
+      header.querySelector('input[type=range]').setAttribute('style', '-webkit-background: yellow;');
+    } else {
+      const header = this.shadowRoot.querySelector('.Header-Wrapper');
+      header.removeAttribute('style');
+      [...header.querySelectorAll('li')].forEach((el) => {
+        el.removeAttribute('style');
+      });
+      header.querySelector('img').classList.remove('hide');
+      header.querySelector('p').removeAttribute('style');
+    }
+  }
+
   connectedCallback() {
     this.shadowRoot.addEventListener('input', this.headerInputEvent.bind(this));
     this.shadowRoot.addEventListener('click', this.headerClickEvent.bind(this));
+
+    window.addEventListener('scroll', this.headerScrollEvent.bind(this));
   }
 }
 

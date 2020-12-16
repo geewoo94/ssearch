@@ -11,6 +11,10 @@ const style = `
     width: 100vw;
     min-width: 700px;
 
+    h1 {
+      font-family: 'Jua', sans-serif;
+    }
+
     ul {
       display: flex;
       flex-direction: column;

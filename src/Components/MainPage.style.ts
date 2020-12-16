@@ -1,4 +1,4 @@
-import { $headerHeight, $blue, $white, $gray } from '../style/theme';
+import { $headerHeight, $blue, $white, $gray, $red } from '../style/theme';
 
 const style = `
   .Contents-Wrapper {
@@ -16,9 +16,16 @@ const style = `
       position: relative;
       flex-direction: column;
       width: 30vw;
-      border: 1px solid ${$blue};
+      border: 3px solid ${$blue};
       margin-bottom: 30px;
       background: white;
+
+      box-sizing: border-box;
+      border-style: solid;
+      border-image: linear-gradient(to right, #01c9ca 0%, #3886FF 100%);
+      border-image-slice: 1;
+      background: #fdfdfd;
+      border-image-width: 3px;
 
       h1 {
         font-size: 26px;
@@ -32,10 +39,11 @@ const style = `
         white-space: nowrap;
         transition: all 0.3s;
         cursor: pointer;
+        font-family: 'Jua', sans-serif;
 
         &:hover {
           transform: scale(1.1);
-          color: ${$blue};
+          color: ${$red};
         }
       }
 
@@ -57,6 +65,7 @@ const style = `
         li {
           padding: 10px;
           border-bottom: 1px solid ${$blue};
+          font-size: 16px;
 
           img {
             width: 20px;
@@ -90,13 +99,13 @@ const style = `
 
       .Close-Button-Wrapper {
         position: absolute;
-        right: -1px;
-        top: -1px;
+        right: -3px;
+        top: -3px;
         width: 50px;
         height: 50px;
         background: white;
-        border-left: 1px solid ${$blue};
-        border-bottom: 1px solid ${$blue};
+        border-left: 3px solid ${$blue};
+        border-bottom: 3px solid ${$blue};
 
         button {
           position: absolute;
@@ -106,7 +115,7 @@ const style = `
           height: 40px;
           font-size: 20px;
           background: ${$white};
-          border: 1px solid ${$blue};
+          border: 3px solid ${$blue};
           z-index: 1;
           transition: all 0.3s;
           overflow: visible;

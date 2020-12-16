@@ -1,4 +1,4 @@
-import { $blue, $headerHeight, $red } from '../style/theme';
+import { $blue, $green, $headerHeight, $red, $yellow } from '../style/theme';
 
 const style = `
   .Header-Wrapper {
@@ -12,6 +12,7 @@ const style = `
     justify-content: space-around;
     border-image-width: 0 0 0 20px;
     z-index: 2;
+    transition: all 0.5s;
 
     box-sizing: border-box;
     border-style: solid;
@@ -30,6 +31,7 @@ const style = `
         cursor: pointer;
         transition: all 0.3s;
         color: ${$blue};
+        font-family: 'Jua', sans-serif;
 
         &:hover {
           color: ${$red};
@@ -45,7 +47,7 @@ const style = `
       flex-direction: column;
 
       img {
-        height: 40px;
+        height: 50px;
         margin-bottom: 10px;
         transition: all 1s;
         cursor: pointer;
@@ -56,7 +58,7 @@ const style = `
       }
 
       input {
-        height: 40px;
+        height: 35px;
         width: 300px;
         border-radius: 20px;
         color: #292929;
@@ -64,25 +66,61 @@ const style = `
         border: 2px solid #c4c4c4;
         padding: 0 20px;
         outline: none;
+        transition: all 0.3s
+      }
+
+      input:focus {
+        background: ${$green};
+        color: white;
       }
     }
 
     Div:last-child {
       position: relative;
+      width: 200px;
 
       input[type=range] {
-        width: 200px;
+        width: inherit;
       }
 
       p {
-        margin-top: 0;
-        position: absolute;
-        letter-spacing: 9.1px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         left: 7px;
-        width: 200px;
+        width: inherit;
+        padding: 0 3px 0 7px;
         color: gray;
         font-weight: bold;
+        margin-top: 5px;
+        margin-bottom: -20px;
       }
+    }
+
+    input[type=range]{
+      -webkit-appearance: none;
+      position: relative;
+      top: -8px;
+    }
+
+    input[type=range]::-webkit-slider-runnable-track {
+      width: 300px;
+      height: 3px;
+      background: ${$blue};
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      border: none;
+      height: 16px;
+      width: 16px;
+      border-radius: 50%;
+      background: ${$green};
+      margin-top: -6px;
+    }
+
+    input[type=range]:focus {
+      outline: none;
     }
   }
 `;

@@ -8,6 +8,10 @@ const style = `
     width: 100vw;
     min-width: 650px;
 
+    h1 {
+      font-family: 'Jua', sans-serif;
+    }
+
     img {
       margin: 20px;
       width: 400px;

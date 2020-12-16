@@ -147,7 +147,7 @@ class MainPage extends simpleShadowDom {
         }).showToast();
       } catch (err) {
         Toastify({
-          text: 'Error occured... please tyy again',
+          text: 'Error occured... please try again',
           duration: 2000,
           newWindow: true,
           close: true,

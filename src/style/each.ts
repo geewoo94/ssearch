@@ -1,6 +1,8 @@
 const eachStyle = `
   * {
     box-sizing: border-box;
+    font-family: 'Noto Sans KR', sans-serif;
+    color: #1B3034;
   }
 
   li {

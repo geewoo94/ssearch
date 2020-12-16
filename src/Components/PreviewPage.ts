@@ -9,6 +9,7 @@ type Props = { list: { base64: string, url: string }[], isCurrentPage: boolean }
 const template = ({ list, isCurrentPage }: Props) => {
   return (`
     <div class='Preview-Page-Wrapper ${isCurrentPage ? '' : 'hide'}'>
+      <h1>Previews</h1>
       ${list.map((item) => {
         return (`
           <img src='data:image/png;base64, ${item.base64}' data-url=${item.url}></img>

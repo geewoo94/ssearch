@@ -21,7 +21,7 @@ const template = ({ likedItems, isCurrentPage }: Props) => {
               <li>
                 <a
                   class='Liked-Anchor'
-                  style='font-size: ${item.count + 10}px;'
+                  style='font-size: ${item.count + 16}px;'
                   href=${item.url}
                   target='_blank'
                   title=${item.url}

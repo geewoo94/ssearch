@@ -14,6 +14,7 @@ const style = `
     h1 {
       color: ${$green};
       margin-bottom: 0;
+      font-family: 'Jua', sans-serif;
     }
 
     ul {

@@ -59,7 +59,7 @@ class Header extends simpleShadowDom {
     }
   }
 
-  headerScrollEvent(e: Event) {
+  headerScrollEvent() {
     if (window.scrollY >= 10) {
       const header = this.shadowRoot.querySelector('.Header-Wrapper');
       header.setAttribute('style', 'height: 70px; background: #1C3035;');

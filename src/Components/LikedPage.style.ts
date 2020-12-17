@@ -1,4 +1,4 @@
-import { $blue, $gray } from '../style/theme';
+import { $blue, $gray, $yellow } from '../style/theme';
 
 const style = `
   .LikedPage-Wrapper {
@@ -12,6 +12,7 @@ const style = `
     min-width: 700px;
 
     h1 {
+      color: ${$yellow};
       font-family: 'Jua', sans-serif;
     }
 

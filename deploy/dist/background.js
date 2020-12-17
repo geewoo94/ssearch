@@ -11,7 +11,6 @@ chrome.contextMenus.create({
 function saveItem({ url, title, count }) {
   chrome.storage.sync.get((items) => {
     let isDuplicated = false;
-    console.log(items);
     items.likedItems && items.likedItems.forEach((likedItem) => {
       if (likedItem.url === url) {
         isDuplicated = true;

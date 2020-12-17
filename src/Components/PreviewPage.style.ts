@@ -1,3 +1,5 @@
+import { $darkBlue } from '../style/theme';
+
 const style = `
   .Preview-Page-Wrapper {
     margin-top: calc(130px + 10px);
@@ -10,6 +12,7 @@ const style = `
 
     h1 {
       font-family: 'Jua', sans-serif;
+      color: ${$darkBlue};
     }
 
     img {

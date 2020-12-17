@@ -1,5 +1,5 @@
 (function devSetting() {
-  if (!chrome || !chrome.history) {
+  if (!window.chrome || !window.chrome.history) {
     window.chrome = {};
 
     window.chrome.history = {

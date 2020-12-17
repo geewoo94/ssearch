@@ -1,38 +1,46 @@
 import { getTime } from 'date-fns';
 import { History } from '../lib';
-import { Curry, go } from './functianal';
+import {
+  curry,
+  map,
+  reduce,
+  filter,
+  sort,
+  descend,
+  prop,
+  uniqBy,
+  go,
+  values,
+} from './functional';
 
-const byRange = (range: number, history: History) =>
-  history.lastVisitTime >= (getTime(new Date()) - (range * 24 * 3600 * 1000));
+/*
+ * export for test list
+ * byRange, bySearchTerm, byRemovedUrls, addOrigin,
+ * nomalize, byCurrentPage
+*/
 
-const bySearchTerm = (searchTerm: string, history: History) => {
-  return (
-    history.origin.includes(searchTerm) ||
-    history.title.includes(searchTerm)
-  );
-};
+export const byRange = curry((range: number, history: History) =>
+  history.lastVisitTime >= (getTime(new Date()) - (range * 24 * 3600 * 1000)));
 
-const byRemovedUrls = (urls: string[], acc: History[], history: History) => {
-  if (!urls.some((url) => (new RegExp(url)).test(history.url))) {
-    acc.push(history);
-    return acc;
-  }
-  return acc;
-};
+export const bySearchTerm = curry((searchTerm: string, history: History) =>
+  (history.origin.includes(searchTerm) || history.title.includes(searchTerm)));
 
-const addOrigin = (history: History) => {
+export const byRemovedUrls = curry((urls: string[], history: History) =>
+  (!urls.some((url) => (new RegExp(url)).test(history.url))));
+
+export const addOrigin = (history: History) => {
   const regex = /https:\/\/[-a-zA-Z0-9@:%._+~#=]{1,256}/;
   history.origin = history.url.match(regex) ? history.url.match(regex)[0] : history.title;
   return history;
 };
 
-const nomalize = (acc: any, history: History) => {
+export const nomalize = (acc: { [key: string]: History[] }, history: History) => {
   if (!acc[history.origin]) acc[history.origin] = [];
   return (acc[history.origin].push(history), acc);
 };
 
-const byCurrentPage = (currentPage: string, history: History) =>
-  (new RegExp(currentPage)).test(history.url);
+export const byCurrentPage = curry((currentPage: string, history: History) =>
+  (new RegExp(currentPage)).test(history.url));
 
 const filterHistory = (
   histories: History[],
@@ -40,23 +48,25 @@ const filterHistory = (
   { range: number, searchTerm: string, removedUrls: string[] }
 ): History[][] =>
   go(histories,
-    Curry.map(addOrigin),
-    Curry.uniqBy('title'),
-    Curry.filter(byRange.bind(null, range)),
-    Curry.filter(bySearchTerm.bind(null, searchTerm)),
-    Curry.reduce(byRemovedUrls.bind(null, removedUrls), []),
-    Curry.reduce(nomalize, {}),
-    Curry.orederByDesc('length'),
-    Curry.orederByDesc('lastVisitTime'));
+    map(addOrigin),
+    uniqBy(prop('title')),
+    filter(byRange(range)),
+    filter(bySearchTerm(searchTerm)),
+    filter(byRemovedUrls(removedUrls)),
+    reduce(nomalize, {}),
+    values,
+    sort(descend(prop('length'))),
+    map(sort(descend(prop('lastVisitTime')))));
+
 
 const filterDetail = (
   histories: History[],
   { currentPage, searchTerm }: { currentPage: string, searchTerm: string }
 ): History[] =>
   go(histories,
-    Curry.filter(byCurrentPage.bind(null, currentPage)),
-    Curry.filter(bySearchTerm.bind(null, searchTerm)),
-    Curry.orederByDesc('lastVisitTime'));
+    filter(byCurrentPage(currentPage)),
+    filter(bySearchTerm(searchTerm)),
+    sort(descend(prop('lastVisitTime'))));
 
 export {
   filterHistory,

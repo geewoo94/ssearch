@@ -1,7 +1,7 @@
 import simpleShadowDom from 'simple-shadow-dom';
 import { PAGES, State } from '../lib';
 import store from '../store';
-import { sort } from '../utils/functianal';
+import { sort } from '../utils/functional';
 
 import style from './LikedPage.style';
 
@@ -16,7 +16,7 @@ const template = ({ likedItems, isCurrentPage }: Props) => {
       <h1>Liked</h1>
       <div>
         <ul>
-          ${list.map((item: any) => {
+          ${list.map((item) => {
             return (`
               <li>
                 <a

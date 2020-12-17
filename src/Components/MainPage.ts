@@ -1,11 +1,12 @@
 import simpleShadowDom from 'simple-shadow-dom';
 import store from '../store';
 import { throttle } from 'lodash';
-import * as Toastify from 'toastify-js';
 import { formatDistance, getTime } from 'date-fns';
 import * as sanitize from 'sanitize-html';
+import Toastify from '../utils/toastify';
 
 import { filterHistory } from '../utils/filterHistory';
+import setHighlight from '../utils/setHighlight';
 import style from './MainPage.style';
 import { History, PAGES, State } from '../lib';
 
@@ -14,15 +15,7 @@ const SiteCard = (sites: History[]) => {
   const currentTime = getTime(new Date());
   const searchTerm = store.getItem(State.SEARCH_TERM);
   const sanitizedOrigin = sanitize(origin, { disallowedTagsMode: 'escape' });
-
-  let highlightedOrigin = '';
-
-  if (sanitizedOrigin.toLowerCase().includes(searchTerm.toLowerCase()) && searchTerm !== '') {
-    const regex = new RegExp(searchTerm, 'gi');
-    highlightedOrigin = sanitizedOrigin.replace(regex, `<i>${searchTerm}</i>`);
-  } else {
-    highlightedOrigin = sanitizedOrigin;
-  }
+  const highlightedOrigin = setHighlight(searchTerm, sanitizedOrigin);
 
   return `
     <div class='SiteCard-Wrapper'>
@@ -36,15 +29,7 @@ const SiteCard = (sites: History[]) => {
           const { lastVisitTime } = site;
           const formatTime = formatDistance(currentTime, lastVisitTime);
           const sanitizedTitle = sanitize(site.title, { disallowedTagsMode: 'escape' });
-
-          let highlightedTitle = '';
-
-          if (sanitizedTitle.toLowerCase().includes(searchTerm.toLowerCase()) && searchTerm !== '') {
-            const regex = new RegExp(searchTerm, 'gi');
-            highlightedTitle = sanitizedTitle.replace(regex, `<i>${searchTerm}</i>`);
-          } else {
-            highlightedTitle = sanitizedTitle;
-          }
+          const highlightedTitle = setHighlight(searchTerm, sanitizedTitle);
 
           return `
             <li>
@@ -114,14 +99,8 @@ class MainPage extends simpleShadowDom {
 
       Toastify({
         text: 'Saving...',
-        duration: 2000,
-        newWindow: true,
-        close: true,
-        gravity: 'top',
-        position: 'right',
         backgroundColor: 'linear-gradient(to right, #00b09b, #96c93d)',
-        stopOnFocus: false,
-      }).showToast();
+      });
 
       try {
         const url = `${SCREENSHOT_URL}?url=${inputUrl}`;
@@ -137,25 +116,13 @@ class MainPage extends simpleShadowDom {
 
         Toastify({
           text: 'Saved!',
-          duration: 2000,
-          newWindow: true,
-          close: true,
-          gravity: 'top',
-          position: 'right',
           backgroundColor: 'linear-gradient(to right, #f857a6, #ff5858)',
-          stopOnFocus: false,
-        }).showToast();
+        });
       } catch (err) {
         Toastify({
           text: 'Error occured... please try again',
-          duration: 2000,
-          newWindow: true,
-          close: true,
-          gravity: 'top',
-          position: 'right',
           backgroundColor: 'linear-gradient(to right, #f857a6, #ff5858)',
-          stopOnFocus: false,
-        }).showToast();
+        });
       }
     }
 
@@ -201,33 +168,20 @@ class MainPage extends simpleShadowDom {
     }
   }
 
+  customSubscribe(state: State) {
+    store.subscribe(state, () => {
+      const histories = store.getItem(State.HISTORIES);
+      const filteredHistories = this.filter(histories);
+      this.setState((prev: Props) => ({ ...prev, histories: filteredHistories }));
+      this.render();
+    });
+  }
+
   connectedCallback() {
-    store.subscribe(State.HISTORIES, (histories) => {
-      const filteredHistories = this.filter(histories);
-      this.setState((prev: Props) => ({...prev, histories: filteredHistories}));
-      this.render();
-    });
-
-    store.subscribe(State.REMOVED_URLS, () => {
-      const histories = store.getItem(State.HISTORIES);
-      const filteredHistories = this.filter(histories);
-      this.setState((prev: Props) => ({...prev, histories: filteredHistories}));
-      this.render();
-    });
-
-    store.subscribe(State.SEARCH_TERM, () => {
-      const histories = store.getItem(State.HISTORIES);
-      const filteredHistories = this.filter(histories);
-      this.setState((prev: Props) => ({...prev, histories: filteredHistories}));
-      this.render();
-    });
-
-    store.subscribe(State.RANGE_VALUE, () => {
-      const histories = store.getItem(State.HISTORIES);
-      const filteredHistories = this.filter(histories);
-      this.setState((prev: Props) => ({...prev, histories: filteredHistories}));
-      this.render();
-    });
+    this.customSubscribe(State.HISTORIES);
+    this.customSubscribe(State.REMOVED_URLS);
+    this.customSubscribe(State.SEARCH_TERM);
+    this.customSubscribe(State.RANGE_VALUE);
 
     store.subscribe(State.PAGE_COUNT, () => {
       const pageCount = store.getItem(State.PAGE_COUNT);

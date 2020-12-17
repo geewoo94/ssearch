@@ -35470,7 +35470,7 @@ var Parser = /** @class */ (function (_super) {
         this._tagname = name;
         if (!this._options.xmlMode &&
             Object.prototype.hasOwnProperty.call(openImpliesClose, name)) {
-            for (var el = void 0; 
+            for (var el = void 0;
             // @ts-ignore
             openImpliesClose[name].has((el = this._stack[this._stack.length - 1])); this.onclosetag(el))
                 ;
@@ -42581,7 +42581,7 @@ exports.default = MainPage;
           }
         )
       }
-      
+
       // Adding an on-click destination path
       if (typeof this.options.destination !== "undefined") {
         divElement.addEventListener(
@@ -42602,7 +42602,7 @@ exports.default = MainPage;
           "click",
           function(event) {
             event.stopPropagation();
-            this.options.onClick();            
+            this.options.onClick();
           }.bind(this)
         );
       }
@@ -42612,7 +42612,7 @@ exports.default = MainPage;
 
         var x = getAxisOffsetAValue("x", this.options);
         var y = getAxisOffsetAValue("y", this.options);
-        
+
         var xOffset = this.options.position == "left" ? x : "-" + x;
         var yOffset = this.options.gravity == "toastify-top" ? y : "-" + y;
 
@@ -47697,7 +47697,7 @@ IndexedSourceMapConsumer.prototype.sourceContentFor =
  * and an object is returned with the following properties:
  *
  *   - line: The line number in the generated source, or null.  The
- *     line number is 1-based. 
+ *     line number is 1-based.
  *   - column: The column number in the generated source, or null.
  *     The column number is 0-based.
  */

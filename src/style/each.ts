@@ -5,6 +5,11 @@ const eachStyle = `
     color: #1B3034;
   }
 
+  h1 {
+    font-family: 'Jua', sans-serif;
+    font-size: 40px;
+  }
+
   li {
     list-style-type: none;
   }

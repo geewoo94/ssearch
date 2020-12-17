@@ -1,6 +1,6 @@
 import { get, set } from 'lodash';
 import { Store, State, Subscriber, Subscribers, PAGES } from './lib';
-import { each } from './utils/functianal';
+import { each } from './utils/functional';
 
 const store = (() => {
   const _store: Store = {};

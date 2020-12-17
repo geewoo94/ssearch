@@ -5,7 +5,8 @@ import { History, PAGES, State } from '../lib';
 
 import store from '../store';
 import { filterDetail } from '../utils/filterHistory';
-import { includes } from '../utils/functianal';
+import setHighlight from '../utils/setHighlight';
+import { includes } from '../utils/functional';
 import style from './DetailPage.style';
 
 type Props = { histories: History[], currentPage: string, isCurrentPage: boolean };
@@ -26,15 +27,7 @@ const template = ({ histories, currentPage, isCurrentPage}: Props) => {
             const { lastVisitTime } = history;
             const formatTime = formatDistance(currentTime, lastVisitTime);
             const sanitizedTitle = sanitize(history.title, { disallowedTagsMode: 'escape' });
-
-            let highlightedTitle = '';
-
-            if (sanitizedTitle.toLowerCase().includes(searchTerm.toLowerCase()) && searchTerm !== '') {
-              const regex = new RegExp(searchTerm, 'gi');
-              highlightedTitle = sanitizedTitle.replace(regex, `<i>${searchTerm}</i>`);
-            } else {
-              highlightedTitle = sanitizedTitle;
-            }
+            const highlightedTitle = setHighlight(searchTerm, sanitizedTitle);
 
             return (`
               <li>

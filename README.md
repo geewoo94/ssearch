@@ -1,21 +1,30 @@
 # 🔎 껌색 - 검색을 검색
 
-### What is Ssearch ?
+### Tags
+```diff
++ javascript
++ typescript
++ FP
++ shadow dom
++ open source
+```
+
+### ✅ What is Ssearch ?
 자신의 검색 기록을 빠르게 찾을수 있도록 도와주는 크롬 익스텐션입니다.</br>
 *2020. 11. 30 ~ 2020. 12. 18*
 
-### Preview
+### ✅ Preview
 <img src='./preview.gif'></img>
 
 <a href='https://www.youtube.com/watch?v=GZfXLyDb1JU&ab_channel=%EB%B0%95%EA%B2%BD%EC%9A%B0'>Youtube에서 보기</a>
 
-### Download
+### ✅ Download
 <a href='#'>다운로드 링크</a>[검수중...]
 
-### Why?
+### ✅ Why?
 평소에 개발도구를 만들고 싶다는 생각을 하고 있었고 크롬에서 검색기록을 찾을때 불편한점이 있어서 직접 만들어보자는 생각에 만들게 되었습니다.
 
-### Implementation
+### ✅ Implementation
 
 **Main Page**
 - 같은 url별로 검색 기록을 카드단위로 묶습니다.
@@ -35,7 +44,7 @@
 **Preview Page**
 - Main Page에서 저장한 해당 사이트의 preview를 이미지 형태로 제공합니다.
 
-### Tech stack
+### ✅ Tech stack
 
 - **Frontend**
   - **vanilla javascript**</br>
@@ -70,13 +79,13 @@
   - **puppeteer**</br>
     웹사이트 미리보기를 구현하기위해 사용되었습니다.
 
-### Brain storm
+### ✅ Brain storm
   - **<a href='https://www.figma.com/file/znKfI3AvJBmMw48OO5L2ko/Untitled?node-id=0%3A1'>mockup schema</a>**</br>
   figma를 아용한 목업 디자인
   - **<a href='https://www.notion.so/22415a9779544ecd9344ef1715e77860?v=3881a55678894b1c8b2ed0dcf7b3b77a'>notion</a>**</br>
   전체적인 태스크 기록
 
-### Issues
+### ✅ Issues
   - **<a href='https://www.notion.so/22415a9779544ecd9344ef1715e77860?v=3881a55678894b1c8b2ed0dcf7b3b77a&p=a02cfc06045c416889c8b855709fe879'>Contribute Open Source [DefinitelyTyped]</a>**</br>
     chrom extention을 만들면서 types/chrome에 누락된 타입을 수정후 기여
   - **<a href='https://www.notion.so/22415a9779544ecd9344ef1715e77860?v=3881a55678894b1c8b2ed0dcf7b3b77a&p=c65c5492587a41dca36ff0ef6f375769'>Functional Programming</a>**</br>
@@ -92,7 +101,7 @@
   - **<a href='https://www.notion.so/22415a9779544ecd9344ef1715e77860?v=3881a55678894b1c8b2ed0dcf7b3b77a&p=85dfcabdafd34c27b9409793cd97ce96'>Aws Lambda</a>**
   - **<a href='https://www.notion.so/22415a9779544ecd9344ef1715e77860?v=3881a55678894b1c8b2ed0dcf7b3b77a&p=3f1f5ba117fd4c8bbcdfe597cd4a4e5a'>Sanitize Html</a>**
 
-### Minor subject
+### ✅ Minor subject
 
 - **고정관념 탈피**</br>
   react와 express를 배우면서 점점 정해진 코드대로만 쓰려고 하고 안전한 컨벤션만 따라가는 경향이 보였었다. 그런게 나쁜건 아니지만 점점 자연스러운 코딩이 아닌 틀에 맞춰서 결과 찍어내는느낌이 들었다. 그래서 이번 프로젝트에서는 바닐라 자바스크립트를 시도했던것이다. 몇달 배우지도 않았는데 사고방식이 완전히 리액트에 갇혀있어서 해당 틀을 깨는데 시간이 많이 걸렸다. 프로젝트중 여러가지 프레임워크를 접했던게 고정관념을 깨는데 많은 도움을 줬고, `backbone, riot js, jquery, svelte, etc...`해당 프레임 워크들을 보면서 다시 자바스크립트는 다양하고 정해진 정답은 없다는걸 느꼈다.
@@ -103,9 +112,9 @@
 - **Easy test**</br>
   FP의 연장선이기도 한데 그동안 공부하면서 내 코드를 테스트하는게 참 쉽지가 않았다. 테스트하기 어렵다는건 그만큼 함수가 하는 역할이 많고 로직분리가 잘 안되어있다는 뜻이기도 한데, 이번 프로젝트에선 FP를 적극 도입해서 그런지 테스트가 굉장히 수월했다. 프로젝트에선 여러가지 유틸리티 함수에만 FP가 도입됐는데 다른 돔 조작이나 많은 부분에 다양하게 도입하기 위해 추가적인 공부를 하고싶다.
 
-### End...?
+### ✅ End...?
 개발 공부는 끝이 없다. 한가지 프로젝트가 끝나면 또 새롭게 배울것들이 늘어난다. 이번 프로젝트를 진행하면서 모자랐던 부분은 다시 공부하면서 또 다른 프로젝트를 진행하고 싶다.
 
-### Plus
+### ✅ Plus
 - **<a href='https://github.com/Youout2020/youout-frontend'>first project</a>** github page
 - **<a href='https://github.com/geewoo94/simple-shadow-dom'>simple-shadow-dom </a>** github page

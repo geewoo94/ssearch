@@ -6,5 +6,7 @@
     apikey + '&limit=' + lmt;
   const data = await fetch(search_url);
   const parsed = await data.json();
-  console.log(parsed);
+  const gif = parsed.results[0].media[0].gif.url;
+
+  document.querySelector('#background').setAttribute('src', gif);
 })();

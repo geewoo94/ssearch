@@ -1,0 +1,14 @@
+{
+  "name": {
+    "message": "껌색"
+  },
+  "description": {
+    "message": "검색을 검색"
+  },
+  "contextTitle": {
+    "message": "현재 페이지 저장"
+  },
+  "contextRemove": {
+    "message": "모든 저장된 페이지 지우기"
+  }
+}

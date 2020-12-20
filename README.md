@@ -18,6 +18,10 @@
 
 <a href='https://www.youtube.com/watch?v=GZfXLyDb1JU&ab_channel=%EB%B0%95%EA%B2%BD%EC%9A%B0'>Youtube에서 보기</a>
 
+### ✅ 발표 영상
+<img src='./standup.png'></img>
+<a href='https://youtu.be/jMw5MIxLY3o?t=2450'>유튜브 링크 [ 40분 50초 시작 ]</a>
+
 ### ✅ Download
 <a href='#'>다운로드 링크</a>[검수중...]
 

@@ -23,7 +23,7 @@
 <a href='https://youtu.be/jMw5MIxLY3o?t=2450'>유튜브 링크 [ 40분 50초 시작 ]</a>
 
 ### ✅ Download
-<a href='#'>다운로드 링크</a>[검수중...]
+<a href='https://chrome.google.com/webstore/detail/ssearch%EA%BB%8C%EC%83%89/kdfmgmggkkncoipjbjpbggndjmdkmjhm?utm_source=chrome-ntp-icon'>다운로드 링크</a>
 
 ### ✅ Why?
 평소에 개발도구를 만들고 싶다는 생각을 하고 있었고 크롬에서 검색기록을 찾을때 불편한점이 있어서 직접 만들어보자는 생각에 만들게 되었습니다.

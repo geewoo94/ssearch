@@ -91,16 +91,19 @@
 
 ### ✅ Issues
   - **<a href='https://www.notion.so/22415a9779544ecd9344ef1715e77860?v=3881a55678894b1c8b2ed0dcf7b3b77a&p=a02cfc06045c416889c8b855709fe879'>Contribute Open Source [DefinitelyTyped]</a>**</br>
-    chrom extention을 만들면서 types/chrome에 누락된 타입을 수정후 기여
+    chrom extention을 만들면서 types/chrome에 누락된 타입을 발견함.</br>
+    해당 소스코드를 내려받고 수정후 기여
   - **<a href='https://www.notion.so/22415a9779544ecd9344ef1715e77860?v=3881a55678894b1c8b2ed0dcf7b3b77a&p=c65c5492587a41dca36ff0ef6f375769'>Functional Programming</a>**</br>
-  typescript + functional programming?
+  프로젝트를 진행중 Functional Programming(FP)에 관심을 갖게됨.</br>
+  typescript와 FP의 궁합에 대해 생각하게 됨.
   - **<a href='https://www.notion.so/22415a9779544ecd9344ef1715e77860?v=3881a55678894b1c8b2ed0dcf7b3b77a&p=ebda8b82b40e45beb66c23cf96d00027'>Shadow Dom</a>**</br>
-  What is shadow dom?
+  프레임 워크를 만들던 도중 Shadow-Dom이란 Web API를 발견하게됨.</br>
+  해당 API를 활용하여 나만의 프레임워크를 만들게 됨.
   - **<a href='https://www.notion.so/22415a9779544ecd9344ef1715e77860?v=3881a55678894b1c8b2ed0dcf7b3b77a&p=79ce0d4a6b1441c091f987384e07a8de'>Css In Js</a>**
   - **<a href='https://www.notion.so/22415a9779544ecd9344ef1715e77860?v=3881a55678894b1c8b2ed0dcf7b3b77a&p=e4f3f5f113a84b9c860e7c69dc0c86e1'>Typescript</a>**</br>
-  any? any? any?
+  typescript를 사용하면서 힘들었던점 느낀점.
   - **<a href='https://www.notion.so/22415a9779544ecd9344ef1715e77860?v=3881a55678894b1c8b2ed0dcf7b3b77a&p=3582a613d54442738d6421b3e7bcd46f'>Webpack Config</a>**</br>
-  webpack version issue
+  Webpack이용시 version issue를 겪고 해당 문제에 대한 고찰.
   - **<a href='https://www.notion.so/22415a9779544ecd9344ef1715e77860?v=3881a55678894b1c8b2ed0dcf7b3b77a&p=a7cd8c899f3041cca2ad10d667565cb6'>Hooks Closure</a>**
   - **<a href='https://www.notion.so/22415a9779544ecd9344ef1715e77860?v=3881a55678894b1c8b2ed0dcf7b3b77a&p=85dfcabdafd34c27b9409793cd97ce96'>Aws Lambda</a>**
   - **<a href='https://www.notion.so/22415a9779544ecd9344ef1715e77860?v=3881a55678894b1c8b2ed0dcf7b3b77a&p=3f1f5ba117fd4c8bbcdfe597cd4a4e5a'>Sanitize Html</a>**

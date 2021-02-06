@@ -52,18 +52,18 @@
 
 - **Frontend**
   - **vanilla javascript**</br>
-    이번 프로젝트는 자바스크립트와 더 친해지기 위해 바닐라로 작업하였습니다.
+    이번 프로젝트는 자바스크립트와 더 친해지기 위해 바닐라로 작업하였습니다. 그 동안 리액트를 사용하면서 리액트 의존성이 강하다고 생각했습니다. 가장 기본적인 바닐라 자바스크립트로 프로젝트를 진행하며 다시금 본질적인 프로그래밍에 대해 생각한 계기가 되었습니다.
   - **typescript**</br>
-    평소에 관심이 있었고 바닐라 자바스크립트로 구현하는 만큼 에디터의 도움을 받고자 사용했습니다.
+    평소에 관심이 있었고 바닐라 자바스크립트로 구현하는 만큼 에디터의 도움을 받고자 사용했습니다. 처음 작업할때는 타입스크립트 없이 작업을 시작하였는데 디버깅 과정이 쉽지 않았습니다. 그에 따라 중간에 타입스크립트를 도입했고 결과적으로 디버깅하는 시간이 크게 줄어들어 시간 내에 프로젝트를 마무리 할 수 있었습니다.
   - **simple-shadow-dom**</br>
-    자체 제작한 프레임 워크입니다. <a href='https://www.npmjs.com/package/simple-shadow-dom'>simple-shadow-dom</a>
+    shadow-dom wep api를 활용해 자체 제작한 프레임 워크입니다. <a href='https://www.npmjs.com/package/simple-shadow-dom'>simple-shadow-dom</a>
 - **Backend**
   - **aws-lambda**</br>
-    서버에서 실행하는 로직이 단순한 함수 하나이기 때문에 serverless로 구현했습니다.
+    서버에서 실행하는 로직이 단순한 함수 하나이기 때문에 serverless로 구현했습니다. 또한 크롬 익스텐션이라는 특성 때문에 인터넷 연결없이도 기능을 활용할수 있는것에 초점을 맞췄습니다.
 
 - **Libraries**
   - **webpack**</br>
-    메인 페이지 html 번들링을 위해 사용되었습니다.
+    메인 페이지 html 번들링을 위해 사용되었습니다. 웹팩, 바벨 설정을 직접 만지며 번들링 과정을 보다 깊게 이해하는 계기가 되었습니다.
   - **jest**</br>
   각종 테스트를 위해 사용되었습니다.
   - **lodash**
@@ -81,7 +81,7 @@
     code style을 통일하기 위해 사용되었습니다.
 
   - **puppeteer**</br>
-    웹사이트 미리보기를 구현하기위해 사용되었습니다.
+    웹사이트 미리보기를 구현하기위해 사용되었습니다. 해당 로직은 aws-lambda 함수 안에 작성되어 있습니다.
 
 ### ✅ Brain storm
   - **<a href='https://www.figma.com/file/znKfI3AvJBmMw48OO5L2ko/Untitled?node-id=0%3A1'>mockup schema</a>**</br>
@@ -93,12 +93,14 @@
   - **<a href='https://www.notion.so/22415a9779544ecd9344ef1715e77860?v=3881a55678894b1c8b2ed0dcf7b3b77a&p=a02cfc06045c416889c8b855709fe879'>Contribute Open Source [DefinitelyTyped]</a>**</br>
     chrom extention을 만들면서 types/chrome에 누락된 타입을 발견함.</br>
     해당 소스코드를 내려받고 수정후 기여
+    <img src='./contribute.png'></img>
   - **<a href='https://www.notion.so/22415a9779544ecd9344ef1715e77860?v=3881a55678894b1c8b2ed0dcf7b3b77a&p=c65c5492587a41dca36ff0ef6f375769'>Functional Programming</a>**</br>
   프로젝트를 진행중 Functional Programming(FP)에 관심을 갖게됨.</br>
   typescript와 FP의 궁합에 대해 생각하게 됨.
   - **<a href='https://www.notion.so/22415a9779544ecd9344ef1715e77860?v=3881a55678894b1c8b2ed0dcf7b3b77a&p=ebda8b82b40e45beb66c23cf96d00027'>Shadow Dom</a>**</br>
   프레임 워크를 만들던 도중 Shadow-Dom이란 Web API를 발견하게됨.</br>
   해당 API를 활용하여 나만의 프레임워크를 만들게 됨.
+  <img src='./npm-ssd.png'></img>
   - **<a href='https://www.notion.so/22415a9779544ecd9344ef1715e77860?v=3881a55678894b1c8b2ed0dcf7b3b77a&p=79ce0d4a6b1441c091f987384e07a8de'>Css In Js</a>**
   - **<a href='https://www.notion.so/22415a9779544ecd9344ef1715e77860?v=3881a55678894b1c8b2ed0dcf7b3b77a&p=e4f3f5f113a84b9c860e7c69dc0c86e1'>Typescript</a>**</br>
   typescript를 사용하면서 힘들었던점 느낀점.
@@ -119,9 +121,9 @@
 - **Easy test**</br>
   FP의 연장선이기도 한데 그동안 공부하면서 내 코드를 테스트하는게 참 쉽지가 않았다. 테스트하기 어렵다는건 그만큼 함수가 하는 역할이 많고 로직분리가 잘 안되어있다는 뜻이기도 한데, 이번 프로젝트에선 FP를 적극 도입해서 그런지 테스트가 굉장히 수월했다. 프로젝트에선 여러가지 유틸리티 함수에만 FP가 도입됐는데 다른 돔 조작이나 많은 부분에 다양하게 도입하기 위해 추가적인 공부를 하고싶다.
 
-### ✅ End...?
-개발 공부는 끝이 없다. 한가지 프로젝트가 끝나면 또 새롭게 배울것들이 늘어난다. 이번 프로젝트를 진행하면서 모자랐던 부분은 다시 공부하면서 또 다른 프로젝트를 진행하고 싶다.
+- **남의 코드를 바라보는 시선**</br>
+  다른 사람의 코드를 무조건적으로 믿는것은 위험하다는 생각이 들었다. 이건 특히 주니어 입장에서 더더욱 그렇다. 나보다 뛰어난 사람이 만든 코드니까... 하며 프로그램에 문제가 발생했을때 나의 코드만 쳐다보면 안된다는것이다. 경력자들도 사람인지라 실수를 한다. 거대한 규모의 라이브러리 프레임워크도 버그가 존재하고 버전이슈도 존재한다. 문제가 생겼을때 나의 문제인지 외부적인 요인인지 확실히 확인하는 과정이 필요하다고 생각했다.
 
 ### ✅ Plus
 - **<a href='https://github.com/Youout2020/youout-frontend'>first project</a>** github page
-- **<a href='https://github.com/geewoo94/simple-shadow-dom'>simple-shadow-dom </a>** github page
+- **<a href='https://github.com/geewoo94/simple-shadow-dom'>simple-shadow-dom </a>** npm page
